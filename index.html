@@ -5,27 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RED NEWS — A Voz de Red County</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --red: #cc0000;
-      --red-dark: #8b0000;
+      --red:        #cc0000;
+      --red-dark:   #8b0000;
       --red-bright: #ff1a1a;
-      --black: #0a0a0a;
-      --dark: #111111;
-      --dark2: #1a1a1a;
-      --dark3: #222222;
-      --gray: #888888;
+      --black:      #080808;
+      --dark:       #0f0f0f;
+      --dark2:      #161616;
+      --dark3:      #1e1e1e;
+      --dark4:      #242424;
+      --gray:       #777777;
       --gray-light: #aaaaaa;
-      --white: #f5f5f0;
-      --white2: #e8e8e0;
-      --font-head: 'Oswald', sans-serif;
-      --font-body: 'Source Serif 4', serif;
-      --font-mono: 'Share Tech Mono', monospace;
+      --white:      #f0f0eb;
+      --white2:     #d8d8d0;
+      --green:      #22c55e;
+      --yellow:     #eab308;
+      --font-head:  'Oswald', sans-serif;
+      --font-body:  'Source Serif 4', serif;
+      --font-mono:  'Share Tech Mono', monospace;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       background: var(--black);
       color: var(--white);
@@ -33,14 +34,12 @@
       min-height: 100vh;
       overflow-x: hidden;
     }
-
     body::before {
       content: '';
-      position: fixed;
-      inset: 0;
-      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px);
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.05) 2px, rgba(0,0,0,0.05) 4px);
       pointer-events: none;
-      z-index: 999;
+      z-index: 9998;
     }
 
     /* ── TICKER ── */
@@ -48,328 +47,509 @@
       background: var(--red);
       overflow: hidden;
       white-space: nowrap;
-      padding: 6px 0;
-      border-bottom: 2px solid var(--red-dark);
+      padding: 5px 0;
+      border-bottom: 1px solid var(--red-dark);
+      position: relative;
+      z-index: 10;
     }
     .ticker-label {
       display: inline-block;
       background: var(--black);
       color: var(--red);
       font-family: var(--font-head);
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       font-weight: 700;
-      letter-spacing: 2px;
-      padding: 2px 12px;
-      margin-right: 16px;
+      letter-spacing: 3px;
+      padding: 2px 14px;
+      margin-right: 18px;
       vertical-align: middle;
     }
     .ticker-text {
       display: inline-block;
-      animation: ticker 40s linear infinite;
+      animation: ticker 50s linear infinite;
       font-family: var(--font-head);
-      font-size: 0.78rem;
-      letter-spacing: 1px;
+      font-size: 0.72rem;
+      letter-spacing: 1.5px;
       color: var(--white);
+      vertical-align: middle;
     }
-    @keyframes ticker {
-      0%   { transform: translateX(100vw); }
-      100% { transform: translateX(-100%); }
-    }
+    @keyframes ticker { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
 
-    /* ── HEADER ── */
-    header {
+    /* ── SITE HEADER ── */
+    .site-header {
       background: var(--dark);
       border-bottom: 3px solid var(--red);
-      padding: 0 24px;
-    }
-    .header-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 0 6px;
-      border-bottom: 1px solid #2a2a2a;
-    }
-    .header-meta {
-      font-family: var(--font-mono);
-      font-size: 0.68rem;
-      color: var(--gray);
-    }
-    .header-meta span { color: var(--red); }
-    .live-dot {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-family: var(--font-head);
-      font-size: 0.7rem;
-      letter-spacing: 2px;
-      color: var(--gray);
-    }
-    .live-dot i {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: #444;
-      display: inline-block;
-      transition: background 0.3s;
-    }
-    .live-dot.on-air i {
-      background: var(--red-bright);
-      box-shadow: 0 0 8px var(--red-bright);
-      animation: pulse 1.2s ease-in-out infinite;
-    }
-    .live-dot.on-air { color: var(--red-bright); }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
     }
 
+    /* Header main row */
+    .header-main {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      padding: 18px 28px;
+      gap: 0;
+      position: relative;
+      overflow: hidden;
+      min-height: 110px;
+    }
+    /* Map grid bg */
+    .header-main::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(204,0,0,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(204,0,0,0.04) 1px, transparent 1px);
+      background-size: 36px 36px;
+      pointer-events: none;
+    }
+    /* Center glow */
+    .header-main::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 500px; height: 200px;
+      background: radial-gradient(ellipse, rgba(204,0,0,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Logo */
     .logo-area {
       display: flex;
       align-items: center;
-      gap: 20px;
-      padding: 18px 0;
+      gap: 16px;
+      position: relative;
+      z-index: 2;
     }
     .logo-icon {
-      width: 60px; height: 60px;
-      background: var(--red);
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
+      width: 76px; height: 76px;
+      background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.4rem;
       flex-shrink: 0;
-      box-shadow: 0 0 20px rgba(204,0,0,0.4);
+      box-shadow: 0 0 30px rgba(204,0,0,0.5), 0 0 60px rgba(204,0,0,0.15);
+      position: relative;
+    }
+    .logo-icon::after {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: 6px;
+      border: 1px solid rgba(255,100,100,0.3);
     }
     .logo-text h1 {
       font-family: var(--font-head);
-      font-size: 2.8rem;
+      font-size: 3.4rem;
       font-weight: 700;
-      letter-spacing: 4px;
+      letter-spacing: 7px;
       line-height: 1;
       color: var(--white);
-      text-shadow: 2px 2px 0 var(--red-dark);
+      text-shadow: 3px 3px 0 rgba(0,0,0,0.5);
     }
-    .logo-text h1 span { color: var(--red); }
-    .logo-text p {
+    .logo-text h1 em { color: var(--red); font-style: normal; }
+    .logo-text .tagline {
       font-family: var(--font-mono);
-      font-size: 0.65rem;
-      letter-spacing: 3px;
+      font-size: 0.58rem;
+      letter-spacing: 4px;
       color: var(--gray);
-      margin-top: 4px;
+      margin-top: 6px;
       text-transform: uppercase;
     }
+    .logo-text .tagline b { color: var(--red); font-weight: normal; }
 
-    nav {
+    /* Center decoration */
+    .header-center {
+      position: relative;
+      z-index: 2;
       display: flex;
-      gap: 0;
-      border-top: 1px solid #2a2a2a;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0 40px;
+      pointer-events: none;
+      user-select: none;
     }
-    nav a {
+    .header-center .county-name {
       font-family: var(--font-head);
-      font-size: 0.78rem;
+      font-size: 1.1rem;
+      letter-spacing: 8px;
+      color: rgba(204,0,0,0.4);
+      text-transform: uppercase;
+    }
+    .header-center .coords {
+      font-family: var(--font-mono);
+      font-size: 0.56rem;
+      color: rgba(100,100,100,0.5);
       letter-spacing: 2px;
-      color: var(--gray-light);
-      text-decoration: none;
-      padding: 10px 18px;
-      border-right: 1px solid #2a2a2a;
-      transition: all 0.2s;
-      text-transform: uppercase;
+      margin-top: 4px;
     }
-    nav a:hover, nav a.active {
-      color: var(--white);
+    /* Pulse dot in center */
+    .header-center .pulse-ring {
+      width: 10px; height: 10px;
+      border-radius: 50%;
       background: var(--red);
+      box-shadow: 0 0 0 0 rgba(204,0,0,0.5);
+      animation: ripple 2s ease-out infinite;
+      margin-bottom: 6px;
+    }
+    @keyframes ripple {
+      0%   { box-shadow: 0 0 0 0 rgba(204,0,0,0.5); }
+      70%  { box-shadow: 0 0 0 14px rgba(204,0,0,0); }
+      100% { box-shadow: 0 0 0 0 rgba(204,0,0,0); }
     }
 
-    /* ── PLAYER ZONE ── */
-    .player-zone {
-      background: linear-gradient(135deg, var(--dark2) 0%, #1a0000 100%);
-      border-bottom: 3px solid var(--red-dark);
-      padding: 24px;
+    /* Right panel */
+    .header-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+      position: relative;
+      z-index: 2;
     }
-    .player-inner {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .player-left h2 {
-      font-family: var(--font-head);
-      font-size: 1rem;
-      letter-spacing: 3px;
-      color: var(--red);
-      text-transform: uppercase;
-      margin-bottom: 12px;
+    .header-badges {
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    .player-left h2::before { content: '▶'; font-size: 0.7rem; }
-
-    .player-box {
-      background: var(--black);
+    .badge-live {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-head);
+      font-size: 0.68rem;
+      letter-spacing: 2px;
+      color: var(--gray);
+      padding: 4px 10px;
       border: 1px solid #2a2a2a;
-      border-radius: 6px;
-      padding: 16px;
-      position: relative;
-      overflow: hidden;
+      border-radius: 3px;
+      background: rgba(0,0,0,0.4);
     }
-    .player-box::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--red), transparent);
+    .badge-live i {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #333;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .badge-live.on i { background: var(--red-bright); box-shadow: 0 0 6px var(--red-bright); animation: pulse 1.2s ease-in-out infinite; }
+    .badge-live.on { color: var(--red-bright); border-color: rgba(204,0,0,0.3); }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+    .freq-badge {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--gray);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: 1px;
+    }
+    .freq-badge span { color: var(--white2); }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .search-bar input {
+      background: rgba(0,0,0,0.5);
+      border: 1px solid #2a2a2a;
+      border-right: none;
+      border-radius: 3px 0 0 3px;
+      color: var(--white);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      padding: 7px 12px;
+      outline: none;
+      width: 200px;
+      transition: border-color 0.2s;
+    }
+    .search-bar input:focus { border-color: var(--red); }
+    .search-bar input::placeholder { color: #444; }
+    .search-bar button {
+      background: var(--red);
+      border: none;
+      border-radius: 0 3px 3px 0;
+      color: var(--white);
+      font-size: 0.85rem;
+      padding: 7px 12px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .search-bar button:hover { background: var(--red-bright); }
+
+    /* ── INFO BAR ── */
+    .info-bar {
+      background: var(--dark2);
+      border-bottom: 1px solid #1a1a1a;
+      padding: 0 28px;
+    }
+    .info-bar-inner {
+      display: flex;
+      align-items: stretch;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .info-date-area {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 9px 24px 9px 0;
+      border-right: 1px solid #222;
+      flex-shrink: 0;
+    }
+    .info-date-text {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      color: var(--gray);
+      letter-spacing: 1px;
+    }
+    .info-date-text .date-main { color: var(--white2); font-size: 0.68rem; display: block; margin-bottom: 2px; }
+    .info-date-time {
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      color: var(--white);
+      letter-spacing: 2px;
+      font-weight: bold;
     }
 
-    .status-bar {
+    .weather-tiles {
+      display: flex;
+      flex: 1;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .weather-tiles::-webkit-scrollbar { display: none; }
+
+    .wtile {
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 14px;
+      padding: 8px 18px;
+      border-right: 1px solid #1a1a1a;
+      min-width: 170px;
+      flex-shrink: 0;
+      transition: background 0.2s;
     }
+    .wtile:hover { background: rgba(255,255,255,0.02); }
+    .wtile-icon { font-size: 1.3rem; flex-shrink: 0; }
+    .wtile-body {}
+    .wtile-name {
+      font-family: var(--font-head);
+      font-size: 0.6rem;
+      letter-spacing: 2px;
+      color: var(--gray);
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .wtile-val {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--white2);
+    }
+    .wtile-dot {
+      display: inline-block;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      margin-right: 5px;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+    .dot-green  { background: var(--green); box-shadow: 0 0 4px var(--green); }
+    .dot-yellow { background: var(--yellow); }
+    .dot-red    { background: var(--red-bright); }
+    .dot-gray   { background: #555; }
+
+    /* Rates tile */
+    .wtile-rate {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--white2);
+    }
+    .wtile-rate .up   { color: var(--red-bright); font-size: 0.58rem; }
+    .wtile-rate .down { color: var(--green); font-size: 0.58rem; }
+
+    /* ── NAV ── */
+    .main-nav {
+      background: var(--dark3);
+      border-bottom: 2px solid #1a1a1a;
+      padding: 0 28px;
+    }
+    .main-nav-inner {
+      display: flex;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .main-nav a {
+      font-family: var(--font-head);
+      font-size: 0.72rem;
+      letter-spacing: 2px;
+      color: var(--gray-light);
+      text-decoration: none;
+      padding: 11px 18px;
+      border-right: 1px solid #1a1a1a;
+      transition: all 0.15s;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+    }
+    .main-nav a:first-child { border-left: 1px solid #1a1a1a; }
+    .main-nav a:hover, .main-nav a.active {
+      color: var(--white);
+      background: var(--red);
+    }
+    .main-nav a .nav-icon { font-size: 0.85rem; }
+
+    /* ── PLAYER ZONE ── */
+    .player-zone {
+      background: linear-gradient(135deg, #100000 0%, #1a0808 50%, #100000 100%);
+      border-bottom: 2px solid var(--red-dark);
+      padding: 20px 28px;
+    }
+    .player-zone-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .player-label {
+      font-family: var(--font-head);
+      font-size: 0.68rem;
+      letter-spacing: 3px;
+      color: var(--red);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .player-label::before { content: '▶'; font-size: 0.6rem; }
+    .player-box {
+      background: rgba(0,0,0,0.5);
+      border: 1px solid #1e1e1e;
+      border-radius: 6px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .player-status-area { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
     .status-badge {
       font-family: var(--font-mono);
-      font-size: 0.65rem;
+      font-size: 0.62rem;
       letter-spacing: 2px;
       padding: 3px 10px;
       border-radius: 2px;
       text-transform: uppercase;
-      background: #2a2a2a;
+      background: #1e1e1e;
       color: var(--gray);
-      border: 1px solid #333;
-      transition: all 0.3s;
-    }
-    .status-badge.live {
-      background: rgba(204,0,0,0.2);
-      color: var(--red-bright);
-      border-color: var(--red);
-      box-shadow: 0 0 10px rgba(204,0,0,0.2);
-    }
-    .status-badge.error {
-      background: rgba(255,80,0,0.15);
-      color: #ff8040;
-      border-color: #ff6020;
-    }
-
-    .now-playing {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      color: var(--gray);
-      margin-bottom: 14px;
+      border: 1px solid #2a2a2a;
       white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
-    .now-playing span { color: var(--white); }
-
+    .status-badge.live { background: rgba(204,0,0,0.2); color: var(--red-bright); border-color: var(--red); }
+    .status-badge.error { background: rgba(255,80,0,0.12); color: #ff8040; border-color: #ff6020; }
+    .player-now {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--gray);
+      flex-shrink: 0;
+    }
+    .player-now span { color: var(--white2); }
     audio#radioPlayer {
-      width: 100%;
-      height: 36px;
+      flex: 1; min-width: 200px; height: 32px;
       filter: invert(1) hue-rotate(180deg) saturate(2);
-      margin-bottom: 10px;
     }
-
     .url-display {
       font-family: var(--font-mono);
-      font-size: 0.6rem;
-      color: #444;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      padding: 4px 6px;
-      background: #0d0d0d;
-      border-radius: 2px;
-      border: 1px solid #1a1a1a;
+      font-size: 0.58rem;
+      color: #333;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      max-width: 260px;
     }
-    .url-display.has-url { color: #556; }
-
+    .url-display.has-url { color: #445; }
     .offline-banner {
       display: none;
-      background: var(--dark2);
-      border: 1px solid #2a2a2a;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid #1e1e1e;
       border-radius: 6px;
-      padding: 20px;
+      padding: 16px 20px;
       text-align: center;
     }
     .offline-banner.show { display: block; }
-    .offline-banner p {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--gray);
-      letter-spacing: 1px;
-    }
+    .offline-banner p { font-family: var(--font-mono); font-size: 0.7rem; color: var(--gray); }
     .offline-banner p span { color: var(--red); }
 
-    /* ── MAIN CONTENT ── */
+    /* ── MAIN WRAP ── */
     .main-wrap {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 32px 24px;
+      padding: 28px 28px;
       display: grid;
-      grid-template-columns: 1fr 320px;
-      gap: 32px;
+      grid-template-columns: 1fr 300px;
+      gap: 28px;
     }
-    @media (max-width: 780px) {
-      .main-wrap { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 860px) { .main-wrap { grid-template-columns: 1fr; } }
 
+    /* Section label */
     .section-label {
       font-family: var(--font-head);
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       letter-spacing: 3px;
       color: var(--red);
       text-transform: uppercase;
       padding-bottom: 8px;
       border-bottom: 2px solid var(--red);
-      margin-bottom: 20px;
-    }
-
-    .headline-card {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-bottom: 28px;
-    }
-    @media (max-width: 540px) {
-      .headline-card { grid-template-columns: 1fr; }
-    }
-
-    .news-big {
-      background: var(--dark2);
-      border: 1px solid #222;
-      border-radius: 4px;
-      overflow: hidden;
-      transition: border-color 0.2s;
-    }
-    .news-big:hover { border-color: var(--red-dark); }
-
-    .news-img {
-      width: 100%;
-      height: 160px;
-      background: linear-gradient(135deg, #1a0000, #2a0a0a);
+      margin-bottom: 18px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 3rem;
-      border-bottom: 1px solid #2a2a2a;
+      gap: 8px;
+    }
+
+    /* ── NEWS GRID ── */
+    .featured-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 560px) { .featured-grid { grid-template-columns: 1fr; } }
+
+    .news-card {
+      background: var(--dark2);
+      border: 1px solid #1a1a1a;
+      border-radius: 4px;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.15s;
+      cursor: default;
+    }
+    .news-card:hover { border-color: var(--red-dark); transform: translateY(-1px); }
+
+    .news-card-thumb {
+      width: 100%; height: 150px;
+      background: linear-gradient(135deg, #150000 0%, #220808 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.8rem;
       position: relative;
+      border-bottom: 1px solid #1e1e1e;
       overflow: hidden;
     }
-    .news-img::after {
+    .news-card-thumb::after {
       content: attr(data-label);
-      position: absolute;
-      top: 10px; left: 10px;
+      position: absolute; top: 10px; left: 10px;
       background: var(--red);
       color: var(--white);
       font-family: var(--font-head);
-      font-size: 0.6rem;
+      font-size: 0.55rem;
       letter-spacing: 2px;
       padding: 2px 8px;
-      border-radius: 2px;
+      border-radius: 1px;
     }
-
-    .news-body { padding: 14px; }
+    .news-card-body { padding: 14px; }
     .news-cat {
       font-family: var(--font-mono);
-      font-size: 0.6rem;
+      font-size: 0.56rem;
       letter-spacing: 2px;
       color: var(--red);
       text-transform: uppercase;
@@ -377,201 +557,212 @@
     }
     .news-title {
       font-family: var(--font-head);
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 600;
       line-height: 1.3;
       color: var(--white);
       margin-bottom: 8px;
     }
-    .news-desc {
-      font-size: 0.78rem;
-      color: var(--gray-light);
-      line-height: 1.6;
-    }
+    .news-desc { font-size: 0.74rem; color: var(--gray-light); line-height: 1.6; }
     .news-time {
       font-family: var(--font-mono);
-      font-size: 0.6rem;
+      font-size: 0.56rem;
       color: #444;
       margin-top: 10px;
     }
 
-    .news-list { display: flex; flex-direction: column; gap: 12px; }
+    /* News list */
+    .news-list { display: flex; flex-direction: column; gap: 10px; }
     .news-item {
       display: flex;
       gap: 12px;
       padding: 12px;
       background: var(--dark2);
-      border: 1px solid #1e1e1e;
+      border: 1px solid #181818;
       border-radius: 4px;
       transition: border-color 0.2s;
       cursor: default;
     }
-    .news-item:hover { border-color: #333; }
-    .news-item-icon {
-      font-size: 1.4rem;
-      flex-shrink: 0;
-      width: 36px;
-      text-align: center;
-    }
-    .news-item-body { flex: 1; }
-    .news-item-body .news-cat { margin-bottom: 4px; }
-    .news-item-body .news-title { font-size: 0.85rem; }
-    .news-item-body .news-time { margin-top: 4px; }
+    .news-item:hover { border-color: #2a2a2a; }
+    .news-item-icon { font-size: 1.3rem; flex-shrink: 0; width: 34px; text-align: center; margin-top: 2px; }
+    .news-item-body { flex: 1; min-width: 0; }
+    .news-item-body .news-title { font-size: 0.82rem; margin-bottom: 4px; }
+    .news-item-body .news-time { margin-top: 3px; }
 
-    /* SIDEBAR */
-    .sidebar { display: flex; flex-direction: column; gap: 24px; }
+    /* ── SIDEBAR ── */
+    .sidebar { display: flex; flex-direction: column; gap: 20px; }
 
     .widget {
       background: var(--dark2);
-      border: 1px solid #222;
+      border: 1px solid #1a1a1a;
       border-radius: 4px;
       overflow: hidden;
     }
     .widget-head {
       background: var(--dark3);
-      padding: 10px 14px;
-      border-bottom: 1px solid #2a2a2a;
+      padding: 9px 14px;
+      border-bottom: 1px solid #222;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
     .widget-head h3 {
       font-family: var(--font-head);
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       letter-spacing: 2px;
       color: var(--red);
       text-transform: uppercase;
     }
+    .widget-head .widget-badge {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      color: var(--gray);
+      letter-spacing: 1px;
+    }
     .widget-body { padding: 14px; }
 
-    .prog-list { display: flex; flex-direction: column; gap: 8px; }
+    /* Weather widget */
+    .weather-widget-main {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #1e1e1e;
+    }
+    .weather-big-icon { font-size: 2.4rem; }
+    .weather-temp { font-family: var(--font-head); font-size: 2rem; color: var(--white); line-height: 1; }
+    .weather-temp small { font-size: 0.9rem; color: var(--gray); }
+    .weather-desc { font-family: var(--font-mono); font-size: 0.62rem; color: var(--gray-light); margin-top: 3px; }
+    .weather-details { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .weather-detail {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--gray);
+      padding: 5px 8px;
+      background: var(--dark3);
+      border-radius: 3px;
+    }
+    .weather-detail span { color: var(--white2); display: block; font-size: 0.68rem; }
+
+    /* Rates widget */
+    .rate-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    .rate-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .rate-name { font-family: var(--font-head); font-size: 0.75rem; letter-spacing: 1px; color: var(--gray-light); }
+    .rate-val { font-family: var(--font-mono); font-size: 0.9rem; color: var(--white); font-weight: bold; }
+    .rate-change { font-family: var(--font-mono); font-size: 0.6rem; }
+    .rate-change.up { color: var(--red-bright); }
+    .rate-change.down { color: var(--green); }
+
+    /* Boombox */
+    .boombox-url {
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      color: #444;
+      background: var(--dark);
+      padding: 7px 10px;
+      border-radius: 3px;
+      border: 1px solid #1a1a1a;
+      word-break: break-all;
+      margin-bottom: 10px;
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      line-height: 1.5;
+    }
+    .boombox-url.has-url { color: #556; }
+
+    /* Schedule */
+    .prog-list { display: flex; flex-direction: column; gap: 6px; }
     .prog-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 10px;
+      padding: 7px 10px;
       border-radius: 3px;
-      background: #1a1a1a;
-      border-left: 3px solid #333;
-      transition: border-color 0.2s;
+      background: var(--dark3);
+      border-left: 3px solid #2a2a2a;
     }
-    .prog-item.current { border-left-color: var(--red); background: rgba(204,0,0,0.08); }
-    .prog-time {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      color: var(--gray);
-      flex-shrink: 0;
-    }
-    .prog-name {
-      font-family: var(--font-head);
-      font-size: 0.78rem;
-      color: var(--white2);
-      flex: 1;
-      padding: 0 10px;
-    }
+    .prog-item.current { border-left-color: var(--red); background: rgba(204,0,0,0.07); }
+    .prog-time { font-family: var(--font-mono); font-size: 0.6rem; color: var(--gray); flex-shrink: 0; }
+    .prog-name { font-family: var(--font-head); font-size: 0.74rem; color: var(--white2); flex: 1; padding: 0 10px; }
     .prog-item.current .prog-name { color: var(--red-bright); }
-    .prog-live {
-      font-family: var(--font-mono);
-      font-size: 0.55rem;
-      color: var(--red);
-      letter-spacing: 1px;
-    }
+    .prog-live { font-family: var(--font-mono); font-size: 0.52rem; color: var(--red); letter-spacing: 1px; }
 
-    .boombox-widget { text-align: center; }
-    .boombox-icon { font-size: 2.5rem; margin-bottom: 10px; }
-    .boombox-desc {
-      font-size: 0.75rem;
-      color: var(--gray);
-      line-height: 1.6;
-      margin-bottom: 14px;
-    }
-    .boombox-url {
-      font-family: var(--font-mono);
-      font-size: 0.6rem;
-      color: #555;
-      background: var(--black);
-      padding: 6px 10px;
-      border-radius: 3px;
-      border: 1px solid #222;
-      word-break: break-all;
-      text-align: left;
-      margin-bottom: 10px;
-      min-height: 32px;
-      display: flex;
-      align-items: center;
-    }
-    .boombox-url.has-url { color: #778; }
-
-    .sobre-text {
-      font-size: 0.78rem;
-      color: var(--gray-light);
-      line-height: 1.7;
-    }
+    /* About */
+    .sobre-text { font-size: 0.76rem; color: var(--gray-light); line-height: 1.7; }
     .sobre-text em { color: var(--red); font-style: italic; }
 
     /* ── FOOTER ── */
     footer {
       background: var(--dark);
       border-top: 2px solid var(--red-dark);
-      padding: 24px;
+      padding: 22px 28px;
       text-align: center;
       margin-top: 20px;
     }
-    .footer-logo {
-      font-family: var(--font-head);
-      font-size: 1.4rem;
-      letter-spacing: 4px;
-      color: var(--white);
-      margin-bottom: 6px;
-    }
-    .footer-logo span { color: var(--red); }
-    footer p {
-      font-family: var(--font-mono);
-      font-size: 0.62rem;
-      color: #444;
-      letter-spacing: 2px;
-    }
-    footer .disclaimer {
-      font-size: 0.65rem;
-      color: #333;
-      margin-top: 10px;
-      font-style: italic;
-      font-family: var(--font-body);
-    }
-    .footer-admin-link {
-      margin-top: 14px;
-    }
-    .footer-admin-link a {
-      font-family: var(--font-mono);
-      font-size: 0.55rem;
-      color: #2a2a2a;
-      text-decoration: none;
-      letter-spacing: 2px;
-      transition: color 0.2s;
-    }
-    .footer-admin-link a:hover { color: #444; }
+    .footer-logo { font-family: var(--font-head); font-size: 1.3rem; letter-spacing: 5px; color: var(--white); margin-bottom: 6px; }
+    .footer-logo em { color: var(--red); font-style: normal; }
+    footer p { font-family: var(--font-mono); font-size: 0.58rem; color: #3a3a3a; letter-spacing: 2px; }
+    footer .disclaimer { font-size: 0.6rem; color: #2a2a2a; margin-top: 8px; font-family: var(--font-body); }
+    .footer-admin-link { margin-top: 12px; }
+    .footer-admin-link a { font-family: var(--font-mono); font-size: 0.5rem; color: #1a1a1a; text-decoration: none; letter-spacing: 2px; transition: color 0.2s; }
+    .footer-admin-link a:hover { color: #333; }
 
-    /* Toast */
+    /* ── TOAST ── */
     #toast {
-      position: fixed;
-      bottom: 24px; right: 24px;
+      position: fixed; bottom: 22px; right: 22px;
       background: var(--red);
       color: var(--white);
       font-family: var(--font-head);
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       letter-spacing: 1px;
       padding: 10px 20px;
       border-radius: 4px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-      opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.25s;
+      opacity: 0; transform: translateY(8px);
+      transition: all 0.22s;
       pointer-events: none;
-      z-index: 3000;
+      z-index: 9999;
     }
     #toast.show { opacity: 1; transform: translateY(0); }
 
+    /* ── SEARCH RESULTS ── */
+    .search-results {
+      position: absolute;
+      top: calc(100% + 4px);
+      right: 0;
+      width: 360px;
+      background: var(--dark2);
+      border: 1px solid #2a2a2a;
+      border-radius: 4px;
+      z-index: 100;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.7);
+      display: none;
+    }
+    .search-results.show { display: block; }
+    .search-result-item {
+      padding: 10px 14px;
+      border-bottom: 1px solid #1a1a1a;
+      cursor: default;
+      transition: background 0.15s;
+    }
+    .search-result-item:hover { background: var(--dark3); }
+    .search-result-item:last-child { border-bottom: none; }
+    .sr-cat { font-family: var(--font-mono); font-size: 0.55rem; color: var(--red); letter-spacing: 2px; text-transform: uppercase; }
+    .sr-title { font-family: var(--font-head); font-size: 0.82rem; color: var(--white); margin-top: 3px; line-height: 1.3; }
+    .sr-empty { padding: 16px 14px; font-family: var(--font-mono); font-size: 0.65rem; color: var(--gray); text-align: center; }
+
     /* ── ADMIN OVERLAY ── */
     #adminOverlay {
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background: rgba(0,0,0,0.97);
       z-index: 2000;
       display: none;
@@ -586,310 +777,98 @@
       background: var(--dark);
       border: 1px solid var(--red-dark);
       border-radius: 6px;
-      width: 100%;
-      max-width: 720px;
+      width: 100%; max-width: 720px;
       box-shadow: 0 0 60px rgba(204,0,0,0.2);
       margin: auto;
     }
-
     .admin-header {
       background: var(--dark2);
       border-bottom: 2px solid var(--red);
       padding: 14px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
     }
-    .admin-header h2 {
-      font-family: var(--font-head);
-      font-size: 0.9rem;
-      letter-spacing: 3px;
-      color: var(--red);
-      text-transform: uppercase;
-    }
+    .admin-header h2 { font-family: var(--font-head); font-size: 0.9rem; letter-spacing: 3px; color: var(--red); text-transform: uppercase; }
     .admin-header-right { display: flex; gap: 8px; align-items: center; }
-    .admin-badge {
-      font-family: var(--font-mono);
-      font-size: 0.58rem;
-      color: var(--gray);
-      letter-spacing: 1px;
-      padding: 2px 8px;
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      border-radius: 2px;
-    }
-
-    .btn-ghost {
-      background: none;
-      border: 1px solid #333;
-      color: var(--gray);
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      padding: 4px 12px;
-      border-radius: 3px;
-      cursor: pointer;
-      transition: all 0.15s;
-      letter-spacing: 1px;
-    }
+    .admin-badge { font-family: var(--font-mono); font-size: 0.58rem; color: var(--gray); letter-spacing: 1px; padding: 2px 8px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 2px; }
+    .btn-ghost { background: none; border: 1px solid #333; color: var(--gray); font-family: var(--font-mono); font-size: 0.65rem; padding: 4px 12px; border-radius: 3px; cursor: pointer; transition: all 0.15s; letter-spacing: 1px; }
     .btn-ghost:hover { background: #222; color: var(--white); }
     .btn-ghost.danger:hover { border-color: var(--red); color: var(--red); }
-
     .admin-body { padding: 20px; }
 
-    /* Login form */
-    .login-wrap {
-      max-width: 340px;
-      margin: 0 auto;
-      text-align: center;
-      padding: 20px 0;
-    }
-    .login-logo {
-      font-family: var(--font-head);
-      font-size: 1.6rem;
-      letter-spacing: 4px;
-      color: var(--white);
-      margin-bottom: 4px;
-    }
-    .login-logo span { color: var(--red); }
-    .login-sub {
-      font-family: var(--font-mono);
-      font-size: 0.6rem;
-      color: var(--gray);
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      margin-bottom: 28px;
-    }
-    .login-err {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      color: #ff6040;
-      margin-top: 10px;
-      min-height: 16px;
-    }
+    .login-wrap { max-width: 340px; margin: 0 auto; text-align: center; padding: 20px 0; }
+    .login-logo { font-family: var(--font-head); font-size: 1.6rem; letter-spacing: 4px; color: var(--white); margin-bottom: 4px; }
+    .login-logo em { color: var(--red); font-style: normal; }
+    .login-sub { font-family: var(--font-mono); font-size: 0.6rem; color: var(--gray); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 28px; }
+    .login-err { font-family: var(--font-mono); font-size: 0.65rem; color: #ff6040; margin-top: 10px; min-height: 16px; }
 
-    /* Tabs */
-    .admin-tabs {
-      display: flex;
-      border-bottom: 1px solid #2a2a2a;
-      margin-bottom: 20px;
-      gap: 0;
-    }
-    .admin-tab {
-      font-family: var(--font-head);
-      font-size: 0.7rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--gray);
-      padding: 9px 16px;
-      cursor: pointer;
-      border: none;
-      background: none;
-      border-bottom: 2px solid transparent;
-      margin-bottom: -1px;
-      transition: all 0.15s;
-    }
+    .admin-tabs { display: flex; border-bottom: 1px solid #2a2a2a; margin-bottom: 20px; }
+    .admin-tab { font-family: var(--font-head); font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; color: var(--gray); padding: 9px 16px; cursor: pointer; border: none; background: none; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
     .admin-tab.active { color: var(--red); border-bottom-color: var(--red); }
     .admin-tab:hover { color: var(--white); }
 
     .tab-pane { display: none; }
     .tab-pane.active { display: block; }
 
-    /* Form elements */
     .form-group { margin-bottom: 14px; }
-    .form-group label {
-      display: block;
-      font-family: var(--font-mono);
-      font-size: 0.62rem;
-      color: var(--gray);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 6px;
+    .form-group label { display: block; font-family: var(--font-mono); font-size: 0.62rem; color: var(--gray); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%; background: var(--black); border: 1px solid #333; border-radius: 4px; color: var(--white);
+      font-family: var(--font-mono); font-size: 0.72rem; padding: 9px 12px; outline: none; transition: border-color 0.2s;
     }
-    .form-group input,
-    .form-group textarea,
-    .form-group select {
-      width: 100%;
-      background: var(--black);
-      border: 1px solid #333;
-      border-radius: 4px;
-      color: var(--white);
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      padding: 9px 12px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .form-group input:focus,
-    .form-group textarea:focus,
-    .form-group select:focus { border-color: var(--red); }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--red); }
     .form-group textarea { resize: vertical; min-height: 56px; line-height: 1.5; }
     .form-group select { cursor: pointer; }
-    .form-group input::placeholder,
-    .form-group textarea::placeholder { color: #444; }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
+    .form-group input::placeholder, .form-group textarea::placeholder { color: #444; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     @media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
 
-    /* Buttons */
-    .btn {
-      font-family: var(--font-head);
-      font-size: 0.72rem;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      border: none;
-      border-radius: 3px;
-      padding: 9px 16px;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
+    .btn { font-family: var(--font-head); font-size: 0.72rem; letter-spacing: 1.5px; text-transform: uppercase; border: none; border-radius: 3px; padding: 9px 16px; cursor: pointer; transition: all 0.15s; }
     .btn-primary { background: var(--red); color: var(--white); }
     .btn-primary:hover { background: var(--red-bright); }
-    .btn-secondary {
-      background: #2a2a2a;
-      color: var(--gray-light);
-      border: 1px solid #333;
-    }
+    .btn-secondary { background: #2a2a2a; color: var(--gray-light); border: 1px solid #333; }
     .btn-secondary:hover { background: #333; color: var(--white); }
     .btn-danger { background: #3a0000; color: #ff6040; border: 1px solid #5a0000; }
     .btn-danger:hover { background: #500000; }
     .btn:active { transform: scale(0.97); }
-
     .btn-row { display: flex; gap: 8px; }
     .btn-row .btn { flex: 1; }
 
-    /* Admin news list */
-    .admin-news-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 16px;
-      max-height: 280px;
-      overflow-y: auto;
-    }
-    .admin-news-list:empty::after {
-      content: 'Nenhuma notícia cadastrada.';
-      display: block;
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      color: #444;
-      text-align: center;
-      padding: 20px 0;
-    }
-    .admin-ni {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 9px 12px;
-      background: var(--dark2);
-      border: 1px solid #222;
-      border-radius: 4px;
-    }
+    .admin-news-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; max-height: 280px; overflow-y: auto; }
+    .admin-news-list:empty::after { content: 'Nenhuma notícia cadastrada.'; display: block; font-family: var(--font-mono); font-size: 0.65rem; color: #444; text-align: center; padding: 20px 0; }
+    .admin-ni { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: var(--dark2); border: 1px solid #222; border-radius: 4px; }
     .admin-ni-icon { font-size: 1.1rem; flex-shrink: 0; }
     .admin-ni-info { flex: 1; min-width: 0; }
-    .admin-ni-title {
-      font-family: var(--font-head);
-      font-size: 0.78rem;
-      color: var(--white);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .admin-ni-meta {
-      font-family: var(--font-mono);
-      font-size: 0.56rem;
-      color: #555;
-      margin-top: 2px;
-    }
-    .admin-ni-featured {
-      font-family: var(--font-mono);
-      font-size: 0.55rem;
-      color: var(--red);
-      margin-right: 4px;
-    }
-    .admin-ni-del {
-      background: none;
-      border: 1px solid #2a2a2a;
-      color: #555;
-      font-family: var(--font-mono);
-      font-size: 0.6rem;
-      padding: 3px 8px;
-      border-radius: 2px;
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: all 0.15s;
-    }
+    .admin-ni-title { font-family: var(--font-head); font-size: 0.78rem; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .admin-ni-meta { font-family: var(--font-mono); font-size: 0.56rem; color: #555; margin-top: 2px; }
+    .admin-ni-featured { font-family: var(--font-mono); font-size: 0.55rem; color: var(--red); margin-right: 4px; }
+    .admin-ni-del { background: none; border: 1px solid #2a2a2a; color: #555; font-family: var(--font-mono); font-size: 0.6rem; padding: 3px 8px; border-radius: 2px; cursor: pointer; flex-shrink: 0; transition: all 0.15s; }
     .admin-ni-del:hover { border-color: var(--red); color: #ff4040; }
 
-    /* Add news collapsible */
-    .add-panel {
-      background: var(--dark2);
-      border: 1px solid #222;
-      border-radius: 4px;
-      padding: 14px;
-      margin-top: 12px;
-    }
-    .add-panel h4 {
-      font-family: var(--font-head);
-      font-size: 0.72rem;
-      letter-spacing: 2px;
-      color: var(--gray);
-      text-transform: uppercase;
-      margin-bottom: 14px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid #2a2a2a;
-    }
+    .add-panel { background: var(--dark2); border: 1px solid #222; border-radius: 4px; padding: 14px; margin-top: 12px; }
+    .add-panel h4 { font-family: var(--font-head); font-size: 0.72rem; letter-spacing: 2px; color: var(--gray); text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid #2a2a2a; }
 
-    /* Live control */
-    .live-control {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--dark2);
-      border: 1px solid #222;
-      border-radius: 4px;
-      padding: 14px 16px;
-      margin-bottom: 16px;
-    }
-    .live-status-text {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      color: var(--gray);
-    }
-    .live-status-text strong {
-      font-family: var(--font-head);
-      font-size: 0.85rem;
-      letter-spacing: 2px;
-      display: block;
-      margin-bottom: 2px;
-    }
+    .live-control { display: flex; align-items: center; justify-content: space-between; background: var(--dark2); border: 1px solid #222; border-radius: 4px; padding: 14px 16px; margin-bottom: 16px; }
+    .live-status-text { font-family: var(--font-mono); font-size: 0.7rem; color: var(--gray); }
+    .live-status-text strong { font-family: var(--font-head); font-size: 0.85rem; letter-spacing: 2px; display: block; margin-bottom: 2px; }
     .live-status-text strong.on { color: var(--red-bright); }
     .live-status-text strong.off { color: var(--gray); }
-
     .btn-live { padding: 8px 20px; font-size: 0.7rem; }
 
-    /* Section divider */
-    .section-sep {
-      border: none;
-      border-top: 1px solid #2a2a2a;
-      margin: 20px 0;
-    }
-
-    .info-note {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      color: var(--gray);
-      line-height: 1.6;
-      padding: 10px 12px;
-      background: #0d0d0d;
-      border-left: 2px solid var(--red-dark);
-      border-radius: 0 4px 4px 0;
-      margin-bottom: 14px;
-    }
+    .section-sep { border: none; border-top: 1px solid #2a2a2a; margin: 20px 0; }
+    .info-note { font-family: var(--font-mono); font-size: 0.65rem; color: var(--gray); line-height: 1.6; padding: 10px 12px; background: #0d0d0d; border-left: 2px solid var(--red-dark); border-radius: 0 4px 4px 0; margin-bottom: 14px; }
     .info-note code { font-family: var(--font-mono); color: var(--red); }
+
+    /* Responsive */
+    @media (max-width: 760px) {
+      .header-main { grid-template-columns: 1fr; gap: 14px; }
+      .header-center { display: none; }
+      .header-right { align-items: flex-start; }
+      .logo-text h1 { font-size: 2.2rem; }
+      .search-bar input { width: 160px; }
+      .info-bar { padding: 0 14px; }
+      .main-nav { padding: 0 14px; }
+      .player-zone, .main-wrap { padding: 16px 14px; }
+    }
   </style>
 </head>
 <body>
@@ -898,60 +877,134 @@
 <div class="ticker-wrap">
   <span class="ticker-label">URGENTE</span>
   <span class="ticker-text" id="tickerText">
-    Tiroteio deixa 3 feridos no Dillimore Arms ·· Sheriff encontrado dormindo em viatura na estrada 68 ·· Blaine County Savings nega novo assalto: "foi manutenção" ·· Prefeito de Palomino Creek some após entrevista à Red News ·· Fazendeiro diz ter visto OVNI; sheriffs investigam "balão meteorológico" ·· Corrida ilegal de muscle cars interrompe tráfego na Route 1 ·· Red News: A voz que Red County merecia. Ou não.
+    Carregando últimas notícias de Red County...
   </span>
 </div>
 
 <!-- HEADER -->
-<header>
-  <div class="header-top">
-    <div class="header-meta">
-      <span id="currentDate">—</span> &nbsp;·&nbsp; RED COUNTY, SAN ANDREAS &nbsp;·&nbsp; EST. 2024
+<header class="site-header">
+  <div class="header-main">
+
+    <!-- Logo -->
+    <div class="logo-area">
+      <div class="logo-icon">🎙️</div>
+      <div class="logo-text">
+        <h1><em>RED</em> NEWS</h1>
+        <p class="tagline">Rádio <b>·</b> Jornal <b>·</b> Red County</p>
+      </div>
     </div>
-    <div class="live-dot" id="liveDot">
-      <i></i> <span id="liveLabel">OFF AIR</span>
+
+    <!-- Center map decoration -->
+    <div class="header-center">
+      <div class="pulse-ring"></div>
+      <div class="county-name">Red County</div>
+      <div class="coords">35°22'N  119°01'W &nbsp;·&nbsp; SAN ANDREAS</div>
+    </div>
+
+    <!-- Right panel -->
+    <div class="header-right">
+      <div class="header-badges">
+        <div class="badge-live" id="liveDot">
+          <i></i> <span id="liveLabel">OFF AIR</span>
+        </div>
+        <div class="badge-live on">
+          <i></i> AO VIVO
+        </div>
+        <div class="freq-badge">📍 <span>RED COUNTY &nbsp;·&nbsp; 98.9 NOTÍCIAS</span></div>
+      </div>
+      <div class="search-bar" style="position:relative">
+        <input type="text" id="searchInput" placeholder="Buscar notícias, eventos, áudios..." autocomplete="off" />
+        <button onclick="doSearch()">🔍</button>
+        <div class="search-results" id="searchResults"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Info bar -->
+  <div class="info-bar">
+    <div class="info-bar-inner">
+      <div class="info-date-area">
+        <div class="info-date-time" id="clockDisplay">--:--</div>
+        <div class="info-date-text">
+          <span class="date-main" id="dateDisplay">—</span>
+          <span>RED COUNTY, SAN ANDREAS · EST. 2024</span>
+        </div>
+      </div>
+      <div class="weather-tiles">
+        <!-- DILLIMORE - Temperatura real -->
+        <div class="wtile">
+          <div class="wtile-icon" id="wIcon">🌡️</div>
+          <div class="wtile-body">
+            <div class="wtile-name">Dillimore</div>
+            <div class="wtile-val" id="wTemp">Carregando...</div>
+          </div>
+        </div>
+        <!-- PALOMINO CREEK - Umidade -->
+        <div class="wtile">
+          <div class="wtile-icon">💧</div>
+          <div class="wtile-body">
+            <div class="wtile-name">Palomino Creek</div>
+            <div class="wtile-val" id="wHumidity">— umidade</div>
+          </div>
+        </div>
+        <!-- ROTA 68 - Condição de pista -->
+        <div class="wtile">
+          <div class="wtile-icon" id="wRoadIcon">🛣️</div>
+          <div class="wtile-body">
+            <div class="wtile-name">Rota 68</div>
+            <div class="wtile-val" id="wRoad">—</div>
+          </div>
+        </div>
+        <!-- USD -->
+        <div class="wtile">
+          <div class="wtile-icon">💵</div>
+          <div class="wtile-body">
+            <div class="wtile-name">Dólar USD</div>
+            <div class="wtile-val wtile-rate" id="wUSD">R$ —</div>
+          </div>
+        </div>
+        <!-- EUR -->
+        <div class="wtile">
+          <div class="wtile-icon">💶</div>
+          <div class="wtile-body">
+            <div class="wtile-name">Euro EUR</div>
+            <div class="wtile-val wtile-rate" id="wEUR">R$ —</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="logo-area">
-    <div class="logo-icon">📻</div>
-    <div class="logo-text">
-      <h1><span>RED</span> NEWS</h1>
-      <p>Rádio · Jornal · Red County</p>
+
+  <!-- Nav -->
+  <nav class="main-nav">
+    <div class="main-nav-inner">
+      <a href="#" class="active"><span class="nav-icon">🏠</span> Início</a>
+      <a href="#noticias"><span class="nav-icon">📰</span> Notícias</a>
+      <a href="#programacao"><span class="nav-icon">📅</span> Programação</a>
+      <a href="#transmissao"><span class="nav-icon">📡</span> Transmissão</a>
+      <a href="#condado"><span class="nav-icon">🗺️</span> Condado</a>
+      <a href="#sobre"><span class="nav-icon">ℹ️</span> Sobre</a>
     </div>
-  </div>
-  <nav>
-    <a href="#" class="active">Início</a>
-    <a href="#noticias">Notícias</a>
-    <a href="#programacao">Programação</a>
-    <a href="#boombox">Transmissão</a>
-    <a href="#sobre">Sobre</a>
   </nav>
 </header>
 
 <!-- PLAYER ZONE -->
-<div class="player-zone">
-  <div class="player-inner">
-    <div class="player-left">
-      <h2>Ao Vivo</h2>
-      <!-- Player (shown when online) -->
-      <div id="playerBox" class="player-box">
-        <div class="status-bar">
-          <div class="status-badge" id="statusBadge">AGUARDANDO LINK</div>
-        </div>
-        <div class="now-playing">
-          Transmitindo: <span id="nowPlayingText">—</span>
-        </div>
-        <audio id="radioPlayer" controls>
-          <source id="radioSource" src="" type="audio/mpeg" />
-          Seu navegador não suporta áudio HTML5.
-        </audio>
-        <div class="url-display" id="urlDisplay">nenhum link configurado</div>
+<div class="player-zone" id="transmissao">
+  <div class="player-zone-inner">
+    <div class="player-label">Transmissão ao Vivo</div>
+    <div id="playerBox" class="player-box">
+      <div class="player-status-area">
+        <div class="status-badge" id="statusBadge">AGUARDANDO</div>
       </div>
-      <!-- Offline banner (shown when offline) -->
-      <div id="offlineBanner" class="offline-banner">
-        <p>📻 <span>RED NEWS RÁDIO</span></p>
-        <p style="margin-top:8px">Fora do ar no momento. Volte mais tarde.</p>
-      </div>
+      <div class="player-now">Transmitindo: <span id="nowPlayingText">—</span></div>
+      <audio id="radioPlayer" controls>
+        <source id="radioSource" src="" type="audio/mpeg" />
+      </audio>
+      <div class="url-display" id="urlDisplay">nenhum link configurado</div>
+    </div>
+    <div id="offlineBanner" class="offline-banner">
+      <p>📻 <span>RED NEWS 98.9</span> — Fora do ar no momento. Volte em breve.</p>
     </div>
   </div>
 </div>
@@ -960,8 +1013,8 @@
 <div class="main-wrap">
   <main>
     <div id="noticias">
-      <div class="section-label">Últimas Notícias</div>
-      <div class="headline-card" id="featuredNews"></div>
+      <div class="section-label">📰 Últimas Notícias</div>
+      <div class="featured-grid" id="featuredNews"></div>
       <div class="news-list" id="newsList"></div>
     </div>
   </main>
@@ -969,22 +1022,66 @@
   <!-- SIDEBAR -->
   <aside class="sidebar">
 
-    <!-- BOOMBOX -->
-    <div class="widget" id="boombox">
-      <div class="widget-head"><h3>📡 Link da Transmissão</h3></div>
-      <div class="widget-body boombox-widget">
-        <div class="boombox-icon">📦</div>
-        <div class="boombox-desc">
-          Use este link para ouvir a Red News de qualquer dispositivo ou player externo.
+    <!-- Clima -->
+    <div class="widget" id="condado">
+      <div class="widget-head">
+        <h3>🌤 Clima — Red County</h3>
+        <span class="widget-badge" id="weatherUpdated">—</span>
+      </div>
+      <div class="widget-body">
+        <div class="weather-widget-main">
+          <div class="weather-big-icon" id="wBigIcon">🌡️</div>
+          <div>
+            <div class="weather-temp" id="wBigTemp">—<small>°C</small></div>
+            <div class="weather-desc" id="wBigDesc">Carregando...</div>
+          </div>
         </div>
-        <div class="boombox-url" id="boomboxUrl">Nenhum link configurado</div>
-        <button class="btn btn-primary" style="width:100%" onclick="copyBoombox()">
-          Copiar link
-        </button>
+        <div class="weather-details">
+          <div class="weather-detail">Umidade<span id="wDetailHum">—</span></div>
+          <div class="weather-detail">Vento<span id="wDetailWind">—</span></div>
+          <div class="weather-detail">Pista<span id="wDetailRoad">—</span></div>
+          <div class="weather-detail">Região<span>Bakersfield, CA</span></div>
+        </div>
       </div>
     </div>
 
-    <!-- PROGRAMAÇÃO -->
+    <!-- Cotações -->
+    <div class="widget">
+      <div class="widget-head">
+        <h3>💹 Cotações</h3>
+        <span class="widget-badge" id="ratesUpdated">—</span>
+      </div>
+      <div class="widget-body">
+        <div class="rate-row">
+          <span class="rate-name">USD / BRL</span>
+          <div>
+            <div class="rate-val" id="rUSD">R$ —</div>
+            <div class="rate-change" id="rUSDChange">—</div>
+          </div>
+        </div>
+        <div class="rate-row">
+          <span class="rate-name">EUR / BRL</span>
+          <div>
+            <div class="rate-val" id="rEUR">R$ —</div>
+            <div class="rate-change" id="rEURChange">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transmissão / Boombox -->
+    <div class="widget" id="boombox">
+      <div class="widget-head"><h3>📡 Link da Transmissão</h3></div>
+      <div class="widget-body">
+        <div style="font-size:0.72rem;color:var(--gray-light);margin-bottom:10px;line-height:1.6;">
+          Use este link para ouvir a Red News em qualquer player externo.
+        </div>
+        <div class="boombox-url" id="boomboxUrl">Nenhum link configurado</div>
+        <button class="btn btn-primary" style="width:100%" onclick="copyBoombox()">Copiar link</button>
+      </div>
+    </div>
+
+    <!-- Programação -->
     <div class="widget" id="programacao">
       <div class="widget-head"><h3>📅 Programação</h3></div>
       <div class="widget-body">
@@ -1000,7 +1097,7 @@
       </div>
     </div>
 
-    <!-- SOBRE -->
+    <!-- Sobre -->
     <div class="widget" id="sobre">
       <div class="widget-head"><h3>📰 Sobre a Red News</h3></div>
       <div class="widget-body">
@@ -1019,7 +1116,7 @@
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-logo"><span>RED</span> NEWS</div>
+  <div class="footer-logo"><em>RED</em> NEWS</div>
   <p>A VOZ QUE RED COUNTY MERECIA. OU NÃO.</p>
   <p class="disclaimer">Red News — Red County, San Andreas. Todos os direitos reservados.</p>
   <div class="footer-admin-link"><a href="#admin">⬛</a></div>
@@ -1030,11 +1127,9 @@
 
 <!-- ══════════════════════════════════════════════
      ADMIN OVERLAY
-     ══════════════════════════════════════════════ -->
+══════════════════════════════════════════════ -->
 <div id="adminOverlay">
   <div class="admin-box">
-
-    <!-- Header -->
     <div class="admin-header">
       <h2>⚙ Painel Admin — Red News</h2>
       <div class="admin-header-right">
@@ -1043,105 +1138,62 @@
         <button class="btn-ghost" onclick="closeAdmin()">✕ Fechar</button>
       </div>
     </div>
-
     <div class="admin-body">
 
-      <!-- ── LOGIN SCREEN ── -->
+      <!-- LOGIN -->
       <div id="loginScreen">
         <div class="login-wrap">
-          <div class="login-logo"><span>RED</span> NEWS</div>
+          <div class="login-logo"><em>RED</em> NEWS</div>
           <div class="login-sub">Área restrita</div>
-
-          <!-- Set password (first time) -->
           <div id="setupForm">
-            <p style="font-family:var(--font-mono);font-size:0.65rem;color:var(--gray);margin-bottom:20px;line-height:1.6;">
-              Nenhuma senha configurada.<br>Defina uma senha de administrador para continuar.
-            </p>
-            <div class="form-group">
-              <label>Nova senha</label>
-              <input type="password" id="setupPwd1" placeholder="Digite a senha" />
-            </div>
-            <div class="form-group">
-              <label>Confirmar senha</label>
-              <input type="password" id="setupPwd2" placeholder="Repita a senha" />
-            </div>
+            <p style="font-family:var(--font-mono);font-size:0.65rem;color:var(--gray);margin-bottom:20px;line-height:1.6;">Nenhuma senha configurada.<br>Defina uma senha para continuar.</p>
+            <div class="form-group"><label>Nova senha</label><input type="password" id="setupPwd1" placeholder="Digite a senha" /></div>
+            <div class="form-group"><label>Confirmar senha</label><input type="password" id="setupPwd2" placeholder="Repita a senha" /></div>
             <button class="btn btn-primary" style="width:100%" onclick="setupPassword()">Definir senha</button>
             <div class="login-err" id="setupErr"></div>
           </div>
-
-          <!-- Login -->
           <div id="loginForm" style="display:none">
-            <div class="form-group">
-              <label>Senha</label>
-              <input type="password" id="loginPwd" placeholder="••••••••" />
-            </div>
+            <div class="form-group"><label>Senha</label><input type="password" id="loginPwd" placeholder="••••••••" /></div>
             <button class="btn btn-primary" style="width:100%" onclick="doLogin()">Entrar</button>
             <div class="login-err" id="loginErr"></div>
           </div>
         </div>
       </div>
 
-      <!-- ── ADMIN DASHBOARD ── -->
+      <!-- DASHBOARD -->
       <div id="adminDashboard" style="display:none">
-
         <div class="admin-tabs">
-          <button class="admin-tab active" onclick="switchTab('tabNews', this)">📰 Notícias</button>
-          <button class="admin-tab" onclick="switchTab('tabRadio', this)">📻 Transmissão</button>
-          <button class="admin-tab" onclick="switchTab('tabSec', this)">🔒 Segurança</button>
+          <button class="admin-tab active" onclick="switchTab('tabNews',this)">📰 Notícias</button>
+          <button class="admin-tab" onclick="switchTab('tabRadio',this)">📻 Transmissão</button>
+          <button class="admin-tab" onclick="switchTab('tabSec',this)">🔒 Segurança</button>
         </div>
 
-        <!-- TAB: NOTÍCIAS -->
         <div class="tab-pane active" id="tabNews">
           <div class="admin-news-list" id="adminNewsList"></div>
-
-          <div style="display:flex;gap:8px;margin-bottom:4px">
-            <button class="btn btn-secondary" style="flex:1;font-size:0.65rem" onclick="resetDefaultNews()">Restaurar padrão</button>
-          </div>
-
+          <button class="btn btn-secondary" style="width:100%;font-size:0.65rem" onclick="resetDefaultNews()">Restaurar padrão</button>
           <div class="add-panel">
             <h4>+ Adicionar notícia</h4>
             <div class="form-row">
-              <div class="form-group">
-                <label>Ícone (emoji)</label>
-                <input type="text" id="nIcon" placeholder="🚔" maxlength="4" />
-              </div>
-              <div class="form-group">
-                <label>Categoria</label>
-                <input type="text" id="nCat" placeholder="Segurança Pública" />
-              </div>
+              <div class="form-group"><label>Ícone (emoji)</label><input type="text" id="nIcon" placeholder="🚔" maxlength="4" /></div>
+              <div class="form-group"><label>Categoria</label><input type="text" id="nCat" placeholder="Segurança Pública" /></div>
             </div>
-            <div class="form-group">
-              <label>Título</label>
-              <input type="text" id="nTitle" placeholder="Título da notícia..." />
-            </div>
-            <div class="form-group">
-              <label>Descrição <span style="color:#444">(opcional, para destaque)</span></label>
-              <textarea id="nDesc" placeholder="Descrição curta..."></textarea>
-            </div>
+            <div class="form-group"><label>Título</label><input type="text" id="nTitle" placeholder="Título da notícia..." /></div>
+            <div class="form-group"><label>Descrição <span style="color:#444">(opcional)</span></label><textarea id="nDesc" placeholder="Descrição curta..."></textarea></div>
             <div class="form-row">
-              <div class="form-group">
-                <label>Hora/Fonte</label>
-                <input type="text" id="nTime" placeholder="Hoje, 14:32 · Red County" />
-              </div>
-              <div class="form-group">
-                <label>Tipo</label>
+              <div class="form-group"><label>Hora/Fonte</label><input type="text" id="nTime" placeholder="Hoje, 14:32 · Red County" /></div>
+              <div class="form-group"><label>Tipo</label>
                 <select id="nType">
                   <option value="item">Lista</option>
-                  <option value="featured">Destaque (card grande)</option>
+                  <option value="featured">Destaque</option>
                 </select>
               </div>
             </div>
-            <div class="form-group" id="labelGroup" style="display:none">
-              <label>Etiqueta</label>
-              <input type="text" id="nLabel" placeholder="EXCLUSIVO" />
-            </div>
+            <div class="form-group" id="labelGroup" style="display:none"><label>Etiqueta</label><input type="text" id="nLabel" placeholder="EXCLUSIVO" /></div>
             <button class="btn btn-primary" style="width:100%" onclick="addNews()">Publicar notícia</button>
           </div>
         </div>
 
-        <!-- TAB: TRANSMISSÃO -->
         <div class="tab-pane" id="tabRadio">
-
           <div class="live-control">
             <div class="live-status-text">
               <strong id="liveControlStatus" class="off">FORA DO AR</strong>
@@ -1149,51 +1201,25 @@
             </div>
             <button class="btn btn-primary btn-live" id="liveToggleBtn" onclick="toggleLive()">Ir ao Vivo</button>
           </div>
-
-          <div class="info-note">
-            🔴 Ligue a rádio com o <code>Ligar_RD.bat</code>, copie o link gerado
-            (formato <code>https://xxxx.trycloudflare.com/rednews.mp3</code>)
-            e cole abaixo.
-          </div>
-
-          <div class="form-group">
-            <label>URL da transmissão</label>
-            <input type="url" id="radioUrlInput" placeholder="https://xxxx.trycloudflare.com/rednews.mp3" />
-          </div>
+          <div class="info-note">🔴 Ligue a rádio com o <code>Ligar_RD.bat</code>, copie o link gerado e cole abaixo.</div>
+          <div class="form-group"><label>URL da transmissão</label><input type="url" id="radioUrlInput" placeholder="https://xxxx.trycloudflare.com/rednews.mp3" /></div>
           <div class="btn-row">
             <button class="btn btn-primary" onclick="saveRadioUrl()">Salvar link</button>
             <button class="btn btn-secondary" onclick="clearRadioUrl()">Limpar</button>
           </div>
         </div>
 
-        <!-- TAB: SEGURANÇA -->
         <div class="tab-pane" id="tabSec">
-          <p style="font-family:var(--font-mono);font-size:0.65rem;color:var(--gray);line-height:1.7;margin-bottom:20px;">
-            Altere a senha de administrador. A sessão atual continuará ativa até você fechar o navegador.
-          </p>
-          <div class="form-group">
-            <label>Senha atual</label>
-            <input type="password" id="pwdCurrent" placeholder="••••••••" />
-          </div>
-          <div class="form-group">
-            <label>Nova senha</label>
-            <input type="password" id="pwdNew1" placeholder="••••••••" />
-          </div>
-          <div class="form-group">
-            <label>Confirmar nova senha</label>
-            <input type="password" id="pwdNew2" placeholder="••••••••" />
-          </div>
+          <p style="font-family:var(--font-mono);font-size:0.65rem;color:var(--gray);line-height:1.7;margin-bottom:20px;">Altere a senha de administrador.</p>
+          <div class="form-group"><label>Senha atual</label><input type="password" id="pwdCurrent" placeholder="••••••••" /></div>
+          <div class="form-group"><label>Nova senha</label><input type="password" id="pwdNew1" placeholder="••••••••" /></div>
+          <div class="form-group"><label>Confirmar nova senha</label><input type="password" id="pwdNew2" placeholder="••••••••" /></div>
           <button class="btn btn-primary" onclick="changePassword()">Alterar senha</button>
           <div class="login-err" id="pwdErr"></div>
-
           <hr class="section-sep" />
-
-          <p style="font-family:var(--font-mono);font-size:0.6rem;color:#444;line-height:1.6;">
-            ⚠ Isso apaga TUDO (senha, notícias, URL) e reseta o painel para o estado inicial.
-          </p>
+          <p style="font-family:var(--font-mono);font-size:0.6rem;color:#444;line-height:1.6;">⚠ Reset completo apaga senha, notícias e URL.</p>
           <button class="btn btn-danger" style="margin-top:10px" onclick="factoryReset()">Reset completo</button>
         </div>
-
       </div>
     </div>
   </div>
@@ -1204,30 +1230,122 @@
 // API
 // ════════════════════════════════════════════
 const TOKEN_KEY = 'rednews_token';
-
 function getToken() { return sessionStorage.getItem(TOKEN_KEY); }
 function setToken(t) { sessionStorage.setItem(TOKEN_KEY, t); }
 function clearToken() { sessionStorage.removeItem(TOKEN_KEY); }
 function isLoggedIn() { return !!getToken(); }
 
 async function api(method, path, body) {
-  const opts = {
-    method,
-    headers: { 'Content-Type': 'application/json' },
-  };
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
   const token = getToken();
   if (token) opts.headers['Authorization'] = `Bearer ${token}`;
   if (body !== undefined) opts.body = JSON.stringify(body);
   const res = await fetch(path, opts);
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || `Erro ${res.status}`);
-  }
+  if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.detail || `Erro ${res.status}`); }
   return res.json();
 }
 
 // ════════════════════════════════════════════
-// PLAYER / STREAM
+// CLOCK
+// ════════════════════════════════════════════
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clockDisplay').textContent =
+    now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ════════════════════════════════════════════
+// WEATHER
+// ════════════════════════════════════════════
+async function fetchWeather() {
+  try {
+    const w = await api('GET', '/api/weather');
+    // Tiles
+    document.getElementById('wIcon').textContent     = w.icon;
+    document.getElementById('wTemp').textContent     = `${w.temp}°C — ${w.description}`;
+    document.getElementById('wHumidity').textContent = `${w.humidity}% umidade`;
+    document.getElementById('wRoadIcon').textContent = w.road_icon;
+    document.getElementById('wRoad').textContent     = w.road_text;
+    // Sidebar widget
+    document.getElementById('wBigIcon').textContent    = w.icon;
+    document.getElementById('wBigTemp').innerHTML      = `${w.temp}<small>°C</small>`;
+    document.getElementById('wBigDesc').textContent    = w.description;
+    document.getElementById('wDetailHum').textContent  = `${w.humidity}%`;
+    document.getElementById('wDetailWind').textContent = `${w.wind} km/h`;
+    document.getElementById('wDetailRoad').textContent = w.road_text;
+    const now = new Date();
+    const updated = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    document.getElementById('weatherUpdated').textContent = `Atualizado ${updated}`;
+  } catch { /* silent fail */ }
+}
+
+// ════════════════════════════════════════════
+// RATES
+// ════════════════════════════════════════════
+async function fetchRates() {
+  try {
+    const r = await api('GET', '/api/rates');
+    const usd = r.usd, eur = r.eur;
+
+    // Tiles
+    const usdSign = usd.change >= 0 ? '▲' : '▼';
+    const eurSign = eur.change >= 0 ? '▲' : '▼';
+    document.getElementById('wUSD').innerHTML =
+      `R$ ${usd.rate.toFixed(2)} <span class="${usd.change >= 0 ? 'up' : 'down'}">${usdSign}${Math.abs(usd.change).toFixed(2)}%</span>`;
+    document.getElementById('wEUR').innerHTML =
+      `R$ ${eur.rate.toFixed(2)} <span class="${eur.change >= 0 ? 'up' : 'down'}">${eurSign}${Math.abs(eur.change).toFixed(2)}%</span>`;
+    // Sidebar
+    document.getElementById('rUSD').textContent = `R$ ${usd.rate.toFixed(2)}`;
+    document.getElementById('rEUR').textContent = `R$ ${eur.rate.toFixed(2)}`;
+    const rUSDc = document.getElementById('rUSDChange');
+    rUSDc.textContent = `${usdSign} ${Math.abs(usd.change).toFixed(2)}% hoje`;
+    rUSDc.className = `rate-change ${usd.change >= 0 ? 'up' : 'down'}`;
+    const rEURc = document.getElementById('rEURChange');
+    rEURc.textContent = `${eurSign} ${Math.abs(eur.change).toFixed(2)}% hoje`;
+    rEURc.className = `rate-change ${eur.change >= 0 ? 'up' : 'down'}`;
+
+    const now = new Date();
+    document.getElementById('ratesUpdated').textContent =
+      `Atualizado ${now.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' })}`;
+  } catch { /* silent fail */ }
+}
+
+// Refresh every 10 min
+setInterval(() => { fetchWeather(); fetchRates(); }, 600000);
+
+// ════════════════════════════════════════════
+// SEARCH
+// ════════════════════════════════════════════
+let allNews = [];
+
+function doSearch() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const box = document.getElementById('searchResults');
+  if (!q) { box.classList.remove('show'); return; }
+  const hits = allNews.filter(n =>
+    n.title.toLowerCase().includes(q) || n.cat.toLowerCase().includes(q)
+  ).slice(0, 6);
+  if (hits.length === 0) {
+    box.innerHTML = `<div class="sr-empty">Nenhum resultado para "${q}"</div>`;
+  } else {
+    box.innerHTML = hits.map(n => `
+      <div class="search-result-item">
+        <div class="sr-cat">${esc(n.cat)}</div>
+        <div class="sr-title">${esc(n.title)}</div>
+      </div>
+    `).join('');
+  }
+  box.classList.add('show');
+}
+
+document.getElementById('searchInput').addEventListener('input', doSearch);
+document.getElementById('searchInput').addEventListener('keydown', e => { if (e.key === 'Escape') document.getElementById('searchResults').classList.remove('show'); });
+document.addEventListener('click', e => { if (!e.target.closest('.search-bar')) document.getElementById('searchResults').classList.remove('show'); });
+
+// ════════════════════════════════════════════
+// PLAYER
 // ════════════════════════════════════════════
 const player    = document.getElementById('radioPlayer');
 const source    = document.getElementById('radioSource');
@@ -1237,27 +1355,21 @@ const urlDisp   = document.getElementById('urlDisplay');
 const boomEl    = document.getElementById('boomboxUrl');
 const liveDot   = document.getElementById('liveDot');
 const liveLabel = document.getElementById('liveLabel');
-
 let currentStreamUrl = '';
 
 function setStatus(state) {
   badge.className = 'status-badge';
-  liveDot.className = 'live-dot';
+  liveDot.className = 'badge-live';
   if (state === 'live') {
-    badge.textContent = '● AO VIVO';
-    badge.classList.add('live');
-    liveDot.classList.add('on-air');
-    liveLabel.textContent = 'ON AIR';
-    nowPlay.textContent = 'Red News Radio';
+    badge.textContent = '● AO VIVO'; badge.classList.add('live');
+    liveDot.classList.add('on'); liveLabel.textContent = 'ON AIR';
+    nowPlay.textContent = 'Red News 98.9';
   } else if (state === 'error') {
-    badge.textContent = '✕ FORA DO AR';
-    badge.classList.add('error');
-    liveLabel.textContent = 'OFF AIR';
-    nowPlay.textContent = 'Sem sinal';
+    badge.textContent = '✕ FORA DO AR'; badge.classList.add('error');
+    liveLabel.textContent = 'OFF AIR'; nowPlay.textContent = 'Sem sinal';
   } else {
-    badge.textContent = 'AGUARDANDO LINK';
-    liveLabel.textContent = 'OFF AIR';
-    nowPlay.textContent = '—';
+    badge.textContent = 'AGUARDANDO';
+    liveLabel.textContent = 'OFF AIR'; nowPlay.textContent = '—';
   }
 }
 
@@ -1265,19 +1377,14 @@ function applyUrl(url) {
   currentStreamUrl = url || '';
   if (!url || !url.startsWith('http')) {
     setStatus('idle');
-    urlDisp.textContent = 'nenhum link configurado';
-    urlDisp.classList.remove('has-url');
-    boomEl.textContent = 'Nenhum link configurado';
-    boomEl.classList.remove('has-url');
+    urlDisp.textContent = 'nenhum link configurado'; urlDisp.classList.remove('has-url');
+    boomEl.textContent = 'Nenhum link configurado'; boomEl.classList.remove('has-url');
     return;
   }
   source.src = url;
-  urlDisp.textContent = url;
-  urlDisp.classList.add('has-url');
-  boomEl.textContent = url;
-  boomEl.classList.add('has-url');
-  player.load();
-  player.play().catch(() => {});
+  urlDisp.textContent = url; urlDisp.classList.add('has-url');
+  boomEl.textContent = url; boomEl.classList.add('has-url');
+  player.load(); player.play().catch(() => {});
   setStatus('live');
 }
 
@@ -1307,26 +1414,17 @@ async function saveRadioUrl() {
   const url = document.getElementById('radioUrlInput').value.trim();
   if (!url) { showToast('Cole o link primeiro!'); return; }
   if (!url.startsWith('http')) { showToast('Link inválido. Use https://...'); return; }
-  try {
-    await api('PUT', '/api/stream', { url });
-    applyUrl(url);
-    showToast('Link salvo!');
-  } catch (e) { showToast('Erro: ' + e.message); }
+  try { await api('PUT', '/api/stream', { url }); applyUrl(url); showToast('Link salvo!'); }
+  catch (e) { showToast('Erro: ' + e.message); }
 }
 
 async function clearRadioUrl() {
   try {
     await api('PUT', '/api/stream', { url: '' });
-    source.src = '';
-    player.load();
-    currentStreamUrl = '';
-    setStatus('idle');
-    urlDisp.textContent = 'nenhum link configurado';
-    urlDisp.classList.remove('has-url');
-    boomEl.textContent = 'Nenhum link configurado';
-    boomEl.classList.remove('has-url');
-    const input = document.getElementById('radioUrlInput');
-    if (input) input.value = '';
+    source.src = ''; player.load(); currentStreamUrl = ''; setStatus('idle');
+    urlDisp.textContent = 'nenhum link configurado'; urlDisp.classList.remove('has-url');
+    boomEl.textContent = 'Nenhum link configurado'; boomEl.classList.remove('has-url');
+    const inp = document.getElementById('radioUrlInput'); if (inp) inp.value = '';
     showToast('Link removido.');
   } catch (e) { showToast('Erro: ' + e.message); }
 }
@@ -1336,8 +1434,7 @@ function syncRadioAdminUI(isLive, url) {
   const tb = document.getElementById('liveToggleBtn');
   if (st) { st.textContent = isLive ? 'AO VIVO' : 'FORA DO AR'; st.className = isLive ? 'on' : 'off'; }
   if (tb) tb.textContent = isLive ? 'Encerrar Transmissão' : 'Ir ao Vivo';
-  const input = document.getElementById('radioUrlInput');
-  if (input && url) input.value = url;
+  const inp = document.getElementById('radioUrlInput'); if (inp && url) inp.value = url;
 }
 
 // ════════════════════════════════════════════
@@ -1348,30 +1445,28 @@ function copyBoombox() {
   navigator.clipboard.writeText(currentStreamUrl)
     .then(() => showToast('Link copiado!'))
     .catch(() => {
-      const ta = document.createElement('textarea');
-      ta.value = currentStreamUrl; document.body.appendChild(ta); ta.select();
-      document.execCommand('copy'); document.body.removeChild(ta);
-      showToast('Link copiado!');
+      const ta = document.createElement('textarea'); ta.value = currentStreamUrl;
+      document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+      document.body.removeChild(ta); showToast('Link copiado!');
     });
 }
 
 // ════════════════════════════════════════════
-// NOTÍCIAS
+// NEWS
 // ════════════════════════════════════════════
 function esc(str) {
-  const d = document.createElement('div');
-  d.textContent = String(str || '');
-  return d.innerHTML;
+  const d = document.createElement('div'); d.textContent = String(str || ''); return d.innerHTML;
 }
 
 function renderNews(news) {
+  allNews = news;
   const featured = news.filter(n => n.type === 'featured');
   const items    = news.filter(n => n.type === 'item');
 
   document.getElementById('featuredNews').innerHTML = featured.map(n => `
-    <div class="news-big">
-      <div class="news-img" data-label="${esc(n.label)}">${esc(n.icon||'📰')}</div>
-      <div class="news-body">
+    <div class="news-card">
+      <div class="news-card-thumb" data-label="${esc(n.label)}">${esc(n.icon||'📰')}</div>
+      <div class="news-card-body">
         <div class="news-cat">${esc(n.cat)}</div>
         <div class="news-title">${esc(n.title)}</div>
         ${n.desc ? `<div class="news-desc">${esc(n.desc)}</div>` : ''}
@@ -1390,6 +1485,10 @@ function renderNews(news) {
       </div>
     </div>
   `).join('');
+
+  // Update ticker with news headlines
+  const headlines = news.map(n => n.title).join(' ·· ');
+  if (headlines) document.getElementById('tickerText').textContent = headlines;
 }
 
 function renderAdminNews(news) {
@@ -1397,9 +1496,7 @@ function renderAdminNews(news) {
     <div class="admin-ni">
       <div class="admin-ni-icon">${esc(n.icon||'📰')}</div>
       <div class="admin-ni-info">
-        <div class="admin-ni-title">
-          ${n.type==='featured' ? '<span class="admin-ni-featured">★ DESTAQUE</span>' : ''}${esc(n.title)}
-        </div>
+        <div class="admin-ni-title">${n.type==='featured'?'<span class="admin-ni-featured">★</span>':''}${esc(n.title)}</div>
         <div class="admin-ni-meta">${esc(n.cat)} · ${esc(n.time_str)}</div>
       </div>
       <button class="admin-ni-del" onclick="deleteNews('${n.id}')">✕</button>
@@ -1408,11 +1505,7 @@ function renderAdminNews(news) {
 }
 
 async function refreshNews() {
-  try {
-    const news = await api('GET', '/api/news');
-    renderNews(news);
-    return news;
-  } catch { return []; }
+  try { const news = await api('GET', '/api/news'); renderNews(news); return news; } catch { return []; }
 }
 
 async function addNews() {
@@ -1426,8 +1519,7 @@ async function addNews() {
   if (!cat || !title) { showToast('Preencha categoria e título.'); return; }
   try {
     await api('POST', '/api/news', { type, icon, cat, title, desc, time, label });
-    const news = await refreshNews();
-    renderAdminNews(news);
+    const news = await refreshNews(); renderAdminNews(news);
     ['nIcon','nCat','nTitle','nDesc','nTime','nLabel'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('nType').value = 'item';
     document.getElementById('labelGroup').style.display = 'none';
@@ -1438,18 +1530,16 @@ async function addNews() {
 async function deleteNews(id) {
   try {
     await api('DELETE', `/api/news/${id}`);
-    const news = await refreshNews();
-    renderAdminNews(news);
+    const news = await refreshNews(); renderAdminNews(news);
     showToast('Notícia removida.');
   } catch (e) { showToast('Erro: ' + e.message); }
 }
 
 async function resetDefaultNews() {
-  if (!confirm('Restaurar as notícias padrão? As notícias atuais serão substituídas.')) return;
+  if (!confirm('Restaurar notícias padrão?')) return;
   try {
     await api('POST', '/api/news/reset');
-    const news = await refreshNews();
-    renderAdminNews(news);
+    const news = await refreshNews(); renderAdminNews(news);
     showToast('Notícias restauradas.');
   } catch (e) { showToast('Erro: ' + e.message); }
 }
@@ -1459,9 +1549,7 @@ async function resetDefaultNews() {
 // ════════════════════════════════════════════
 async function adminLogout() {
   try { await api('POST', '/api/auth/logout'); } catch {}
-  clearToken();
-  showAdminUI();
-  showToast('Sessão encerrada.');
+  clearToken(); showAdminUI(); showToast('Sessão encerrada.');
 }
 
 async function openAdmin() {
@@ -1480,16 +1568,12 @@ async function showAdminUI() {
   document.getElementById('adminDashboard').style.display = loggedIn ? 'block' : 'none';
   document.getElementById('adminLogoutBtn').style.display = loggedIn ? '' : 'none';
   document.getElementById('adminBadge').textContent       = loggedIn ? 'AUTENTICADO' : 'NÃO AUTENTICADO';
-
   if (!loggedIn) {
     try {
-      const status = await api('GET', '/api/auth/status');
-      document.getElementById('setupForm').style.display = status.has_password ? 'none' : 'block';
-      document.getElementById('loginForm').style.display = status.has_password ? 'block' : 'none';
-    } catch {
-      document.getElementById('setupForm').style.display = 'block';
-      document.getElementById('loginForm').style.display = 'none';
-    }
+      const s = await api('GET', '/api/auth/status');
+      document.getElementById('setupForm').style.display = s.has_password ? 'none' : 'block';
+      document.getElementById('loginForm').style.display = s.has_password ? 'block' : 'none';
+    } catch { document.getElementById('setupForm').style.display = 'block'; document.getElementById('loginForm').style.display = 'none'; }
     document.getElementById('loginErr').textContent = '';
     document.getElementById('setupErr').textContent = '';
     document.getElementById('loginPwd').value = '';
@@ -1504,8 +1588,8 @@ async function showAdminUI() {
 }
 
 async function setupPassword() {
-  const p1  = document.getElementById('setupPwd1').value;
-  const p2  = document.getElementById('setupPwd2').value;
+  const p1 = document.getElementById('setupPwd1').value;
+  const p2 = document.getElementById('setupPwd2').value;
   const err = document.getElementById('setupErr');
   if (!p1) { err.textContent = 'Digite uma senha.'; return; }
   if (p1 !== p2) { err.textContent = 'As senhas não coincidem.'; return; }
@@ -1529,10 +1613,7 @@ async function doLogin() {
     document.getElementById('loginPwd').value = '';
     await showAdminUI();
     showToast('Bem-vindo, administrador.');
-  } catch (e) {
-    err.textContent = e.message;
-    document.getElementById('loginPwd').value = '';
-  }
+  } catch (e) { err.textContent = e.message; document.getElementById('loginPwd').value = ''; }
 }
 
 async function changePassword() {
@@ -1546,25 +1627,19 @@ async function changePassword() {
     await api('POST', '/api/auth/change', { current_password: cur, new_password: n1 });
     ['pwdCurrent','pwdNew1','pwdNew2'].forEach(id => document.getElementById(id).value = '');
     err.textContent = '';
-    showToast('Senha alterada com sucesso!');
+    showToast('Senha alterada!');
   } catch (e) { err.textContent = e.message; }
 }
 
 async function factoryReset() {
-  if (!confirm('Tem certeza? Isso apagará a senha, todas as notícias e a URL de transmissão.')) return;
+  if (!confirm('Tem certeza? Isso apagará tudo.')) return;
   try {
     await api('POST', '/api/auth/reset');
-    clearToken();
-    await refreshNews();
-    applyLiveState(false, '');
-    await showAdminUI();
+    clearToken(); await refreshNews(); applyLiveState(false, ''); await showAdminUI();
     showToast('Reset completo realizado.');
   } catch (e) { showToast('Erro: ' + e.message); }
 }
 
-// ════════════════════════════════════════════
-// TABS
-// ════════════════════════════════════════════
 function switchTab(id, btn) {
   document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('active'));
@@ -1582,18 +1657,14 @@ document.addEventListener('change', e => {
 // ════════════════════════════════════════════
 function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
+  t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2800);
 }
 
 // ════════════════════════════════════════════
-// HASH ROUTING
+// ROUTING
 // ════════════════════════════════════════════
-window.addEventListener('hashchange', () => {
-  if (window.location.hash === '#admin') openAdmin();
-});
-
+window.addEventListener('hashchange', () => { if (window.location.hash === '#admin') openAdmin(); });
 document.getElementById('loginPwd').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 document.getElementById('setupPwd2').addEventListener('keydown', e => { if (e.key === 'Enter') setupPassword(); });
 
@@ -1601,10 +1672,12 @@ document.getElementById('setupPwd2').addEventListener('keydown', e => { if (e.ke
 // INIT
 // ════════════════════════════════════════════
 (async function init() {
+  // Date
   const d = new Date();
-  document.getElementById('currentDate').textContent =
-    d.toLocaleDateString('pt-BR', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  document.getElementById('dateDisplay').textContent =
+    d.toLocaleDateString('pt-BR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
 
+  // Load everything in parallel
   const [news, stream] = await Promise.all([
     api('GET', '/api/news').catch(() => []),
     api('GET', '/api/stream').catch(() => ({ url: '', is_live: false })),
@@ -1612,6 +1685,10 @@ document.getElementById('setupPwd2').addEventListener('keydown', e => { if (e.ke
 
   renderNews(news);
   applyLiveState(stream.is_live, stream.url);
+
+  // Load weather and rates (can take longer, non-blocking)
+  fetchWeather();
+  fetchRates();
 
   if (window.location.hash === '#admin') openAdmin();
 })();

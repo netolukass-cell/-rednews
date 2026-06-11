@@ -3,6 +3,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
 import sqlite3, hashlib, secrets, time, os
 from typing import Optional
+import httpx
 
 app = FastAPI(docs_url=None, redoc_url=None)
 
@@ -252,6 +253,99 @@ def update_stream(data: StreamUpdate, token: str = Depends(verify_token)):
                      ("1" if data.is_live else "0",))
     conn.commit(); conn.close()
     return {"ok": True}
+
+# ── Weather & Rates ───────────────────────────────────────────────────────────
+
+_weather_cache = {"data": None, "ts": 0}
+_rates_cache   = {"data": None, "ts": 0}
+CACHE_TTL = 600  # 10 min
+
+WMO_DESC = {
+    0:"Céu limpo", 1:"Predominantemente limpo", 2:"Parcialmente nublado",
+    3:"Nublado", 45:"Neblina", 48:"Neblina com gelo",
+    51:"Chuvisco leve", 53:"Chuvisco moderado", 55:"Chuvisco intenso",
+    61:"Chuva leve", 63:"Chuva moderada", 65:"Chuva forte",
+    71:"Neve leve", 73:"Neve moderada", 75:"Neve forte",
+    80:"Pancadas de chuva", 81:"Pancadas moderadas", 82:"Pancadas fortes",
+    95:"Tempestade", 96:"Tempestade c/ granizo", 99:"Tempestade forte",
+}
+
+def wmo_icon(code):
+    if code in (0, 1):         return "☀️"
+    if code in (2, 3):         return "⛅"
+    if code in (45, 48):       return "🌫️"
+    if 51 <= code <= 55:       return "🌦️"
+    if 61 <= code <= 65:       return "🌧️"
+    if 71 <= code <= 75:       return "❄️"
+    if 80 <= code <= 82:       return "🌧️"
+    if code >= 95:             return "⛈️"
+    return "🌡️"
+
+def road_condition(code, wind):
+    if code >= 95:  return "⛔", "Risco alto — evite sair"
+    if code >= 80:  return "🔴", "Pista alagada — cuidado"
+    if code >= 61:  return "🟡", "Pista molhada"
+    if code in (45, 48): return "🟠", "Visibilidade reduzida"
+    if wind > 50:   return "🟡", "Vento forte"
+    return "🟢", "Pista seca — normal"
+
+@app.get("/api/weather")
+async def get_weather():
+    now = time.time()
+    if _weather_cache["data"] and now - _weather_cache["ts"] < CACHE_TTL:
+        return _weather_cache["data"]
+    try:
+        async with httpx.AsyncClient(timeout=8) as client:
+            r = await client.get(
+                "https://api.open-meteo.com/v1/forecast",
+                params={
+                    "latitude": 35.37, "longitude": -119.02,
+                    "current": "temperature_2m,weather_code,wind_speed_10m,relative_humidity_2m",
+                    "timezone": "America/Los_Angeles",
+                }
+            )
+            raw = r.json()
+        c    = raw["current"]
+        code = c["weather_code"]
+        wind = c["wind_speed_10m"]
+        rd_icon, rd_text = road_condition(code, wind)
+        data = {
+            "temp":        round(c["temperature_2m"]),
+            "humidity":    c["relative_humidity_2m"],
+            "wind":        round(wind),
+            "code":        code,
+            "description": WMO_DESC.get(code, "—"),
+            "icon":        wmo_icon(code),
+            "road_icon":   rd_icon,
+            "road_text":   rd_text,
+        }
+        _weather_cache["data"] = data
+        _weather_cache["ts"]   = now
+        return data
+    except Exception:
+        return {"temp":"—","humidity":"—","wind":"—","code":0,
+                "description":"Sem dados","icon":"🌡️","road_icon":"⚫","road_text":"Sem dados"}
+
+@app.get("/api/rates")
+async def get_rates():
+    now = time.time()
+    if _rates_cache["data"] and now - _rates_cache["ts"] < CACHE_TTL:
+        return _rates_cache["data"]
+    try:
+        async with httpx.AsyncClient(timeout=8) as client:
+            r = await client.get("https://economia.awesomeapi.com.br/json/last/USD-BRL,EUR-BRL")
+            raw = r.json()
+        usd = raw["USDBRL"]
+        eur = raw["EURBRL"]
+        data = {
+            "usd": {"rate": float(usd["bid"]), "change": float(usd["pctChange"])},
+            "eur": {"rate": float(eur["bid"]), "change": float(eur["pctChange"])},
+        }
+        _rates_cache["data"] = data
+        _rates_cache["ts"]   = now
+        return data
+    except Exception:
+        return {"usd":{"rate":0,"change":0},"eur":{"rate":0,"change":0}}
 
 # ── Static ────────────────────────────────────────────────────────────────────
 
