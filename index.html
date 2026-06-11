@@ -34,18 +34,11 @@
       overflow-x: hidden;
     }
 
-    /* ── SCANLINE OVERLAY ── */
     body::before {
       content: '';
       position: fixed;
       inset: 0;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0,0,0,0.06) 2px,
-        rgba(0,0,0,0.06) 4px
-      );
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px);
       pointer-events: none;
       z-index: 999;
     }
@@ -195,13 +188,6 @@
     .player-inner {
       max-width: 900px;
       margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-      align-items: start;
-    }
-    @media (max-width: 680px) {
-      .player-inner { grid-template-columns: 1fr; }
     }
 
     .player-left h2 {
@@ -215,10 +201,7 @@
       align-items: center;
       gap: 8px;
     }
-    .player-left h2::before {
-      content: '▶';
-      font-size: 0.7rem;
-    }
+    .player-left h2::before { content: '▶'; font-size: 0.7rem; }
 
     .player-box {
       background: var(--black);
@@ -298,84 +281,22 @@
     }
     .url-display.has-url { color: #556; }
 
-    /* CONFIG PANEL */
-    .config-panel h2 {
-      font-family: var(--font-head);
-      font-size: 1rem;
-      letter-spacing: 3px;
-      color: var(--gray);
-      text-transform: uppercase;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .offline-banner {
+      display: none;
+      background: var(--dark2);
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      padding: 20px;
+      text-align: center;
     }
-    .config-panel h2::before { content: '⚙'; font-size: 0.9rem; }
-
-    .instruction {
+    .offline-banner.show { display: block; }
+    .offline-banner p {
+      font-family: var(--font-mono);
       font-size: 0.75rem;
       color: var(--gray);
-      line-height: 1.6;
-      margin-bottom: 14px;
-      padding: 10px 12px;
-      background: #0d0d0d;
-      border-left: 2px solid var(--red-dark);
-      border-radius: 0 4px 4px 0;
+      letter-spacing: 1px;
     }
-    .instruction code {
-      font-family: var(--font-mono);
-      color: var(--red);
-      font-size: 0.7rem;
-    }
-
-    .input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .input-group input {
-      background: var(--black);
-      border: 1px solid #333;
-      border-radius: 4px;
-      color: var(--white);
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      padding: 10px 12px;
-      outline: none;
-      transition: border-color 0.2s;
-      width: 100%;
-    }
-    .input-group input:focus { border-color: var(--red); }
-    .input-group input::placeholder { color: #444; }
-
-    .btn-row {
-      display: flex;
-      gap: 8px;
-    }
-    .btn {
-      font-family: var(--font-head);
-      font-size: 0.72rem;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      border: none;
-      border-radius: 3px;
-      padding: 9px 16px;
-      cursor: pointer;
-      transition: all 0.15s;
-      flex: 1;
-    }
-    .btn-primary {
-      background: var(--red);
-      color: var(--white);
-    }
-    .btn-primary:hover { background: var(--red-bright); }
-    .btn-secondary {
-      background: #2a2a2a;
-      color: var(--gray-light);
-      border: 1px solid #333;
-    }
-    .btn-secondary:hover { background: #333; color: var(--white); }
-    .btn:active { transform: scale(0.97); }
+    .offline-banner p span { color: var(--red); }
 
     /* ── MAIN CONTENT ── */
     .main-wrap {
@@ -390,7 +311,6 @@
       .main-wrap { grid-template-columns: 1fr; }
     }
 
-    /* NOTICIAS */
     .section-label {
       font-family: var(--font-head);
       font-size: 0.7rem;
@@ -521,7 +441,6 @@
     }
     .widget-body { padding: 14px; }
 
-    /* Programação */
     .prog-list { display: flex; flex-direction: column; gap: 8px; }
     .prog-item {
       display: flex;
@@ -555,7 +474,6 @@
       letter-spacing: 1px;
     }
 
-    /* Boombox widget */
     .boombox-widget { text-align: center; }
     .boombox-icon { font-size: 2.5rem; margin-bottom: 10px; }
     .boombox-desc {
@@ -581,7 +499,6 @@
     }
     .boombox-url.has-url { color: #778; }
 
-    /* Sobre */
     .sobre-text {
       font-size: 0.78rem;
       color: var(--gray-light);
@@ -618,6 +535,18 @@
       font-style: italic;
       font-family: var(--font-body);
     }
+    .footer-admin-link {
+      margin-top: 14px;
+    }
+    .footer-admin-link a {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      color: #2a2a2a;
+      text-decoration: none;
+      letter-spacing: 2px;
+      transition: color 0.2s;
+    }
+    .footer-admin-link a:hover { color: #444; }
 
     /* Toast */
     #toast {
@@ -635,9 +564,332 @@
       transform: translateY(10px);
       transition: all 0.25s;
       pointer-events: none;
-      z-index: 1000;
+      z-index: 3000;
     }
     #toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ── ADMIN OVERLAY ── */
+    #adminOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.97);
+      z-index: 2000;
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      overflow-y: auto;
+      padding: 40px 20px;
+    }
+    #adminOverlay.open { display: flex; }
+
+    .admin-box {
+      background: var(--dark);
+      border: 1px solid var(--red-dark);
+      border-radius: 6px;
+      width: 100%;
+      max-width: 720px;
+      box-shadow: 0 0 60px rgba(204,0,0,0.2);
+      margin: auto;
+    }
+
+    .admin-header {
+      background: var(--dark2);
+      border-bottom: 2px solid var(--red);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .admin-header h2 {
+      font-family: var(--font-head);
+      font-size: 0.9rem;
+      letter-spacing: 3px;
+      color: var(--red);
+      text-transform: uppercase;
+    }
+    .admin-header-right { display: flex; gap: 8px; align-items: center; }
+    .admin-badge {
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      color: var(--gray);
+      letter-spacing: 1px;
+      padding: 2px 8px;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 2px;
+    }
+
+    .btn-ghost {
+      background: none;
+      border: 1px solid #333;
+      color: var(--gray);
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      padding: 4px 12px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.15s;
+      letter-spacing: 1px;
+    }
+    .btn-ghost:hover { background: #222; color: var(--white); }
+    .btn-ghost.danger:hover { border-color: var(--red); color: var(--red); }
+
+    .admin-body { padding: 20px; }
+
+    /* Login form */
+    .login-wrap {
+      max-width: 340px;
+      margin: 0 auto;
+      text-align: center;
+      padding: 20px 0;
+    }
+    .login-logo {
+      font-family: var(--font-head);
+      font-size: 1.6rem;
+      letter-spacing: 4px;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+    .login-logo span { color: var(--red); }
+    .login-sub {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: var(--gray);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+    .login-err {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: #ff6040;
+      margin-top: 10px;
+      min-height: 16px;
+    }
+
+    /* Tabs */
+    .admin-tabs {
+      display: flex;
+      border-bottom: 1px solid #2a2a2a;
+      margin-bottom: 20px;
+      gap: 0;
+    }
+    .admin-tab {
+      font-family: var(--font-head);
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gray);
+      padding: 9px 16px;
+      cursor: pointer;
+      border: none;
+      background: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all 0.15s;
+    }
+    .admin-tab.active { color: var(--red); border-bottom-color: var(--red); }
+    .admin-tab:hover { color: var(--white); }
+
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    /* Form elements */
+    .form-group { margin-bottom: 14px; }
+    .form-group label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      color: var(--gray);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      background: var(--black);
+      border: 1px solid #333;
+      border-radius: 4px;
+      color: var(--white);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 9px 12px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus { border-color: var(--red); }
+    .form-group textarea { resize: vertical; min-height: 56px; line-height: 1.5; }
+    .form-group select { cursor: pointer; }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color: #444; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
+
+    /* Buttons */
+    .btn {
+      font-family: var(--font-head);
+      font-size: 0.72rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 3px;
+      padding: 9px 16px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-primary { background: var(--red); color: var(--white); }
+    .btn-primary:hover { background: var(--red-bright); }
+    .btn-secondary {
+      background: #2a2a2a;
+      color: var(--gray-light);
+      border: 1px solid #333;
+    }
+    .btn-secondary:hover { background: #333; color: var(--white); }
+    .btn-danger { background: #3a0000; color: #ff6040; border: 1px solid #5a0000; }
+    .btn-danger:hover { background: #500000; }
+    .btn:active { transform: scale(0.97); }
+
+    .btn-row { display: flex; gap: 8px; }
+    .btn-row .btn { flex: 1; }
+
+    /* Admin news list */
+    .admin-news-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    .admin-news-list:empty::after {
+      content: 'Nenhuma notícia cadastrada.';
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: #444;
+      text-align: center;
+      padding: 20px 0;
+    }
+    .admin-ni {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      background: var(--dark2);
+      border: 1px solid #222;
+      border-radius: 4px;
+    }
+    .admin-ni-icon { font-size: 1.1rem; flex-shrink: 0; }
+    .admin-ni-info { flex: 1; min-width: 0; }
+    .admin-ni-title {
+      font-family: var(--font-head);
+      font-size: 0.78rem;
+      color: var(--white);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .admin-ni-meta {
+      font-family: var(--font-mono);
+      font-size: 0.56rem;
+      color: #555;
+      margin-top: 2px;
+    }
+    .admin-ni-featured {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      color: var(--red);
+      margin-right: 4px;
+    }
+    .admin-ni-del {
+      background: none;
+      border: 1px solid #2a2a2a;
+      color: #555;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      padding: 3px 8px;
+      border-radius: 2px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .admin-ni-del:hover { border-color: var(--red); color: #ff4040; }
+
+    /* Add news collapsible */
+    .add-panel {
+      background: var(--dark2);
+      border: 1px solid #222;
+      border-radius: 4px;
+      padding: 14px;
+      margin-top: 12px;
+    }
+    .add-panel h4 {
+      font-family: var(--font-head);
+      font-size: 0.72rem;
+      letter-spacing: 2px;
+      color: var(--gray);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    /* Live control */
+    .live-control {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--dark2);
+      border: 1px solid #222;
+      border-radius: 4px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+    }
+    .live-status-text {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--gray);
+    }
+    .live-status-text strong {
+      font-family: var(--font-head);
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      display: block;
+      margin-bottom: 2px;
+    }
+    .live-status-text strong.on { color: var(--red-bright); }
+    .live-status-text strong.off { color: var(--gray); }
+
+    .btn-live { padding: 8px 20px; font-size: 0.7rem; }
+
+    /* Section divider */
+    .section-sep {
+      border: none;
+      border-top: 1px solid #2a2a2a;
+      margin: 20px 0;
+    }
+
+    .info-note {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--gray);
+      line-height: 1.6;
+      padding: 10px 12px;
+      background: #0d0d0d;
+      border-left: 2px solid var(--red-dark);
+      border-radius: 0 4px 4px 0;
+      margin-bottom: 14px;
+    }
+    .info-note code { font-family: var(--font-mono); color: var(--red); }
   </style>
 </head>
 <body>
@@ -645,7 +897,7 @@
 <!-- TICKER -->
 <div class="ticker-wrap">
   <span class="ticker-label">URGENTE</span>
-  <span class="ticker-text">
+  <span class="ticker-text" id="tickerText">
     Tiroteio deixa 3 feridos no Dillimore Arms ·· Sheriff encontrado dormindo em viatura na estrada 68 ·· Blaine County Savings nega novo assalto: "foi manutenção" ·· Prefeito de Palomino Creek some após entrevista à Red News ·· Fazendeiro diz ter visto OVNI; sheriffs investigam "balão meteorológico" ·· Corrida ilegal de muscle cars interrompe tráfego na Route 1 ·· Red News: A voz que Red County merecia. Ou não.
   </span>
 </div>
@@ -664,14 +916,14 @@
     <div class="logo-icon">📻</div>
     <div class="logo-text">
       <h1><span>RED</span> NEWS</h1>
-      <p>Rádio · Jornal · Red County · GTA RP</p>
+      <p>Rádio · Jornal · Red County</p>
     </div>
   </div>
   <nav>
     <a href="#" class="active">Início</a>
     <a href="#noticias">Notícias</a>
     <a href="#programacao">Programação</a>
-    <a href="#boombox">Boombox</a>
+    <a href="#boombox">Transmissão</a>
     <a href="#sobre">Sobre</a>
   </nav>
 </header>
@@ -679,11 +931,10 @@
 <!-- PLAYER ZONE -->
 <div class="player-zone">
   <div class="player-inner">
-
-    <!-- PLAYER -->
     <div class="player-left">
       <h2>Ao Vivo</h2>
-      <div class="player-box">
+      <!-- Player (shown when online) -->
+      <div id="playerBox" class="player-box">
         <div class="status-bar">
           <div class="status-badge" id="statusBadge">AGUARDANDO LINK</div>
         </div>
@@ -696,94 +947,22 @@
         </audio>
         <div class="url-display" id="urlDisplay">nenhum link configurado</div>
       </div>
-    </div>
-
-    <!-- CONFIG -->
-    <div class="config-panel">
-      <h2>Configurar Transmissão</h2>
-      <div class="instruction">
-        🔴 Ligue a rádio com o <code>Ligar_RD.bat</code>, copie o link gerado
-        (formato <code>https://xxxx.trycloudflare.com/rednews.mp3</code>)
-        e cole no campo abaixo.
-      </div>
-      <div class="input-group">
-        <input
-          type="url"
-          id="radioUrlInput"
-          placeholder="https://xxxx.trycloudflare.com/rednews.mp3"
-        />
-        <div class="btn-row">
-          <button class="btn btn-primary" onclick="saveRadioUrl()">Salvar link</button>
-          <button class="btn btn-secondary" onclick="clearRadioUrl()">Limpar</button>
-        </div>
+      <!-- Offline banner (shown when offline) -->
+      <div id="offlineBanner" class="offline-banner">
+        <p>📻 <span>RED NEWS RÁDIO</span></p>
+        <p style="margin-top:8px">Fora do ar no momento. Volte mais tarde.</p>
       </div>
     </div>
-
   </div>
 </div>
 
 <!-- MAIN -->
 <div class="main-wrap">
   <main>
-    <!-- NOTICIAS -->
     <div id="noticias">
       <div class="section-label">Últimas Notícias</div>
-
-      <div class="headline-card">
-        <div class="news-big">
-          <div class="news-img" data-label="EXCLUSIVO">🚔</div>
-          <div class="news-body">
-            <div class="news-cat">Segurança Pública</div>
-            <div class="news-title">Sheriff persegue suspeito por 40 minutos — sem conseguir alcançar</div>
-            <div class="news-desc">Viatura foi vista em velocidade máxima de 60km/h enquanto suspeito fugia a pé pelo deserto.</div>
-            <div class="news-time">Hoje, 14:32 · Red County Sheriff's Dept.</div>
-          </div>
-        </div>
-        <div class="news-big">
-          <div class="news-img" data-label="URGENTE">💥</div>
-          <div class="news-body">
-            <div class="news-cat">Policial</div>
-            <div class="news-title">Terceiro "acidente" este mês no posto da Route 68 levanta suspeitas</div>
-            <div class="news-desc">Moradores pedem sinalização. Autoridades culpam "o asfalto úmido" — mesmo em dia de sol.</div>
-            <div class="news-time">Hoje, 11:08 · Route 68, Red County</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="news-list">
-        <div class="news-item">
-          <div class="news-item-icon">🏦</div>
-          <div class="news-item-body">
-            <div class="news-cat">Economia</div>
-            <div class="news-title">Blaine County Savings nega estar seco: "tivemos apenas uma reorganização de caixa"</div>
-            <div class="news-time">Hoje, 09:15</div>
-          </div>
-        </div>
-        <div class="news-item">
-          <div class="news-item-icon">🌵</div>
-          <div class="news-item-body">
-            <div class="news-cat">Interior</div>
-            <div class="news-title">Fazendeiro de Palomino Creek oferece R$500 por informações sobre suas próprias vacas</div>
-            <div class="news-time">Ontem, 18:44</div>
-          </div>
-        </div>
-        <div class="news-item">
-          <div class="news-item-icon">🔫</div>
-          <div class="news-item-body">
-            <div class="news-cat">Segurança</div>
-            <div class="news-title">Loja de armas de Dillimore registra recorde de vendas — "clientela muito motivada este mês"</div>
-            <div class="news-time">Ontem, 15:20</div>
-          </div>
-        </div>
-        <div class="news-item">
-          <div class="news-item-icon">🚗</div>
-          <div class="news-item-body">
-            <div class="news-cat">Trânsito</div>
-            <div class="news-title">Corrida não-oficial na Route 1 termina com todos os carros no fosso — exceto o vencedor</div>
-            <div class="news-time">Ontem, 22:10</div>
-          </div>
-        </div>
-      </div>
+      <div class="headline-card" id="featuredNews"></div>
+      <div class="news-list" id="newsList"></div>
     </div>
   </main>
 
@@ -792,15 +971,15 @@
 
     <!-- BOOMBOX -->
     <div class="widget" id="boombox">
-      <div class="widget-head"><h3>🎮 Link da Boombox</h3></div>
+      <div class="widget-head"><h3>📡 Link da Transmissão</h3></div>
       <div class="widget-body boombox-widget">
         <div class="boombox-icon">📦</div>
         <div class="boombox-desc">
-          Cole esse link na boombox do GTA para ouvir a rádio dentro do jogo.
+          Use este link para ouvir a Red News de qualquer dispositivo ou player externo.
         </div>
         <div class="boombox-url" id="boomboxUrl">Nenhum link configurado</div>
         <button class="btn btn-primary" style="width:100%" onclick="copyBoombox()">
-          Copiar link da Boombox
+          Copiar link
         </button>
       </div>
     </div>
@@ -810,35 +989,13 @@
       <div class="widget-head"><h3>📅 Programação</h3></div>
       <div class="widget-body">
         <div class="prog-list">
-          <div class="prog-item">
-            <div class="prog-time">00–06h</div>
-            <div class="prog-name">Madrugada Sertaneja</div>
-          </div>
-          <div class="prog-item">
-            <div class="prog-time">06–09h</div>
-            <div class="prog-name">Bom Dia Red County</div>
-          </div>
-          <div class="prog-item current">
-            <div class="prog-time">09–12h</div>
-            <div class="prog-name">Noticiário da Manhã</div>
-            <div class="prog-live">AO VIVO</div>
-          </div>
-          <div class="prog-item">
-            <div class="prog-time">12–14h</div>
-            <div class="prog-name">Almoço com Notícias</div>
-          </div>
-          <div class="prog-item">
-            <div class="prog-time">14–18h</div>
-            <div class="prog-name">Tarde Livre</div>
-          </div>
-          <div class="prog-item">
-            <div class="prog-time">18–22h</div>
-            <div class="prog-name">Noite de Red County</div>
-          </div>
-          <div class="prog-item">
-            <div class="prog-time">22–00h</div>
-            <div class="prog-name">Crimes & Causos</div>
-          </div>
+          <div class="prog-item"><div class="prog-time">00–06h</div><div class="prog-name">Madrugada Sertaneja</div></div>
+          <div class="prog-item"><div class="prog-time">06–09h</div><div class="prog-name">Bom Dia Red County</div></div>
+          <div class="prog-item current"><div class="prog-time">09–12h</div><div class="prog-name">Noticiário da Manhã</div><div class="prog-live">AO VIVO</div></div>
+          <div class="prog-item"><div class="prog-time">12–14h</div><div class="prog-name">Almoço com Notícias</div></div>
+          <div class="prog-item"><div class="prog-time">14–18h</div><div class="prog-name">Tarde Livre</div></div>
+          <div class="prog-item"><div class="prog-time">18–22h</div><div class="prog-name">Noite de Red County</div></div>
+          <div class="prog-item"><div class="prog-time">22–00h</div><div class="prog-name">Crimes &amp; Causos</div></div>
         </div>
       </div>
     </div>
@@ -864,151 +1021,643 @@
 <footer>
   <div class="footer-logo"><span>RED</span> NEWS</div>
   <p>A VOZ QUE RED COUNTY MERECIA. OU NÃO.</p>
-  <p class="disclaimer">Ficção. Todos os eventos, personagens e instituições são fictícios e pertencem ao universo de roleplay. Nenhuma relação com a realidade.</p>
+  <p class="disclaimer">Red News — Red County, San Andreas. Todos os direitos reservados.</p>
+  <div class="footer-admin-link"><a href="#admin">⬛</a></div>
 </footer>
 
 <!-- TOAST -->
 <div id="toast"></div>
 
-<script>
-  const STORAGE_KEY = 'rednews_radio_url';
-  const player      = document.getElementById('radioPlayer');
-  const source      = document.getElementById('radioSource');
-  const input       = document.getElementById('radioUrlInput');
-  const badge       = document.getElementById('statusBadge');
-  const nowPlaying  = document.getElementById('nowPlayingText');
-  const urlDisplay  = document.getElementById('urlDisplay');
-  const boomboxUrl  = document.getElementById('boomboxUrl');
-  const liveDot     = document.getElementById('liveDot');
-  const liveLabel   = document.getElementById('liveLabel');
+<!-- ══════════════════════════════════════════════
+     ADMIN OVERLAY
+     ══════════════════════════════════════════════ -->
+<div id="adminOverlay">
+  <div class="admin-box">
 
-  // ── DATA ──
+    <!-- Header -->
+    <div class="admin-header">
+      <h2>⚙ Painel Admin — Red News</h2>
+      <div class="admin-header-right">
+        <span class="admin-badge" id="adminBadge">NÃO AUTENTICADO</span>
+        <button class="btn-ghost danger" id="adminLogoutBtn" style="display:none" onclick="adminLogout()">Sair</button>
+        <button class="btn-ghost" onclick="closeAdmin()">✕ Fechar</button>
+      </div>
+    </div>
+
+    <div class="admin-body">
+
+      <!-- ── LOGIN SCREEN ── -->
+      <div id="loginScreen">
+        <div class="login-wrap">
+          <div class="login-logo"><span>RED</span> NEWS</div>
+          <div class="login-sub">Área restrita</div>
+
+          <!-- Set password (first time) -->
+          <div id="setupForm">
+            <p style="font-family:var(--font-mono);font-size:0.65rem;color:var(--gray);margin-bottom:20px;line-height:1.6;">
+              Nenhuma senha configurada.<br>Defina uma senha de administrador para continuar.
+            </p>
+            <div class="form-group">
+              <label>Nova senha</label>
+              <input type="password" id="setupPwd1" placeholder="Digite a senha" />
+            </div>
+            <div class="form-group">
+              <label>Confirmar senha</label>
+              <input type="password" id="setupPwd2" placeholder="Repita a senha" />
+            </div>
+            <button class="btn btn-primary" style="width:100%" onclick="setupPassword()">Definir senha</button>
+            <div class="login-err" id="setupErr"></div>
+          </div>
+
+          <!-- Login -->
+          <div id="loginForm" style="display:none">
+            <div class="form-group">
+              <label>Senha</label>
+              <input type="password" id="loginPwd" placeholder="••••••••" />
+            </div>
+            <button class="btn btn-primary" style="width:100%" onclick="doLogin()">Entrar</button>
+            <div class="login-err" id="loginErr"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ADMIN DASHBOARD ── -->
+      <div id="adminDashboard" style="display:none">
+
+        <div class="admin-tabs">
+          <button class="admin-tab active" onclick="switchTab('tabNews', this)">📰 Notícias</button>
+          <button class="admin-tab" onclick="switchTab('tabRadio', this)">📻 Transmissão</button>
+          <button class="admin-tab" onclick="switchTab('tabSec', this)">🔒 Segurança</button>
+        </div>
+
+        <!-- TAB: NOTÍCIAS -->
+        <div class="tab-pane active" id="tabNews">
+          <div class="admin-news-list" id="adminNewsList"></div>
+
+          <div style="display:flex;gap:8px;margin-bottom:4px">
+            <button class="btn btn-secondary" style="flex:1;font-size:0.65rem" onclick="resetDefaultNews()">Restaurar padrão</button>
+          </div>
+
+          <div class="add-panel">
+            <h4>+ Adicionar notícia</h4>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Ícone (emoji)</label>
+                <input type="text" id="nIcon" placeholder="🚔" maxlength="4" />
+              </div>
+              <div class="form-group">
+                <label>Categoria</label>
+                <input type="text" id="nCat" placeholder="Segurança Pública" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Título</label>
+              <input type="text" id="nTitle" placeholder="Título da notícia..." />
+            </div>
+            <div class="form-group">
+              <label>Descrição <span style="color:#444">(opcional, para destaque)</span></label>
+              <textarea id="nDesc" placeholder="Descrição curta..."></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Hora/Fonte</label>
+                <input type="text" id="nTime" placeholder="Hoje, 14:32 · Red County" />
+              </div>
+              <div class="form-group">
+                <label>Tipo</label>
+                <select id="nType">
+                  <option value="item">Lista</option>
+                  <option value="featured">Destaque (card grande)</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group" id="labelGroup" style="display:none">
+              <label>Etiqueta</label>
+              <input type="text" id="nLabel" placeholder="EXCLUSIVO" />
+            </div>
+            <button class="btn btn-primary" style="width:100%" onclick="addNews()">Publicar notícia</button>
+          </div>
+        </div>
+
+        <!-- TAB: TRANSMISSÃO -->
+        <div class="tab-pane" id="tabRadio">
+
+          <div class="live-control">
+            <div class="live-status-text">
+              <strong id="liveControlStatus" class="off">FORA DO AR</strong>
+              <span>Status da transmissão ao vivo</span>
+            </div>
+            <button class="btn btn-primary btn-live" id="liveToggleBtn" onclick="toggleLive()">Ir ao Vivo</button>
+          </div>
+
+          <div class="info-note">
+            🔴 Ligue a rádio com o <code>Ligar_RD.bat</code>, copie o link gerado
+            (formato <code>https://xxxx.trycloudflare.com/rednews.mp3</code>)
+            e cole abaixo.
+          </div>
+
+          <div class="form-group">
+            <label>URL da transmissão</label>
+            <input type="url" id="radioUrlInput" placeholder="https://xxxx.trycloudflare.com/rednews.mp3" />
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="saveRadioUrl()">Salvar link</button>
+            <button class="btn btn-secondary" onclick="clearRadioUrl()">Limpar</button>
+          </div>
+        </div>
+
+        <!-- TAB: SEGURANÇA -->
+        <div class="tab-pane" id="tabSec">
+          <p style="font-family:var(--font-mono);font-size:0.65rem;color:var(--gray);line-height:1.7;margin-bottom:20px;">
+            Altere a senha de administrador. A sessão atual continuará ativa até você fechar o navegador.
+          </p>
+          <div class="form-group">
+            <label>Senha atual</label>
+            <input type="password" id="pwdCurrent" placeholder="••••••••" />
+          </div>
+          <div class="form-group">
+            <label>Nova senha</label>
+            <input type="password" id="pwdNew1" placeholder="••••••••" />
+          </div>
+          <div class="form-group">
+            <label>Confirmar nova senha</label>
+            <input type="password" id="pwdNew2" placeholder="••••••••" />
+          </div>
+          <button class="btn btn-primary" onclick="changePassword()">Alterar senha</button>
+          <div class="login-err" id="pwdErr"></div>
+
+          <hr class="section-sep" />
+
+          <p style="font-family:var(--font-mono);font-size:0.6rem;color:#444;line-height:1.6;">
+            ⚠ Isso apaga TUDO (senha, notícias, URL) e reseta o painel para o estado inicial.
+          </p>
+          <button class="btn btn-danger" style="margin-top:10px" onclick="factoryReset()">Reset completo</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════
+// CONSTANTES
+// ════════════════════════════════════════════
+const K = {
+  HASH:    'rednews_admin_hash',
+  SESSION: 'rednews_admin_session',
+  NEWS:    'rednews_news',
+  URL:     'rednews_radio_url',
+  LIVE:    'rednews_live',
+};
+
+// ════════════════════════════════════════════
+// NOTÍCIAS PADRÃO
+// ════════════════════════════════════════════
+const DEFAULT_NEWS = [
+  { id:'d1', type:'featured', icon:'🚔', cat:'Segurança Pública', title:'Sheriff persegue suspeito por 40 minutos — sem conseguir alcançar', desc:'Viatura foi vista em velocidade máxima de 60km/h enquanto suspeito fugia a pé pelo deserto.', time:'Hoje, 14:32 · Red County Sheriff\'s Dept.', label:'EXCLUSIVO' },
+  { id:'d2', type:'featured', icon:'💥', cat:'Policial', title:'Terceiro "acidente" este mês no posto da Route 68 levanta suspeitas', desc:'Moradores pedem sinalização. Autoridades culpam "o asfalto úmido" — mesmo em dia de sol.', time:'Hoje, 11:08 · Route 68, Red County', label:'URGENTE' },
+  { id:'d3', type:'item',     icon:'🏦', cat:'Economia',  title:'Blaine County Savings nega estar seco: "tivemos apenas uma reorganização de caixa"', desc:'', time:'Hoje, 09:15' },
+  { id:'d4', type:'item',     icon:'🌵', cat:'Interior',  title:'Fazendeiro de Palomino Creek oferece R$500 por informações sobre suas próprias vacas', desc:'', time:'Ontem, 18:44' },
+  { id:'d5', type:'item',     icon:'🔫', cat:'Segurança', title:'Loja de armas de Dillimore registra recorde de vendas — "clientela muito motivada este mês"', desc:'', time:'Ontem, 15:20' },
+  { id:'d6', type:'item',     icon:'🚗', cat:'Trânsito',  title:'Corrida não-oficial na Route 1 termina com todos os carros no fosso — exceto o vencedor', desc:'', time:'Ontem, 22:10' },
+];
+
+// ════════════════════════════════════════════
+// SHA-256
+// ════════════════════════════════════════════
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+// ════════════════════════════════════════════
+// AUTH
+// ════════════════════════════════════════════
+function isLoggedIn() {
+  return sessionStorage.getItem(K.SESSION) === '1';
+}
+
+function adminLogout() {
+  sessionStorage.removeItem(K.SESSION);
+  showAdminUI();
+  showToast('Sessão encerrada.');
+}
+
+// ════════════════════════════════════════════
+// ADMIN OVERLAY
+// ════════════════════════════════════════════
+function openAdmin() {
+  document.getElementById('adminOverlay').classList.add('open');
+  showAdminUI();
+}
+
+function closeAdmin() {
+  document.getElementById('adminOverlay').classList.remove('open');
+  window.location.hash = '';
+}
+
+function showAdminUI() {
+  const hasHash = !!localStorage.getItem(K.HASH);
+  const loggedIn = isLoggedIn();
+
+  document.getElementById('loginScreen').style.display    = loggedIn ? 'none' : 'block';
+  document.getElementById('adminDashboard').style.display = loggedIn ? 'block' : 'none';
+  document.getElementById('adminLogoutBtn').style.display = loggedIn ? '' : 'none';
+  document.getElementById('adminBadge').textContent       = loggedIn ? 'AUTENTICADO' : 'NÃO AUTENTICADO';
+
+  if (!loggedIn) {
+    document.getElementById('setupForm').style.display = hasHash ? 'none' : 'block';
+    document.getElementById('loginForm').style.display = hasHash ? 'block' : 'none';
+    document.getElementById('loginErr').textContent = '';
+    document.getElementById('setupErr').textContent = '';
+    document.getElementById('loginPwd').value = '';
+  } else {
+    renderAdminNews();
+    syncRadioAdminUI();
+  }
+}
+
+// ════════════════════════════════════════════
+// SETUP / LOGIN
+// ════════════════════════════════════════════
+async function setupPassword() {
+  const p1 = document.getElementById('setupPwd1').value;
+  const p2 = document.getElementById('setupPwd2').value;
+  const err = document.getElementById('setupErr');
+  if (!p1) { err.textContent = 'Digite uma senha.'; return; }
+  if (p1 !== p2) { err.textContent = 'As senhas não coincidem.'; return; }
+  if (p1.length < 6) { err.textContent = 'Mínimo 6 caracteres.'; return; }
+  const h = await sha256(p1);
+  localStorage.setItem(K.HASH, h);
+  sessionStorage.setItem(K.SESSION, '1');
+  document.getElementById('setupPwd1').value = '';
+  document.getElementById('setupPwd2').value = '';
+  showAdminUI();
+  showToast('Senha definida! Bem-vindo ao painel.');
+}
+
+async function doLogin() {
+  const pwd = document.getElementById('loginPwd').value;
+  const err = document.getElementById('loginErr');
+  if (!pwd) { err.textContent = 'Digite a senha.'; return; }
+  const h = await sha256(pwd);
+  if (h === localStorage.getItem(K.HASH)) {
+    sessionStorage.setItem(K.SESSION, '1');
+    document.getElementById('loginPwd').value = '';
+    showAdminUI();
+    showToast('Bem-vindo, administrador.');
+  } else {
+    err.textContent = 'Senha incorreta.';
+    document.getElementById('loginPwd').value = '';
+  }
+}
+
+async function changePassword() {
+  const cur  = document.getElementById('pwdCurrent').value;
+  const n1   = document.getElementById('pwdNew1').value;
+  const n2   = document.getElementById('pwdNew2').value;
+  const err  = document.getElementById('pwdErr');
+  if (!cur || !n1 || !n2) { err.textContent = 'Preencha todos os campos.'; return; }
+  if (n1 !== n2) { err.textContent = 'As novas senhas não coincidem.'; return; }
+  if (n1.length < 6) { err.textContent = 'Mínimo 6 caracteres.'; return; }
+  const curH = await sha256(cur);
+  if (curH !== localStorage.getItem(K.HASH)) { err.textContent = 'Senha atual incorreta.'; return; }
+  const newH = await sha256(n1);
+  localStorage.setItem(K.HASH, newH);
+  document.getElementById('pwdCurrent').value = '';
+  document.getElementById('pwdNew1').value = '';
+  document.getElementById('pwdNew2').value = '';
+  err.textContent = '';
+  showToast('Senha alterada com sucesso!');
+}
+
+function factoryReset() {
+  if (!confirm('Tem certeza? Isso apagará a senha, todas as notícias e a URL de transmissão.')) return;
+  localStorage.removeItem(K.HASH);
+  localStorage.removeItem(K.NEWS);
+  localStorage.removeItem(K.URL);
+  localStorage.removeItem(K.LIVE);
+  sessionStorage.removeItem(K.SESSION);
+  renderNews();
+  applyUrl('', false);
+  applyLiveState(false);
+  showAdminUI();
+  showToast('Reset completo realizado.');
+}
+
+// ════════════════════════════════════════════
+// TABS
+// ════════════════════════════════════════════
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// Show/hide label field based on news type
+document.addEventListener('change', e => {
+  if (e.target.id === 'nType') {
+    document.getElementById('labelGroup').style.display = e.target.value === 'featured' ? 'block' : 'none';
+  }
+});
+
+// ════════════════════════════════════════════
+// NOTÍCIAS
+// ════════════════════════════════════════════
+function loadNews() {
+  try {
+    const raw = localStorage.getItem(K.NEWS);
+    return raw ? JSON.parse(raw) : DEFAULT_NEWS;
+  } catch { return DEFAULT_NEWS; }
+}
+
+function saveNewsData(arr) {
+  localStorage.setItem(K.NEWS, JSON.stringify(arr));
+}
+
+function esc(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+function renderNews() {
+  const news = loadNews();
+  const featured = news.filter(n => n.type === 'featured');
+  const items    = news.filter(n => n.type === 'item');
+
+  const fc = document.getElementById('featuredNews');
+  const nl = document.getElementById('newsList');
+
+  fc.innerHTML = featured.map(n => `
+    <div class="news-big">
+      <div class="news-img" data-label="${esc(n.label||'')}">
+        ${esc(n.icon||'📰')}
+      </div>
+      <div class="news-body">
+        <div class="news-cat">${esc(n.cat)}</div>
+        <div class="news-title">${esc(n.title)}</div>
+        ${n.desc ? `<div class="news-desc">${esc(n.desc)}</div>` : ''}
+        <div class="news-time">${esc(n.time||'')}</div>
+      </div>
+    </div>
+  `).join('');
+
+  nl.innerHTML = items.map(n => `
+    <div class="news-item">
+      <div class="news-item-icon">${esc(n.icon||'📰')}</div>
+      <div class="news-item-body">
+        <div class="news-cat">${esc(n.cat)}</div>
+        <div class="news-title">${esc(n.title)}</div>
+        <div class="news-time">${esc(n.time||'')}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderAdminNews() {
+  const news = loadNews();
+  const el = document.getElementById('adminNewsList');
+  el.innerHTML = news.map((n, i) => `
+    <div class="admin-ni">
+      <div class="admin-ni-icon">${esc(n.icon||'📰')}</div>
+      <div class="admin-ni-info">
+        <div class="admin-ni-title">
+          ${n.type==='featured' ? '<span class="admin-ni-featured">★ DESTAQUE</span>' : ''}${esc(n.title)}
+        </div>
+        <div class="admin-ni-meta">${esc(n.cat)} · ${esc(n.time||'')}</div>
+      </div>
+      <button class="admin-ni-del" onclick="deleteNews(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+function addNews() {
+  const icon  = document.getElementById('nIcon').value.trim()  || '📰';
+  const cat   = document.getElementById('nCat').value.trim();
+  const title = document.getElementById('nTitle').value.trim();
+  const desc  = document.getElementById('nDesc').value.trim();
+  const time  = document.getElementById('nTime').value.trim();
+  const type  = document.getElementById('nType').value;
+  const label = document.getElementById('nLabel').value.trim() || 'NOVO';
+
+  if (!cat || !title) { showToast('Preencha categoria e título.'); return; }
+
+  const news = loadNews();
+  news.unshift({ id: Date.now().toString(), type, icon, cat, title, desc, time, label });
+  saveNewsData(news);
+  renderNews();
+  renderAdminNews();
+
+  // Reset form
+  ['nIcon','nCat','nTitle','nDesc','nTime','nLabel'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('nType').value = 'item';
+  document.getElementById('labelGroup').style.display = 'none';
+  showToast('Notícia publicada!');
+}
+
+function deleteNews(index) {
+  const news = loadNews();
+  news.splice(index, 1);
+  saveNewsData(news);
+  renderNews();
+  renderAdminNews();
+  showToast('Notícia removida.');
+}
+
+function resetDefaultNews() {
+  if (!confirm('Restaurar as notícias padrão? As notícias atuais serão substituídas.')) return;
+  localStorage.removeItem(K.NEWS);
+  renderNews();
+  renderAdminNews();
+  showToast('Notícias restauradas.');
+}
+
+// ════════════════════════════════════════════
+// PLAYER / TRANSMISSÃO
+// ════════════════════════════════════════════
+const player    = document.getElementById('radioPlayer');
+const source    = document.getElementById('radioSource');
+const badge     = document.getElementById('statusBadge');
+const nowPlay   = document.getElementById('nowPlayingText');
+const urlDisp   = document.getElementById('urlDisplay');
+const boomEl    = document.getElementById('boomboxUrl');
+const liveDot   = document.getElementById('liveDot');
+const liveLabel = document.getElementById('liveLabel');
+
+function setStatus(state) {
+  badge.className = 'status-badge';
+  liveDot.className = 'live-dot';
+  if (state === 'live') {
+    badge.textContent = '● AO VIVO';
+    badge.classList.add('live');
+    liveDot.classList.add('on-air');
+    liveLabel.textContent = 'ON AIR';
+    nowPlay.textContent = 'Red News Radio';
+  } else if (state === 'error') {
+    badge.textContent = '✕ FORA DO AR';
+    badge.classList.add('error');
+    liveLabel.textContent = 'OFF AIR';
+    nowPlay.textContent = 'Sem sinal';
+  } else {
+    badge.textContent = 'AGUARDANDO LINK';
+    liveLabel.textContent = 'OFF AIR';
+    nowPlay.textContent = '—';
+  }
+}
+
+function applyUrl(url, reload = true) {
+  if (!url || !url.startsWith('http')) {
+    setStatus('idle');
+    urlDisp.textContent = 'nenhum link configurado';
+    urlDisp.classList.remove('has-url');
+    boomEl.textContent = 'Nenhum link configurado';
+    boomEl.classList.remove('has-url');
+    return;
+  }
+  source.src = url;
+  urlDisp.textContent = url;
+  urlDisp.classList.add('has-url');
+  boomEl.textContent = url;
+  boomEl.classList.add('has-url');
+  if (reload) {
+    player.load();
+    player.play().catch(() => {});
+  }
+  setStatus('live');
+}
+
+function applyLiveState(isLive) {
+  const pb = document.getElementById('playerBox');
+  const ob = document.getElementById('offlineBanner');
+  pb.style.display = isLive ? '' : 'none';
+  ob.classList.toggle('show', !isLive);
+}
+
+function toggleLive() {
+  const isLive = localStorage.getItem(K.LIVE) === '1';
+  const newVal = !isLive;
+  localStorage.setItem(K.LIVE, newVal ? '1' : '0');
+  applyLiveState(newVal);
+  syncRadioAdminUI();
+  showToast(newVal ? 'Rádio marcada como AO VIVO.' : 'Rádio marcada como Fora do Ar.');
+}
+
+function syncRadioAdminUI() {
+  const isLive = localStorage.getItem(K.LIVE) === '1';
+  const st = document.getElementById('liveControlStatus');
+  const tb = document.getElementById('liveToggleBtn');
+  if (st) {
+    st.textContent = isLive ? 'AO VIVO' : 'FORA DO AR';
+    st.className = isLive ? 'on' : 'off';
+  }
+  if (tb) tb.textContent = isLive ? 'Encerrar Transmissão' : 'Ir ao Vivo';
+
+  const saved = localStorage.getItem(K.URL);
+  const input = document.getElementById('radioUrlInput');
+  if (input && saved) input.value = saved;
+}
+
+function saveRadioUrl() {
+  const url = document.getElementById('radioUrlInput').value.trim();
+  if (!url) { showToast('Cole o link primeiro!'); return; }
+  if (!url.startsWith('http')) { showToast('Link inválido. Use https://...'); return; }
+  localStorage.setItem(K.URL, url);
+  applyUrl(url, true);
+  showToast('Link salvo!');
+}
+
+function clearRadioUrl() {
+  localStorage.removeItem(K.URL);
+  const input = document.getElementById('radioUrlInput');
+  if (input) input.value = '';
+  source.src = '';
+  player.load();
+  setStatus('idle');
+  urlDisp.textContent = 'nenhum link configurado';
+  urlDisp.classList.remove('has-url');
+  boomEl.textContent = 'Nenhum link configurado';
+  boomEl.classList.remove('has-url');
+  showToast('Link removido.');
+}
+
+player.addEventListener('playing', () => setStatus('live'));
+player.addEventListener('error',   () => { if (localStorage.getItem(K.URL)) setStatus('error'); });
+player.addEventListener('stalled', () => { if (localStorage.getItem(K.URL)) setStatus('error'); });
+player.addEventListener('waiting', () => { if (localStorage.getItem(K.URL)) setStatus('error'); });
+
+// ════════════════════════════════════════════
+// BOOMBOX
+// ════════════════════════════════════════════
+function copyBoombox() {
+  const url = localStorage.getItem(K.URL);
+  if (!url) { showToast('Nenhum link configurado!'); return; }
+  navigator.clipboard.writeText(url)
+    .then(() => showToast('Link copiado!'))
+    .catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = url; document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+      showToast('Link copiado!');
+    });
+}
+
+// ════════════════════════════════════════════
+// TOAST
+// ════════════════════════════════════════════
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ════════════════════════════════════════════
+// HASH ROUTING
+// ════════════════════════════════════════════
+function handleHash() {
+  if (window.location.hash === '#admin') {
+    openAdmin();
+  }
+}
+window.addEventListener('hashchange', handleHash);
+
+// Enter key in login
+document.getElementById('loginPwd').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+document.getElementById('setupPwd2').addEventListener('keydown', e => {
+  if (e.key === 'Enter') setupPassword();
+});
+
+// ════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════
+(function init() {
+  // Date
   const d = new Date();
   document.getElementById('currentDate').textContent =
     d.toLocaleDateString('pt-BR', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
 
-  // ── ESTADO ──
-  function setStatus(state) {
-    badge.className = 'status-badge';
-    liveDot.className = 'live-dot';
-    if (state === 'live') {
-      badge.textContent = '● AO VIVO';
-      badge.classList.add('live');
-      liveDot.classList.add('on-air');
-      liveLabel.textContent = 'ON AIR';
-      nowPlaying.textContent = 'Red News Radio';
-    } else if (state === 'error') {
-      badge.textContent = '✕ FORA DO AR';
-      badge.classList.add('error');
-      liveLabel.textContent = 'OFF AIR';
-      nowPlaying.textContent = 'Sem sinal';
-    } else {
-      badge.textContent = 'AGUARDANDO LINK';
-      liveLabel.textContent = 'OFF AIR';
-      nowPlaying.textContent = '—';
-    }
+  // News
+  renderNews();
+
+  // Live state
+  const isLive = localStorage.getItem(K.LIVE) === '1';
+  applyLiveState(isLive);
+
+  // Radio URL (only load if admin is live)
+  if (isLive) {
+    const saved = localStorage.getItem(K.URL);
+    if (saved) applyUrl(saved, false);
+    else setStatus('idle');
   }
 
-  // ── CARREGAR URL SALVA ──
-  function loadSavedUrl() {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      applyUrl(saved, false);
-      input.value = saved;
-    } else {
-      setStatus('idle');
-    }
-  }
-
-  function applyUrl(url, reload = true) {
-    if (!url || !url.startsWith('http')) {
-      setStatus('idle');
-      urlDisplay.textContent = 'nenhum link configurado';
-      urlDisplay.classList.remove('has-url');
-      boomboxUrl.textContent = 'Nenhum link configurado';
-      boomboxUrl.classList.remove('has-url');
-      return;
-    }
-    source.src = url;
-    urlDisplay.textContent = url;
-    urlDisplay.classList.add('has-url');
-    boomboxUrl.textContent = url;
-    boomboxUrl.classList.add('has-url');
-    if (reload) {
-      player.load();
-      player.play().catch(() => {});
-    }
-    setStatus('live');
-  }
-
-  // ── EVENTOS DO PLAYER ──
-  player.addEventListener('playing', () => setStatus('live'));
-  player.addEventListener('error',   () => {
-    const url = localStorage.getItem(STORAGE_KEY);
-    if (url) setStatus('error');
-  });
-  player.addEventListener('stalled', () => {
-    const url = localStorage.getItem(STORAGE_KEY);
-    if (url) setStatus('error');
-  });
-  player.addEventListener('waiting', () => {
-    const url = localStorage.getItem(STORAGE_KEY);
-    if (url) setStatus('error');
-  });
-
-  // ── SALVAR URL ──
-  function saveRadioUrl() {
-    const url = input.value.trim();
-    if (!url) { showToast('Cole o link primeiro!'); return; }
-    if (!url.startsWith('http')) { showToast('Link inválido. Use https://...'); return; }
-    localStorage.setItem(STORAGE_KEY, url);
-    applyUrl(url, true);
-    showToast('Link salvo! Carregando...');
-  }
-
-  function clearRadioUrl() {
-    localStorage.removeItem(STORAGE_KEY);
-    input.value = '';
-    source.src = '';
-    player.load();
-    setStatus('idle');
-    urlDisplay.textContent = 'nenhum link configurado';
-    urlDisplay.classList.remove('has-url');
-    boomboxUrl.textContent = 'Nenhum link configurado';
-    boomboxUrl.classList.remove('has-url');
-    showToast('Link removido.');
-  }
-
-  // ── COPIAR BOOMBOX ──
-  function copyBoombox() {
-    const url = localStorage.getItem(STORAGE_KEY);
-    if (!url) { showToast('Nenhum link configurado!'); return; }
-    navigator.clipboard.writeText(url)
-      .then(() => showToast('Link copiado para a área de transferência!'))
-      .catch(() => {
-        const ta = document.createElement('textarea');
-        ta.value = url;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        showToast('Link copiado!');
-      });
-  }
-
-  // ── TOAST ──
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2800);
-  }
-
-  // ── ENTER no input ──
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') saveRadioUrl(); });
-
-  // ── INIT ──
-  loadSavedUrl();
+  // Hash check
+  handleHash();
+})();
 </script>
 </body>
 </html>
