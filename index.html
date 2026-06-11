@@ -1201,282 +1201,33 @@
 
 <script>
 // ════════════════════════════════════════════
-// CONSTANTES
+// API
 // ════════════════════════════════════════════
-const K = {
-  HASH:    'rednews_admin_hash',
-  SESSION: 'rednews_admin_session',
-  NEWS:    'rednews_news',
-  URL:     'rednews_radio_url',
-  LIVE:    'rednews_live',
-};
+const TOKEN_KEY = 'rednews_token';
 
-// ════════════════════════════════════════════
-// NOTÍCIAS PADRÃO
-// ════════════════════════════════════════════
-const DEFAULT_NEWS = [
-  { id:'d1', type:'featured', icon:'🚔', cat:'Segurança Pública', title:'Sheriff persegue suspeito por 40 minutos — sem conseguir alcançar', desc:'Viatura foi vista em velocidade máxima de 60km/h enquanto suspeito fugia a pé pelo deserto.', time:'Hoje, 14:32 · Red County Sheriff\'s Dept.', label:'EXCLUSIVO' },
-  { id:'d2', type:'featured', icon:'💥', cat:'Policial', title:'Terceiro "acidente" este mês no posto da Route 68 levanta suspeitas', desc:'Moradores pedem sinalização. Autoridades culpam "o asfalto úmido" — mesmo em dia de sol.', time:'Hoje, 11:08 · Route 68, Red County', label:'URGENTE' },
-  { id:'d3', type:'item',     icon:'🏦', cat:'Economia',  title:'Blaine County Savings nega estar seco: "tivemos apenas uma reorganização de caixa"', desc:'', time:'Hoje, 09:15' },
-  { id:'d4', type:'item',     icon:'🌵', cat:'Interior',  title:'Fazendeiro de Palomino Creek oferece R$500 por informações sobre suas próprias vacas', desc:'', time:'Ontem, 18:44' },
-  { id:'d5', type:'item',     icon:'🔫', cat:'Segurança', title:'Loja de armas de Dillimore registra recorde de vendas — "clientela muito motivada este mês"', desc:'', time:'Ontem, 15:20' },
-  { id:'d6', type:'item',     icon:'🚗', cat:'Trânsito',  title:'Corrida não-oficial na Route 1 termina com todos os carros no fosso — exceto o vencedor', desc:'', time:'Ontem, 22:10' },
-];
+function getToken() { return sessionStorage.getItem(TOKEN_KEY); }
+function setToken(t) { sessionStorage.setItem(TOKEN_KEY, t); }
+function clearToken() { sessionStorage.removeItem(TOKEN_KEY); }
+function isLoggedIn() { return !!getToken(); }
 
-// ════════════════════════════════════════════
-// SHA-256
-// ════════════════════════════════════════════
-async function sha256(str) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-}
-
-// ════════════════════════════════════════════
-// AUTH
-// ════════════════════════════════════════════
-function isLoggedIn() {
-  return sessionStorage.getItem(K.SESSION) === '1';
-}
-
-function adminLogout() {
-  sessionStorage.removeItem(K.SESSION);
-  showAdminUI();
-  showToast('Sessão encerrada.');
-}
-
-// ════════════════════════════════════════════
-// ADMIN OVERLAY
-// ════════════════════════════════════════════
-function openAdmin() {
-  document.getElementById('adminOverlay').classList.add('open');
-  showAdminUI();
-}
-
-function closeAdmin() {
-  document.getElementById('adminOverlay').classList.remove('open');
-  window.location.hash = '';
-}
-
-function showAdminUI() {
-  const hasHash = !!localStorage.getItem(K.HASH);
-  const loggedIn = isLoggedIn();
-
-  document.getElementById('loginScreen').style.display    = loggedIn ? 'none' : 'block';
-  document.getElementById('adminDashboard').style.display = loggedIn ? 'block' : 'none';
-  document.getElementById('adminLogoutBtn').style.display = loggedIn ? '' : 'none';
-  document.getElementById('adminBadge').textContent       = loggedIn ? 'AUTENTICADO' : 'NÃO AUTENTICADO';
-
-  if (!loggedIn) {
-    document.getElementById('setupForm').style.display = hasHash ? 'none' : 'block';
-    document.getElementById('loginForm').style.display = hasHash ? 'block' : 'none';
-    document.getElementById('loginErr').textContent = '';
-    document.getElementById('setupErr').textContent = '';
-    document.getElementById('loginPwd').value = '';
-  } else {
-    renderAdminNews();
-    syncRadioAdminUI();
+async function api(method, path, body) {
+  const opts = {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+  };
+  const token = getToken();
+  if (token) opts.headers['Authorization'] = `Bearer ${token}`;
+  if (body !== undefined) opts.body = JSON.stringify(body);
+  const res = await fetch(path, opts);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || `Erro ${res.status}`);
   }
+  return res.json();
 }
 
 // ════════════════════════════════════════════
-// SETUP / LOGIN
-// ════════════════════════════════════════════
-async function setupPassword() {
-  const p1 = document.getElementById('setupPwd1').value;
-  const p2 = document.getElementById('setupPwd2').value;
-  const err = document.getElementById('setupErr');
-  if (!p1) { err.textContent = 'Digite uma senha.'; return; }
-  if (p1 !== p2) { err.textContent = 'As senhas não coincidem.'; return; }
-  if (p1.length < 6) { err.textContent = 'Mínimo 6 caracteres.'; return; }
-  const h = await sha256(p1);
-  localStorage.setItem(K.HASH, h);
-  sessionStorage.setItem(K.SESSION, '1');
-  document.getElementById('setupPwd1').value = '';
-  document.getElementById('setupPwd2').value = '';
-  showAdminUI();
-  showToast('Senha definida! Bem-vindo ao painel.');
-}
-
-async function doLogin() {
-  const pwd = document.getElementById('loginPwd').value;
-  const err = document.getElementById('loginErr');
-  if (!pwd) { err.textContent = 'Digite a senha.'; return; }
-  const h = await sha256(pwd);
-  if (h === localStorage.getItem(K.HASH)) {
-    sessionStorage.setItem(K.SESSION, '1');
-    document.getElementById('loginPwd').value = '';
-    showAdminUI();
-    showToast('Bem-vindo, administrador.');
-  } else {
-    err.textContent = 'Senha incorreta.';
-    document.getElementById('loginPwd').value = '';
-  }
-}
-
-async function changePassword() {
-  const cur  = document.getElementById('pwdCurrent').value;
-  const n1   = document.getElementById('pwdNew1').value;
-  const n2   = document.getElementById('pwdNew2').value;
-  const err  = document.getElementById('pwdErr');
-  if (!cur || !n1 || !n2) { err.textContent = 'Preencha todos os campos.'; return; }
-  if (n1 !== n2) { err.textContent = 'As novas senhas não coincidem.'; return; }
-  if (n1.length < 6) { err.textContent = 'Mínimo 6 caracteres.'; return; }
-  const curH = await sha256(cur);
-  if (curH !== localStorage.getItem(K.HASH)) { err.textContent = 'Senha atual incorreta.'; return; }
-  const newH = await sha256(n1);
-  localStorage.setItem(K.HASH, newH);
-  document.getElementById('pwdCurrent').value = '';
-  document.getElementById('pwdNew1').value = '';
-  document.getElementById('pwdNew2').value = '';
-  err.textContent = '';
-  showToast('Senha alterada com sucesso!');
-}
-
-function factoryReset() {
-  if (!confirm('Tem certeza? Isso apagará a senha, todas as notícias e a URL de transmissão.')) return;
-  localStorage.removeItem(K.HASH);
-  localStorage.removeItem(K.NEWS);
-  localStorage.removeItem(K.URL);
-  localStorage.removeItem(K.LIVE);
-  sessionStorage.removeItem(K.SESSION);
-  renderNews();
-  applyUrl('', false);
-  applyLiveState(false);
-  showAdminUI();
-  showToast('Reset completo realizado.');
-}
-
-// ════════════════════════════════════════════
-// TABS
-// ════════════════════════════════════════════
-function switchTab(id, btn) {
-  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  btn.classList.add('active');
-}
-
-// Show/hide label field based on news type
-document.addEventListener('change', e => {
-  if (e.target.id === 'nType') {
-    document.getElementById('labelGroup').style.display = e.target.value === 'featured' ? 'block' : 'none';
-  }
-});
-
-// ════════════════════════════════════════════
-// NOTÍCIAS
-// ════════════════════════════════════════════
-function loadNews() {
-  try {
-    const raw = localStorage.getItem(K.NEWS);
-    return raw ? JSON.parse(raw) : DEFAULT_NEWS;
-  } catch { return DEFAULT_NEWS; }
-}
-
-function saveNewsData(arr) {
-  localStorage.setItem(K.NEWS, JSON.stringify(arr));
-}
-
-function esc(str) {
-  const d = document.createElement('div');
-  d.textContent = str;
-  return d.innerHTML;
-}
-
-function renderNews() {
-  const news = loadNews();
-  const featured = news.filter(n => n.type === 'featured');
-  const items    = news.filter(n => n.type === 'item');
-
-  const fc = document.getElementById('featuredNews');
-  const nl = document.getElementById('newsList');
-
-  fc.innerHTML = featured.map(n => `
-    <div class="news-big">
-      <div class="news-img" data-label="${esc(n.label||'')}">
-        ${esc(n.icon||'📰')}
-      </div>
-      <div class="news-body">
-        <div class="news-cat">${esc(n.cat)}</div>
-        <div class="news-title">${esc(n.title)}</div>
-        ${n.desc ? `<div class="news-desc">${esc(n.desc)}</div>` : ''}
-        <div class="news-time">${esc(n.time||'')}</div>
-      </div>
-    </div>
-  `).join('');
-
-  nl.innerHTML = items.map(n => `
-    <div class="news-item">
-      <div class="news-item-icon">${esc(n.icon||'📰')}</div>
-      <div class="news-item-body">
-        <div class="news-cat">${esc(n.cat)}</div>
-        <div class="news-title">${esc(n.title)}</div>
-        <div class="news-time">${esc(n.time||'')}</div>
-      </div>
-    </div>
-  `).join('');
-}
-
-function renderAdminNews() {
-  const news = loadNews();
-  const el = document.getElementById('adminNewsList');
-  el.innerHTML = news.map((n, i) => `
-    <div class="admin-ni">
-      <div class="admin-ni-icon">${esc(n.icon||'📰')}</div>
-      <div class="admin-ni-info">
-        <div class="admin-ni-title">
-          ${n.type==='featured' ? '<span class="admin-ni-featured">★ DESTAQUE</span>' : ''}${esc(n.title)}
-        </div>
-        <div class="admin-ni-meta">${esc(n.cat)} · ${esc(n.time||'')}</div>
-      </div>
-      <button class="admin-ni-del" onclick="deleteNews(${i})">✕</button>
-    </div>
-  `).join('');
-}
-
-function addNews() {
-  const icon  = document.getElementById('nIcon').value.trim()  || '📰';
-  const cat   = document.getElementById('nCat').value.trim();
-  const title = document.getElementById('nTitle').value.trim();
-  const desc  = document.getElementById('nDesc').value.trim();
-  const time  = document.getElementById('nTime').value.trim();
-  const type  = document.getElementById('nType').value;
-  const label = document.getElementById('nLabel').value.trim() || 'NOVO';
-
-  if (!cat || !title) { showToast('Preencha categoria e título.'); return; }
-
-  const news = loadNews();
-  news.unshift({ id: Date.now().toString(), type, icon, cat, title, desc, time, label });
-  saveNewsData(news);
-  renderNews();
-  renderAdminNews();
-
-  // Reset form
-  ['nIcon','nCat','nTitle','nDesc','nTime','nLabel'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('nType').value = 'item';
-  document.getElementById('labelGroup').style.display = 'none';
-  showToast('Notícia publicada!');
-}
-
-function deleteNews(index) {
-  const news = loadNews();
-  news.splice(index, 1);
-  saveNewsData(news);
-  renderNews();
-  renderAdminNews();
-  showToast('Notícia removida.');
-}
-
-function resetDefaultNews() {
-  if (!confirm('Restaurar as notícias padrão? As notícias atuais serão substituídas.')) return;
-  localStorage.removeItem(K.NEWS);
-  renderNews();
-  renderAdminNews();
-  showToast('Notícias restauradas.');
-}
-
-// ════════════════════════════════════════════
-// PLAYER / TRANSMISSÃO
+// PLAYER / STREAM
 // ════════════════════════════════════════════
 const player    = document.getElementById('radioPlayer');
 const source    = document.getElementById('radioSource');
@@ -1486,6 +1237,8 @@ const urlDisp   = document.getElementById('urlDisplay');
 const boomEl    = document.getElementById('boomboxUrl');
 const liveDot   = document.getElementById('liveDot');
 const liveLabel = document.getElementById('liveLabel');
+
+let currentStreamUrl = '';
 
 function setStatus(state) {
   badge.className = 'status-badge';
@@ -1508,7 +1261,8 @@ function setStatus(state) {
   }
 }
 
-function applyUrl(url, reload = true) {
+function applyUrl(url) {
+  currentStreamUrl = url || '';
   if (!url || !url.startsWith('http')) {
     setStatus('idle');
     urlDisp.textContent = 'nenhum link configurado';
@@ -1522,87 +1276,306 @@ function applyUrl(url, reload = true) {
   urlDisp.classList.add('has-url');
   boomEl.textContent = url;
   boomEl.classList.add('has-url');
-  if (reload) {
-    player.load();
-    player.play().catch(() => {});
-  }
+  player.load();
+  player.play().catch(() => {});
   setStatus('live');
 }
 
-function applyLiveState(isLive) {
-  const pb = document.getElementById('playerBox');
-  const ob = document.getElementById('offlineBanner');
-  pb.style.display = isLive ? '' : 'none';
-  ob.classList.toggle('show', !isLive);
-}
-
-function toggleLive() {
-  const isLive = localStorage.getItem(K.LIVE) === '1';
-  const newVal = !isLive;
-  localStorage.setItem(K.LIVE, newVal ? '1' : '0');
-  applyLiveState(newVal);
-  syncRadioAdminUI();
-  showToast(newVal ? 'Rádio marcada como AO VIVO.' : 'Rádio marcada como Fora do Ar.');
-}
-
-function syncRadioAdminUI() {
-  const isLive = localStorage.getItem(K.LIVE) === '1';
-  const st = document.getElementById('liveControlStatus');
-  const tb = document.getElementById('liveToggleBtn');
-  if (st) {
-    st.textContent = isLive ? 'AO VIVO' : 'FORA DO AR';
-    st.className = isLive ? 'on' : 'off';
-  }
-  if (tb) tb.textContent = isLive ? 'Encerrar Transmissão' : 'Ir ao Vivo';
-
-  const saved = localStorage.getItem(K.URL);
-  const input = document.getElementById('radioUrlInput');
-  if (input && saved) input.value = saved;
-}
-
-function saveRadioUrl() {
-  const url = document.getElementById('radioUrlInput').value.trim();
-  if (!url) { showToast('Cole o link primeiro!'); return; }
-  if (!url.startsWith('http')) { showToast('Link inválido. Use https://...'); return; }
-  localStorage.setItem(K.URL, url);
-  applyUrl(url, true);
-  showToast('Link salvo!');
-}
-
-function clearRadioUrl() {
-  localStorage.removeItem(K.URL);
-  const input = document.getElementById('radioUrlInput');
-  if (input) input.value = '';
-  source.src = '';
-  player.load();
-  setStatus('idle');
-  urlDisp.textContent = 'nenhum link configurado';
-  urlDisp.classList.remove('has-url');
-  boomEl.textContent = 'Nenhum link configurado';
-  boomEl.classList.remove('has-url');
-  showToast('Link removido.');
+function applyLiveState(isLive, url) {
+  document.getElementById('playerBox').style.display = isLive ? '' : 'none';
+  document.getElementById('offlineBanner').classList.toggle('show', !isLive);
+  if (isLive && url) applyUrl(url);
 }
 
 player.addEventListener('playing', () => setStatus('live'));
-player.addEventListener('error',   () => { if (localStorage.getItem(K.URL)) setStatus('error'); });
-player.addEventListener('stalled', () => { if (localStorage.getItem(K.URL)) setStatus('error'); });
-player.addEventListener('waiting', () => { if (localStorage.getItem(K.URL)) setStatus('error'); });
+player.addEventListener('error',   () => { if (currentStreamUrl) setStatus('error'); });
+player.addEventListener('stalled', () => { if (currentStreamUrl) setStatus('error'); });
+player.addEventListener('waiting', () => { if (currentStreamUrl) setStatus('error'); });
+
+async function toggleLive() {
+  try {
+    const data = await api('GET', '/api/stream');
+    const newLive = !data.is_live;
+    await api('PUT', '/api/stream', { is_live: newLive });
+    applyLiveState(newLive, data.url);
+    syncRadioAdminUI(newLive, data.url);
+    showToast(newLive ? 'Rádio marcada como AO VIVO.' : 'Rádio marcada como Fora do Ar.');
+  } catch (e) { showToast('Erro: ' + e.message); }
+}
+
+async function saveRadioUrl() {
+  const url = document.getElementById('radioUrlInput').value.trim();
+  if (!url) { showToast('Cole o link primeiro!'); return; }
+  if (!url.startsWith('http')) { showToast('Link inválido. Use https://...'); return; }
+  try {
+    await api('PUT', '/api/stream', { url });
+    applyUrl(url);
+    showToast('Link salvo!');
+  } catch (e) { showToast('Erro: ' + e.message); }
+}
+
+async function clearRadioUrl() {
+  try {
+    await api('PUT', '/api/stream', { url: '' });
+    source.src = '';
+    player.load();
+    currentStreamUrl = '';
+    setStatus('idle');
+    urlDisp.textContent = 'nenhum link configurado';
+    urlDisp.classList.remove('has-url');
+    boomEl.textContent = 'Nenhum link configurado';
+    boomEl.classList.remove('has-url');
+    const input = document.getElementById('radioUrlInput');
+    if (input) input.value = '';
+    showToast('Link removido.');
+  } catch (e) { showToast('Erro: ' + e.message); }
+}
+
+function syncRadioAdminUI(isLive, url) {
+  const st = document.getElementById('liveControlStatus');
+  const tb = document.getElementById('liveToggleBtn');
+  if (st) { st.textContent = isLive ? 'AO VIVO' : 'FORA DO AR'; st.className = isLive ? 'on' : 'off'; }
+  if (tb) tb.textContent = isLive ? 'Encerrar Transmissão' : 'Ir ao Vivo';
+  const input = document.getElementById('radioUrlInput');
+  if (input && url) input.value = url;
+}
 
 // ════════════════════════════════════════════
 // BOOMBOX
 // ════════════════════════════════════════════
 function copyBoombox() {
-  const url = localStorage.getItem(K.URL);
-  if (!url) { showToast('Nenhum link configurado!'); return; }
-  navigator.clipboard.writeText(url)
+  if (!currentStreamUrl) { showToast('Nenhum link configurado!'); return; }
+  navigator.clipboard.writeText(currentStreamUrl)
     .then(() => showToast('Link copiado!'))
     .catch(() => {
       const ta = document.createElement('textarea');
-      ta.value = url; document.body.appendChild(ta); ta.select();
+      ta.value = currentStreamUrl; document.body.appendChild(ta); ta.select();
       document.execCommand('copy'); document.body.removeChild(ta);
       showToast('Link copiado!');
     });
 }
+
+// ════════════════════════════════════════════
+// NOTÍCIAS
+// ════════════════════════════════════════════
+function esc(str) {
+  const d = document.createElement('div');
+  d.textContent = String(str || '');
+  return d.innerHTML;
+}
+
+function renderNews(news) {
+  const featured = news.filter(n => n.type === 'featured');
+  const items    = news.filter(n => n.type === 'item');
+
+  document.getElementById('featuredNews').innerHTML = featured.map(n => `
+    <div class="news-big">
+      <div class="news-img" data-label="${esc(n.label)}">${esc(n.icon||'📰')}</div>
+      <div class="news-body">
+        <div class="news-cat">${esc(n.cat)}</div>
+        <div class="news-title">${esc(n.title)}</div>
+        ${n.desc ? `<div class="news-desc">${esc(n.desc)}</div>` : ''}
+        <div class="news-time">${esc(n.time_str)}</div>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('newsList').innerHTML = items.map(n => `
+    <div class="news-item">
+      <div class="news-item-icon">${esc(n.icon||'📰')}</div>
+      <div class="news-item-body">
+        <div class="news-cat">${esc(n.cat)}</div>
+        <div class="news-title">${esc(n.title)}</div>
+        <div class="news-time">${esc(n.time_str)}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderAdminNews(news) {
+  document.getElementById('adminNewsList').innerHTML = news.map(n => `
+    <div class="admin-ni">
+      <div class="admin-ni-icon">${esc(n.icon||'📰')}</div>
+      <div class="admin-ni-info">
+        <div class="admin-ni-title">
+          ${n.type==='featured' ? '<span class="admin-ni-featured">★ DESTAQUE</span>' : ''}${esc(n.title)}
+        </div>
+        <div class="admin-ni-meta">${esc(n.cat)} · ${esc(n.time_str)}</div>
+      </div>
+      <button class="admin-ni-del" onclick="deleteNews('${n.id}')">✕</button>
+    </div>
+  `).join('');
+}
+
+async function refreshNews() {
+  try {
+    const news = await api('GET', '/api/news');
+    renderNews(news);
+    return news;
+  } catch { return []; }
+}
+
+async function addNews() {
+  const icon  = document.getElementById('nIcon').value.trim()  || '📰';
+  const cat   = document.getElementById('nCat').value.trim();
+  const title = document.getElementById('nTitle').value.trim();
+  const desc  = document.getElementById('nDesc').value.trim();
+  const time  = document.getElementById('nTime').value.trim();
+  const type  = document.getElementById('nType').value;
+  const label = document.getElementById('nLabel').value.trim() || 'NOVO';
+  if (!cat || !title) { showToast('Preencha categoria e título.'); return; }
+  try {
+    await api('POST', '/api/news', { type, icon, cat, title, desc, time, label });
+    const news = await refreshNews();
+    renderAdminNews(news);
+    ['nIcon','nCat','nTitle','nDesc','nTime','nLabel'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('nType').value = 'item';
+    document.getElementById('labelGroup').style.display = 'none';
+    showToast('Notícia publicada!');
+  } catch (e) { showToast('Erro: ' + e.message); }
+}
+
+async function deleteNews(id) {
+  try {
+    await api('DELETE', `/api/news/${id}`);
+    const news = await refreshNews();
+    renderAdminNews(news);
+    showToast('Notícia removida.');
+  } catch (e) { showToast('Erro: ' + e.message); }
+}
+
+async function resetDefaultNews() {
+  if (!confirm('Restaurar as notícias padrão? As notícias atuais serão substituídas.')) return;
+  try {
+    await api('POST', '/api/news/reset');
+    const news = await refreshNews();
+    renderAdminNews(news);
+    showToast('Notícias restauradas.');
+  } catch (e) { showToast('Erro: ' + e.message); }
+}
+
+// ════════════════════════════════════════════
+// ADMIN AUTH
+// ════════════════════════════════════════════
+async function adminLogout() {
+  try { await api('POST', '/api/auth/logout'); } catch {}
+  clearToken();
+  showAdminUI();
+  showToast('Sessão encerrada.');
+}
+
+async function openAdmin() {
+  document.getElementById('adminOverlay').classList.add('open');
+  await showAdminUI();
+}
+
+function closeAdmin() {
+  document.getElementById('adminOverlay').classList.remove('open');
+  history.replaceState(null, '', ' ');
+}
+
+async function showAdminUI() {
+  const loggedIn = isLoggedIn();
+  document.getElementById('loginScreen').style.display    = loggedIn ? 'none' : 'block';
+  document.getElementById('adminDashboard').style.display = loggedIn ? 'block' : 'none';
+  document.getElementById('adminLogoutBtn').style.display = loggedIn ? '' : 'none';
+  document.getElementById('adminBadge').textContent       = loggedIn ? 'AUTENTICADO' : 'NÃO AUTENTICADO';
+
+  if (!loggedIn) {
+    try {
+      const status = await api('GET', '/api/auth/status');
+      document.getElementById('setupForm').style.display = status.has_password ? 'none' : 'block';
+      document.getElementById('loginForm').style.display = status.has_password ? 'block' : 'none';
+    } catch {
+      document.getElementById('setupForm').style.display = 'block';
+      document.getElementById('loginForm').style.display = 'none';
+    }
+    document.getElementById('loginErr').textContent = '';
+    document.getElementById('setupErr').textContent = '';
+    document.getElementById('loginPwd').value = '';
+  } else {
+    const [news, stream] = await Promise.all([
+      api('GET', '/api/news').catch(() => []),
+      api('GET', '/api/stream').catch(() => ({ url: '', is_live: false })),
+    ]);
+    renderAdminNews(news);
+    syncRadioAdminUI(stream.is_live, stream.url);
+  }
+}
+
+async function setupPassword() {
+  const p1  = document.getElementById('setupPwd1').value;
+  const p2  = document.getElementById('setupPwd2').value;
+  const err = document.getElementById('setupErr');
+  if (!p1) { err.textContent = 'Digite uma senha.'; return; }
+  if (p1 !== p2) { err.textContent = 'As senhas não coincidem.'; return; }
+  try {
+    const res = await api('POST', '/api/auth/setup', { password: p1 });
+    setToken(res.token);
+    document.getElementById('setupPwd1').value = '';
+    document.getElementById('setupPwd2').value = '';
+    await showAdminUI();
+    showToast('Senha definida! Bem-vindo ao painel.');
+  } catch (e) { err.textContent = e.message; }
+}
+
+async function doLogin() {
+  const pwd = document.getElementById('loginPwd').value;
+  const err = document.getElementById('loginErr');
+  if (!pwd) { err.textContent = 'Digite a senha.'; return; }
+  try {
+    const res = await api('POST', '/api/auth/login', { password: pwd });
+    setToken(res.token);
+    document.getElementById('loginPwd').value = '';
+    await showAdminUI();
+    showToast('Bem-vindo, administrador.');
+  } catch (e) {
+    err.textContent = e.message;
+    document.getElementById('loginPwd').value = '';
+  }
+}
+
+async function changePassword() {
+  const cur = document.getElementById('pwdCurrent').value;
+  const n1  = document.getElementById('pwdNew1').value;
+  const n2  = document.getElementById('pwdNew2').value;
+  const err = document.getElementById('pwdErr');
+  if (!cur || !n1 || !n2) { err.textContent = 'Preencha todos os campos.'; return; }
+  if (n1 !== n2) { err.textContent = 'As novas senhas não coincidem.'; return; }
+  try {
+    await api('POST', '/api/auth/change', { current_password: cur, new_password: n1 });
+    ['pwdCurrent','pwdNew1','pwdNew2'].forEach(id => document.getElementById(id).value = '');
+    err.textContent = '';
+    showToast('Senha alterada com sucesso!');
+  } catch (e) { err.textContent = e.message; }
+}
+
+async function factoryReset() {
+  if (!confirm('Tem certeza? Isso apagará a senha, todas as notícias e a URL de transmissão.')) return;
+  try {
+    await api('POST', '/api/auth/reset');
+    clearToken();
+    await refreshNews();
+    applyLiveState(false, '');
+    await showAdminUI();
+    showToast('Reset completo realizado.');
+  } catch (e) { showToast('Erro: ' + e.message); }
+}
+
+// ════════════════════════════════════════════
+// TABS
+// ════════════════════════════════════════════
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+document.addEventListener('change', e => {
+  if (e.target.id === 'nType')
+    document.getElementById('labelGroup').style.display = e.target.value === 'featured' ? 'block' : 'none';
+});
 
 // ════════════════════════════════════════════
 // TOAST
@@ -1617,46 +1590,30 @@ function showToast(msg) {
 // ════════════════════════════════════════════
 // HASH ROUTING
 // ════════════════════════════════════════════
-function handleHash() {
-  if (window.location.hash === '#admin') {
-    openAdmin();
-  }
-}
-window.addEventListener('hashchange', handleHash);
+window.addEventListener('hashchange', () => {
+  if (window.location.hash === '#admin') openAdmin();
+});
 
-// Enter key in login
-document.getElementById('loginPwd').addEventListener('keydown', e => {
-  if (e.key === 'Enter') doLogin();
-});
-document.getElementById('setupPwd2').addEventListener('keydown', e => {
-  if (e.key === 'Enter') setupPassword();
-});
+document.getElementById('loginPwd').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+document.getElementById('setupPwd2').addEventListener('keydown', e => { if (e.key === 'Enter') setupPassword(); });
 
 // ════════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════════
-(function init() {
-  // Date
+(async function init() {
   const d = new Date();
   document.getElementById('currentDate').textContent =
     d.toLocaleDateString('pt-BR', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
 
-  // News
-  renderNews();
+  const [news, stream] = await Promise.all([
+    api('GET', '/api/news').catch(() => []),
+    api('GET', '/api/stream').catch(() => ({ url: '', is_live: false })),
+  ]);
 
-  // Live state
-  const isLive = localStorage.getItem(K.LIVE) === '1';
-  applyLiveState(isLive);
+  renderNews(news);
+  applyLiveState(stream.is_live, stream.url);
 
-  // Radio URL (only load if admin is live)
-  if (isLive) {
-    const saved = localStorage.getItem(K.URL);
-    if (saved) applyUrl(saved, false);
-    else setStatus('idle');
-  }
-
-  // Hash check
-  handleHash();
+  if (window.location.hash === '#admin') openAdmin();
 })();
 </script>
 </body>
