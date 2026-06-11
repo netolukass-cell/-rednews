@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RED NEWS — A Voz de Red County</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --red: #cc0000;
+      --red-dark: #8b0000;
+      --red-bright: #ff1a1a;
+      --black: #0a0a0a;
+      --dark: #111111;
+      --dark2: #1a1a1a;
+      --dark3: #222222;
+      --gray: #888888;
+      --gray-light: #aaaaaa;
+      --white: #f5f5f0;
+      --white2: #e8e8e0;
+      --font-head: 'Oswald', sans-serif;
+      --font-body: 'Source Serif 4', serif;
+      --font-mono: 'Share Tech Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── SCANLINE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.06) 2px,
+        rgba(0,0,0,0.06) 4px
+      );
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* ── TICKER ── */
+    .ticker-wrap {
+      background: var(--red);
+      overflow: hidden;
+      white-space: nowrap;
+      padding: 6px 0;
+      border-bottom: 2px solid var(--red-dark);
+    }
+    .ticker-label {
+      display: inline-block;
+      background: var(--black);
+      color: var(--red);
+      font-family: var(--font-head);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      padding: 2px 12px;
+      margin-right: 16px;
+      vertical-align: middle;
+    }
+    .ticker-text {
+      display: inline-block;
+      animation: ticker 40s linear infinite;
+      font-family: var(--font-head);
+      font-size: 0.78rem;
+      letter-spacing: 1px;
+      color: var(--white);
+    }
+    @keyframes ticker {
+      0%   { transform: translateX(100vw); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--dark);
+      border-bottom: 3px solid var(--red);
+      padding: 0 24px;
+    }
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0 6px;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .header-meta {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--gray);
+    }
+    .header-meta span { color: var(--red); }
+    .live-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-head);
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      color: var(--gray);
+    }
+    .live-dot i {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #444;
+      display: inline-block;
+      transition: background 0.3s;
+    }
+    .live-dot.on-air i {
+      background: var(--red-bright);
+      box-shadow: 0 0 8px var(--red-bright);
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+    .live-dot.on-air { color: var(--red-bright); }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 18px 0;
+    }
+    .logo-icon {
+      width: 60px; height: 60px;
+      background: var(--red);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      flex-shrink: 0;
+      box-shadow: 0 0 20px rgba(204,0,0,0.4);
+    }
+    .logo-text h1 {
+      font-family: var(--font-head);
+      font-size: 2.8rem;
+      font-weight: 700;
+      letter-spacing: 4px;
+      line-height: 1;
+      color: var(--white);
+      text-shadow: 2px 2px 0 var(--red-dark);
+    }
+    .logo-text h1 span { color: var(--red); }
+    .logo-text p {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 3px;
+      color: var(--gray);
+      margin-top: 4px;
+      text-transform: uppercase;
+    }
+
+    nav {
+      display: flex;
+      gap: 0;
+      border-top: 1px solid #2a2a2a;
+    }
+    nav a {
+      font-family: var(--font-head);
+      font-size: 0.78rem;
+      letter-spacing: 2px;
+      color: var(--gray-light);
+      text-decoration: none;
+      padding: 10px 18px;
+      border-right: 1px solid #2a2a2a;
+      transition: all 0.2s;
+      text-transform: uppercase;
+    }
+    nav a:hover, nav a.active {
+      color: var(--white);
+      background: var(--red);
+    }
+
+    /* ── PLAYER ZONE ── */
+    .player-zone {
+      background: linear-gradient(135deg, var(--dark2) 0%, #1a0000 100%);
+      border-bottom: 3px solid var(--red-dark);
+      padding: 24px;
+    }
+    .player-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 680px) {
+      .player-inner { grid-template-columns: 1fr; }
+    }
+
+    .player-left h2 {
+      font-family: var(--font-head);
+      font-size: 1rem;
+      letter-spacing: 3px;
+      color: var(--red);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .player-left h2::before {
+      content: '▶';
+      font-size: 0.7rem;
+    }
+
+    .player-box {
+      background: var(--black);
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .player-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--red), transparent);
+    }
+
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .status-badge {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      padding: 3px 10px;
+      border-radius: 2px;
+      text-transform: uppercase;
+      background: #2a2a2a;
+      color: var(--gray);
+      border: 1px solid #333;
+      transition: all 0.3s;
+    }
+    .status-badge.live {
+      background: rgba(204,0,0,0.2);
+      color: var(--red-bright);
+      border-color: var(--red);
+      box-shadow: 0 0 10px rgba(204,0,0,0.2);
+    }
+    .status-badge.error {
+      background: rgba(255,80,0,0.15);
+      color: #ff8040;
+      border-color: #ff6020;
+    }
+
+    .now-playing {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--gray);
+      margin-bottom: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .now-playing span { color: var(--white); }
+
+    audio#radioPlayer {
+      width: 100%;
+      height: 36px;
+      filter: invert(1) hue-rotate(180deg) saturate(2);
+      margin-bottom: 10px;
+    }
+
+    .url-display {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: #444;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding: 4px 6px;
+      background: #0d0d0d;
+      border-radius: 2px;
+      border: 1px solid #1a1a1a;
+    }
+    .url-display.has-url { color: #556; }
+
+    /* CONFIG PANEL */
+    .config-panel h2 {
+      font-family: var(--font-head);
+      font-size: 1rem;
+      letter-spacing: 3px;
+      color: var(--gray);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .config-panel h2::before { content: '⚙'; font-size: 0.9rem; }
+
+    .instruction {
+      font-size: 0.75rem;
+      color: var(--gray);
+      line-height: 1.6;
+      margin-bottom: 14px;
+      padding: 10px 12px;
+      background: #0d0d0d;
+      border-left: 2px solid var(--red-dark);
+      border-radius: 0 4px 4px 0;
+    }
+    .instruction code {
+      font-family: var(--font-mono);
+      color: var(--red);
+      font-size: 0.7rem;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .input-group input {
+      background: var(--black);
+      border: 1px solid #333;
+      border-radius: 4px;
+      color: var(--white);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 10px 12px;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+    .input-group input:focus { border-color: var(--red); }
+    .input-group input::placeholder { color: #444; }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+    }
+    .btn {
+      font-family: var(--font-head);
+      font-size: 0.72rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 3px;
+      padding: 9px 16px;
+      cursor: pointer;
+      transition: all 0.15s;
+      flex: 1;
+    }
+    .btn-primary {
+      background: var(--red);
+      color: var(--white);
+    }
+    .btn-primary:hover { background: var(--red-bright); }
+    .btn-secondary {
+      background: #2a2a2a;
+      color: var(--gray-light);
+      border: 1px solid #333;
+    }
+    .btn-secondary:hover { background: #333; color: var(--white); }
+    .btn:active { transform: scale(0.97); }
+
+    /* ── MAIN CONTENT ── */
+    .main-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 32px;
+    }
+    @media (max-width: 780px) {
+      .main-wrap { grid-template-columns: 1fr; }
+    }
+
+    /* NOTICIAS */
+    .section-label {
+      font-family: var(--font-head);
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      color: var(--red);
+      text-transform: uppercase;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--red);
+      margin-bottom: 20px;
+    }
+
+    .headline-card {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+    @media (max-width: 540px) {
+      .headline-card { grid-template-columns: 1fr; }
+    }
+
+    .news-big {
+      background: var(--dark2);
+      border: 1px solid #222;
+      border-radius: 4px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .news-big:hover { border-color: var(--red-dark); }
+
+    .news-img {
+      width: 100%;
+      height: 160px;
+      background: linear-gradient(135deg, #1a0000, #2a0a0a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      border-bottom: 1px solid #2a2a2a;
+      position: relative;
+      overflow: hidden;
+    }
+    .news-img::after {
+      content: attr(data-label);
+      position: absolute;
+      top: 10px; left: 10px;
+      background: var(--red);
+      color: var(--white);
+      font-family: var(--font-head);
+      font-size: 0.6rem;
+      letter-spacing: 2px;
+      padding: 2px 8px;
+      border-radius: 2px;
+    }
+
+    .news-body { padding: 14px; }
+    .news-cat {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 2px;
+      color: var(--red);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .news-title {
+      font-family: var(--font-head);
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.3;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+    .news-desc {
+      font-size: 0.78rem;
+      color: var(--gray-light);
+      line-height: 1.6;
+    }
+    .news-time {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: #444;
+      margin-top: 10px;
+    }
+
+    .news-list { display: flex; flex-direction: column; gap: 12px; }
+    .news-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px;
+      background: var(--dark2);
+      border: 1px solid #1e1e1e;
+      border-radius: 4px;
+      transition: border-color 0.2s;
+      cursor: default;
+    }
+    .news-item:hover { border-color: #333; }
+    .news-item-icon {
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      width: 36px;
+      text-align: center;
+    }
+    .news-item-body { flex: 1; }
+    .news-item-body .news-cat { margin-bottom: 4px; }
+    .news-item-body .news-title { font-size: 0.85rem; }
+    .news-item-body .news-time { margin-top: 4px; }
+
+    /* SIDEBAR */
+    .sidebar { display: flex; flex-direction: column; gap: 24px; }
+
+    .widget {
+      background: var(--dark2);
+      border: 1px solid #222;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .widget-head {
+      background: var(--dark3);
+      padding: 10px 14px;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .widget-head h3 {
+      font-family: var(--font-head);
+      font-size: 0.75rem;
+      letter-spacing: 2px;
+      color: var(--red);
+      text-transform: uppercase;
+    }
+    .widget-body { padding: 14px; }
+
+    /* Programação */
+    .prog-list { display: flex; flex-direction: column; gap: 8px; }
+    .prog-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 10px;
+      border-radius: 3px;
+      background: #1a1a1a;
+      border-left: 3px solid #333;
+      transition: border-color 0.2s;
+    }
+    .prog-item.current { border-left-color: var(--red); background: rgba(204,0,0,0.08); }
+    .prog-time {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--gray);
+      flex-shrink: 0;
+    }
+    .prog-name {
+      font-family: var(--font-head);
+      font-size: 0.78rem;
+      color: var(--white2);
+      flex: 1;
+      padding: 0 10px;
+    }
+    .prog-item.current .prog-name { color: var(--red-bright); }
+    .prog-live {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      color: var(--red);
+      letter-spacing: 1px;
+    }
+
+    /* Boombox widget */
+    .boombox-widget { text-align: center; }
+    .boombox-icon { font-size: 2.5rem; margin-bottom: 10px; }
+    .boombox-desc {
+      font-size: 0.75rem;
+      color: var(--gray);
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+    .boombox-url {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      color: #555;
+      background: var(--black);
+      padding: 6px 10px;
+      border-radius: 3px;
+      border: 1px solid #222;
+      word-break: break-all;
+      text-align: left;
+      margin-bottom: 10px;
+      min-height: 32px;
+      display: flex;
+      align-items: center;
+    }
+    .boombox-url.has-url { color: #778; }
+
+    /* Sobre */
+    .sobre-text {
+      font-size: 0.78rem;
+      color: var(--gray-light);
+      line-height: 1.7;
+    }
+    .sobre-text em { color: var(--red); font-style: italic; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark);
+      border-top: 2px solid var(--red-dark);
+      padding: 24px;
+      text-align: center;
+      margin-top: 20px;
+    }
+    .footer-logo {
+      font-family: var(--font-head);
+      font-size: 1.4rem;
+      letter-spacing: 4px;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+    .footer-logo span { color: var(--red); }
+    footer p {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      color: #444;
+      letter-spacing: 2px;
+    }
+    footer .disclaimer {
+      font-size: 0.65rem;
+      color: #333;
+      margin-top: 10px;
+      font-style: italic;
+      font-family: var(--font-body);
+    }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      background: var(--red);
+      color: var(--white);
+      font-family: var(--font-head);
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+      padding: 10px 20px;
+      border-radius: 4px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.25s;
+      pointer-events: none;
+      z-index: 1000;
+    }
+    #toast.show { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <span class="ticker-label">URGENTE</span>
+  <span class="ticker-text">
+    Tiroteio deixa 3 feridos no Dillimore Arms ·· Sheriff encontrado dormindo em viatura na estrada 68 ·· Blaine County Savings nega novo assalto: "foi manutenção" ·· Prefeito de Palomino Creek some após entrevista à Red News ·· Fazendeiro diz ter visto OVNI; sheriffs investigam "balão meteorológico" ·· Corrida ilegal de muscle cars interrompe tráfego na Route 1 ·· Red News: A voz que Red County merecia. Ou não.
+  </span>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="header-top">
+    <div class="header-meta">
+      <span id="currentDate">—</span> &nbsp;·&nbsp; RED COUNTY, SAN ANDREAS &nbsp;·&nbsp; EST. 2024
+    </div>
+    <div class="live-dot" id="liveDot">
+      <i></i> <span id="liveLabel">OFF AIR</span>
+    </div>
+  </div>
+  <div class="logo-area">
+    <div class="logo-icon">📻</div>
+    <div class="logo-text">
+      <h1><span>RED</span> NEWS</h1>
+      <p>Rádio · Jornal · Red County · GTA RP</p>
+    </div>
+  </div>
+  <nav>
+    <a href="#" class="active">Início</a>
+    <a href="#noticias">Notícias</a>
+    <a href="#programacao">Programação</a>
+    <a href="#boombox">Boombox</a>
+    <a href="#sobre">Sobre</a>
+  </nav>
+</header>
+
+<!-- PLAYER ZONE -->
+<div class="player-zone">
+  <div class="player-inner">
+
+    <!-- PLAYER -->
+    <div class="player-left">
+      <h2>Ao Vivo</h2>
+      <div class="player-box">
+        <div class="status-bar">
+          <div class="status-badge" id="statusBadge">AGUARDANDO LINK</div>
+        </div>
+        <div class="now-playing">
+          Transmitindo: <span id="nowPlayingText">—</span>
+        </div>
+        <audio id="radioPlayer" controls>
+          <source id="radioSource" src="" type="audio/mpeg" />
+          Seu navegador não suporta áudio HTML5.
+        </audio>
+        <div class="url-display" id="urlDisplay">nenhum link configurado</div>
+      </div>
+    </div>
+
+    <!-- CONFIG -->
+    <div class="config-panel">
+      <h2>Configurar Transmissão</h2>
+      <div class="instruction">
+        🔴 Ligue a rádio com o <code>Ligar_RD.bat</code>, copie o link gerado
+        (formato <code>https://xxxx.trycloudflare.com/rednews.mp3</code>)
+        e cole no campo abaixo.
+      </div>
+      <div class="input-group">
+        <input
+          type="url"
+          id="radioUrlInput"
+          placeholder="https://xxxx.trycloudflare.com/rednews.mp3"
+        />
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="saveRadioUrl()">Salvar link</button>
+          <button class="btn btn-secondary" onclick="clearRadioUrl()">Limpar</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main-wrap">
+  <main>
+    <!-- NOTICIAS -->
+    <div id="noticias">
+      <div class="section-label">Últimas Notícias</div>
+
+      <div class="headline-card">
+        <div class="news-big">
+          <div class="news-img" data-label="EXCLUSIVO">🚔</div>
+          <div class="news-body">
+            <div class="news-cat">Segurança Pública</div>
+            <div class="news-title">Sheriff persegue suspeito por 40 minutos — sem conseguir alcançar</div>
+            <div class="news-desc">Viatura foi vista em velocidade máxima de 60km/h enquanto suspeito fugia a pé pelo deserto.</div>
+            <div class="news-time">Hoje, 14:32 · Red County Sheriff's Dept.</div>
+          </div>
+        </div>
+        <div class="news-big">
+          <div class="news-img" data-label="URGENTE">💥</div>
+          <div class="news-body">
+            <div class="news-cat">Policial</div>
+            <div class="news-title">Terceiro "acidente" este mês no posto da Route 68 levanta suspeitas</div>
+            <div class="news-desc">Moradores pedem sinalização. Autoridades culpam "o asfalto úmido" — mesmo em dia de sol.</div>
+            <div class="news-time">Hoje, 11:08 · Route 68, Red County</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="news-list">
+        <div class="news-item">
+          <div class="news-item-icon">🏦</div>
+          <div class="news-item-body">
+            <div class="news-cat">Economia</div>
+            <div class="news-title">Blaine County Savings nega estar seco: "tivemos apenas uma reorganização de caixa"</div>
+            <div class="news-time">Hoje, 09:15</div>
+          </div>
+        </div>
+        <div class="news-item">
+          <div class="news-item-icon">🌵</div>
+          <div class="news-item-body">
+            <div class="news-cat">Interior</div>
+            <div class="news-title">Fazendeiro de Palomino Creek oferece R$500 por informações sobre suas próprias vacas</div>
+            <div class="news-time">Ontem, 18:44</div>
+          </div>
+        </div>
+        <div class="news-item">
+          <div class="news-item-icon">🔫</div>
+          <div class="news-item-body">
+            <div class="news-cat">Segurança</div>
+            <div class="news-title">Loja de armas de Dillimore registra recorde de vendas — "clientela muito motivada este mês"</div>
+            <div class="news-time">Ontem, 15:20</div>
+          </div>
+        </div>
+        <div class="news-item">
+          <div class="news-item-icon">🚗</div>
+          <div class="news-item-body">
+            <div class="news-cat">Trânsito</div>
+            <div class="news-title">Corrida não-oficial na Route 1 termina com todos os carros no fosso — exceto o vencedor</div>
+            <div class="news-time">Ontem, 22:10</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- BOOMBOX -->
+    <div class="widget" id="boombox">
+      <div class="widget-head"><h3>🎮 Link da Boombox</h3></div>
+      <div class="widget-body boombox-widget">
+        <div class="boombox-icon">📦</div>
+        <div class="boombox-desc">
+          Cole esse link na boombox do GTA para ouvir a rádio dentro do jogo.
+        </div>
+        <div class="boombox-url" id="boomboxUrl">Nenhum link configurado</div>
+        <button class="btn btn-primary" style="width:100%" onclick="copyBoombox()">
+          Copiar link da Boombox
+        </button>
+      </div>
+    </div>
+
+    <!-- PROGRAMAÇÃO -->
+    <div class="widget" id="programacao">
+      <div class="widget-head"><h3>📅 Programação</h3></div>
+      <div class="widget-body">
+        <div class="prog-list">
+          <div class="prog-item">
+            <div class="prog-time">00–06h</div>
+            <div class="prog-name">Madrugada Sertaneja</div>
+          </div>
+          <div class="prog-item">
+            <div class="prog-time">06–09h</div>
+            <div class="prog-name">Bom Dia Red County</div>
+          </div>
+          <div class="prog-item current">
+            <div class="prog-time">09–12h</div>
+            <div class="prog-name">Noticiário da Manhã</div>
+            <div class="prog-live">AO VIVO</div>
+          </div>
+          <div class="prog-item">
+            <div class="prog-time">12–14h</div>
+            <div class="prog-name">Almoço com Notícias</div>
+          </div>
+          <div class="prog-item">
+            <div class="prog-time">14–18h</div>
+            <div class="prog-name">Tarde Livre</div>
+          </div>
+          <div class="prog-item">
+            <div class="prog-time">18–22h</div>
+            <div class="prog-name">Noite de Red County</div>
+          </div>
+          <div class="prog-item">
+            <div class="prog-time">22–00h</div>
+            <div class="prog-name">Crimes & Causos</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOBRE -->
+    <div class="widget" id="sobre">
+      <div class="widget-head"><h3>📰 Sobre a Red News</h3></div>
+      <div class="widget-body">
+        <p class="sobre-text">
+          A <em>Red News</em> é a única rádio e agência de notícias do interior de
+          Red County — e vai continuar sendo, porque ninguém mais quer o emprego.<br><br>
+          Cobrimos tudo: assaltos, tiroteios, fugas de rebanho, e as declarações
+          do prefeito que ele sempre jura nunca ter dado.<br><br>
+          <em>Transmitindo ao vivo. Ou quase isso.</em>
+        </p>
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo"><span>RED</span> NEWS</div>
+  <p>A VOZ QUE RED COUNTY MERECIA. OU NÃO.</p>
+  <p class="disclaimer">Ficção. Todos os eventos, personagens e instituições são fictícios e pertencem ao universo de roleplay. Nenhuma relação com a realidade.</p>
+</footer>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+  const STORAGE_KEY = 'rednews_radio_url';
+  const player      = document.getElementById('radioPlayer');
+  const source      = document.getElementById('radioSource');
+  const input       = document.getElementById('radioUrlInput');
+  const badge       = document.getElementById('statusBadge');
+  const nowPlaying  = document.getElementById('nowPlayingText');
+  const urlDisplay  = document.getElementById('urlDisplay');
+  const boomboxUrl  = document.getElementById('boomboxUrl');
+  const liveDot     = document.getElementById('liveDot');
+  const liveLabel   = document.getElementById('liveLabel');
+
+  // ── DATA ──
+  const d = new Date();
+  document.getElementById('currentDate').textContent =
+    d.toLocaleDateString('pt-BR', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  // ── ESTADO ──
+  function setStatus(state) {
+    badge.className = 'status-badge';
+    liveDot.className = 'live-dot';
+    if (state === 'live') {
+      badge.textContent = '● AO VIVO';
+      badge.classList.add('live');
+      liveDot.classList.add('on-air');
+      liveLabel.textContent = 'ON AIR';
+      nowPlaying.textContent = 'Red News Radio';
+    } else if (state === 'error') {
+      badge.textContent = '✕ FORA DO AR';
+      badge.classList.add('error');
+      liveLabel.textContent = 'OFF AIR';
+      nowPlaying.textContent = 'Sem sinal';
+    } else {
+      badge.textContent = 'AGUARDANDO LINK';
+      liveLabel.textContent = 'OFF AIR';
+      nowPlaying.textContent = '—';
+    }
+  }
+
+  // ── CARREGAR URL SALVA ──
+  function loadSavedUrl() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      applyUrl(saved, false);
+      input.value = saved;
+    } else {
+      setStatus('idle');
+    }
+  }
+
+  function applyUrl(url, reload = true) {
+    if (!url || !url.startsWith('http')) {
+      setStatus('idle');
+      urlDisplay.textContent = 'nenhum link configurado';
+      urlDisplay.classList.remove('has-url');
+      boomboxUrl.textContent = 'Nenhum link configurado';
+      boomboxUrl.classList.remove('has-url');
+      return;
+    }
+    source.src = url;
+    urlDisplay.textContent = url;
+    urlDisplay.classList.add('has-url');
+    boomboxUrl.textContent = url;
+    boomboxUrl.classList.add('has-url');
+    if (reload) {
+      player.load();
+      player.play().catch(() => {});
+    }
+    setStatus('live');
+  }
+
+  // ── EVENTOS DO PLAYER ──
+  player.addEventListener('playing', () => setStatus('live'));
+  player.addEventListener('error',   () => {
+    const url = localStorage.getItem(STORAGE_KEY);
+    if (url) setStatus('error');
+  });
+  player.addEventListener('stalled', () => {
+    const url = localStorage.getItem(STORAGE_KEY);
+    if (url) setStatus('error');
+  });
+  player.addEventListener('waiting', () => {
+    const url = localStorage.getItem(STORAGE_KEY);
+    if (url) setStatus('error');
+  });
+
+  // ── SALVAR URL ──
+  function saveRadioUrl() {
+    const url = input.value.trim();
+    if (!url) { showToast('Cole o link primeiro!'); return; }
+    if (!url.startsWith('http')) { showToast('Link inválido. Use https://...'); return; }
+    localStorage.setItem(STORAGE_KEY, url);
+    applyUrl(url, true);
+    showToast('Link salvo! Carregando...');
+  }
+
+  function clearRadioUrl() {
+    localStorage.removeItem(STORAGE_KEY);
+    input.value = '';
+    source.src = '';
+    player.load();
+    setStatus('idle');
+    urlDisplay.textContent = 'nenhum link configurado';
+    urlDisplay.classList.remove('has-url');
+    boomboxUrl.textContent = 'Nenhum link configurado';
+    boomboxUrl.classList.remove('has-url');
+    showToast('Link removido.');
+  }
+
+  // ── COPIAR BOOMBOX ──
+  function copyBoombox() {
+    const url = localStorage.getItem(STORAGE_KEY);
+    if (!url) { showToast('Nenhum link configurado!'); return; }
+    navigator.clipboard.writeText(url)
+      .then(() => showToast('Link copiado para a área de transferência!'))
+      .catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = url;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('Link copiado!');
+      });
+  }
+
+  // ── TOAST ──
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // ── ENTER no input ──
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') saveRadioUrl(); });
+
+  // ── INIT ──
+  loadSavedUrl();
+</script>
+</body>
+</html>
