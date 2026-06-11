@@ -76,126 +76,115 @@
     @keyframes ticker { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
 
     /* ── SITE HEADER ── */
-    .site-header {
-      background: var(--dark);
-      border-bottom: 3px solid var(--red);
-    }
+    .site-header { background: var(--dark); border-bottom: 3px solid var(--red); }
 
-    /* Header main row */
-    .header-main {
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      align-items: center;
-      padding: 18px 28px;
-      gap: 0;
+    /* Header hero */
+    .header-hero {
       position: relative;
       overflow: hidden;
-      min-height: 110px;
+      background: linear-gradient(160deg, #0d0000 0%, #1a0505 35%, #0d0000 70%, #110000 100%);
+      min-height: 130px;
     }
-    /* Map grid bg */
-    .header-main::before {
+    /* Animated grid map */
+    .header-hero::before {
       content: '';
       position: absolute; inset: 0;
       background-image:
-        linear-gradient(rgba(204,0,0,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(204,0,0,0.04) 1px, transparent 1px);
-      background-size: 36px 36px;
+        linear-gradient(rgba(204,0,0,0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(204,0,0,0.07) 1px, transparent 1px);
+      background-size: 44px 44px;
       pointer-events: none;
     }
-    /* Center glow */
-    .header-main::after {
+    /* Red glow from center */
+    .header-hero::after {
       content: '';
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 500px; height: 200px;
-      background: radial-gradient(ellipse, rgba(204,0,0,0.12) 0%, transparent 70%);
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 120% at 55% 50%, rgba(180,0,0,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 30% 80% at 20% 50%, rgba(100,0,0,0.1) 0%, transparent 60%);
       pointer-events: none;
+    }
+
+    .header-hero-inner {
+      position: relative; z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 28px;
+      gap: 24px;
     }
 
     /* Logo */
     .logo-area {
       display: flex;
       align-items: center;
-      gap: 16px;
-      position: relative;
-      z-index: 2;
+      gap: 18px;
+      flex-shrink: 0;
     }
     .logo-icon {
-      width: 76px; height: 76px;
-      background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
-      border-radius: 6px;
+      width: 84px; height: 84px;
+      background: linear-gradient(145deg, var(--red) 0%, #a00000 100%);
+      border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 2.4rem;
+      font-size: 2.6rem;
       flex-shrink: 0;
-      box-shadow: 0 0 30px rgba(204,0,0,0.5), 0 0 60px rgba(204,0,0,0.15);
-      position: relative;
-    }
-    .logo-icon::after {
-      content: '';
-      position: absolute; inset: 0;
-      border-radius: 6px;
-      border: 1px solid rgba(255,100,100,0.3);
+      box-shadow: 0 0 40px rgba(204,0,0,0.6), 0 0 80px rgba(204,0,0,0.2), inset 0 1px 0 rgba(255,100,100,0.2);
     }
     .logo-text h1 {
       font-family: var(--font-head);
-      font-size: 3.4rem;
+      font-size: 4rem;
       font-weight: 700;
-      letter-spacing: 7px;
+      letter-spacing: 8px;
       line-height: 1;
       color: var(--white);
-      text-shadow: 3px 3px 0 rgba(0,0,0,0.5);
+      text-shadow: 0 2px 20px rgba(0,0,0,0.8), 2px 2px 0 rgba(0,0,0,0.5);
     }
     .logo-text h1 em { color: var(--red); font-style: normal; }
     .logo-text .tagline {
       font-family: var(--font-mono);
-      font-size: 0.58rem;
-      letter-spacing: 4px;
-      color: var(--gray);
-      margin-top: 6px;
+      font-size: 0.62rem;
+      letter-spacing: 5px;
+      color: #666;
+      margin-top: 7px;
       text-transform: uppercase;
     }
-    .logo-text .tagline b { color: var(--red); font-weight: normal; }
+    .logo-text .tagline b { color: rgba(204,0,0,0.7); font-weight: normal; }
 
-    /* Center decoration */
+    /* Center map label */
     .header-center {
-      position: relative;
-      z-index: 2;
+      flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 0 40px;
       pointer-events: none;
       user-select: none;
     }
-    .header-center .county-name {
-      font-family: var(--font-head);
-      font-size: 1.1rem;
-      letter-spacing: 8px;
-      color: rgba(204,0,0,0.4);
-      text-transform: uppercase;
-    }
-    .header-center .coords {
-      font-family: var(--font-mono);
-      font-size: 0.56rem;
-      color: rgba(100,100,100,0.5);
-      letter-spacing: 2px;
-      margin-top: 4px;
-    }
-    /* Pulse dot in center */
-    .header-center .pulse-ring {
-      width: 10px; height: 10px;
-      border-radius: 50%;
+    .pulse-ring {
+      width: 12px; height: 12px; border-radius: 50%;
       background: var(--red);
-      box-shadow: 0 0 0 0 rgba(204,0,0,0.5);
+      box-shadow: 0 0 0 0 rgba(204,0,0,0.6);
       animation: ripple 2s ease-out infinite;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     @keyframes ripple {
       0%   { box-shadow: 0 0 0 0 rgba(204,0,0,0.5); }
-      70%  { box-shadow: 0 0 0 14px rgba(204,0,0,0); }
+      70%  { box-shadow: 0 0 0 18px rgba(204,0,0,0); }
       100% { box-shadow: 0 0 0 0 rgba(204,0,0,0); }
+    }
+    .county-name {
+      font-family: var(--font-head);
+      font-size: 1.3rem;
+      letter-spacing: 10px;
+      color: rgba(204,0,0,0.35);
+      text-transform: uppercase;
+    }
+    .coords {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      color: rgba(90,90,90,0.6);
+      letter-spacing: 2px;
+      margin-top: 5px;
     }
 
     /* Right panel */
@@ -203,205 +192,108 @@
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      gap: 10px;
-      position: relative;
-      z-index: 2;
-    }
-    .header-badges {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .badge-live {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-family: var(--font-head);
-      font-size: 0.68rem;
-      letter-spacing: 2px;
-      color: var(--gray);
-      padding: 4px 10px;
-      border: 1px solid #2a2a2a;
-      border-radius: 3px;
-      background: rgba(0,0,0,0.4);
-    }
-    .badge-live i {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: #333;
-      display: inline-block;
+      gap: 12px;
       flex-shrink: 0;
     }
-    .badge-live.on i { background: var(--red-bright); box-shadow: 0 0 6px var(--red-bright); animation: pulse 1.2s ease-in-out infinite; }
-    .badge-live.on { color: var(--red-bright); border-color: rgba(204,0,0,0.3); }
-    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+    .header-badges { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+
+    .badge-live {
+      display: flex; align-items: center; gap: 7px;
+      font-family: var(--font-head);
+      font-size: 0.7rem; letter-spacing: 2px;
+      color: var(--gray);
+      padding: 5px 12px;
+      border: 1px solid #252525;
+      border-radius: 3px;
+      background: rgba(0,0,0,0.6);
+      white-space: nowrap;
+    }
+    .badge-live i { width: 8px; height: 8px; border-radius: 50%; background: #2a2a2a; display: inline-block; flex-shrink: 0; }
+    .badge-live.on i { background: var(--red-bright); box-shadow: 0 0 8px var(--red-bright); animation: pulse 1.2s ease-in-out infinite; }
+    .badge-live.on { color: var(--red-bright); border-color: rgba(204,0,0,0.4); background: rgba(180,0,0,0.1); }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.25; } }
 
     .freq-badge {
-      font-family: var(--font-mono);
-      font-size: 0.6rem;
-      color: var(--gray);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      letter-spacing: 1px;
+      font-family: var(--font-mono); font-size: 0.62rem;
+      color: var(--gray); display: flex; align-items: center; gap: 6px; letter-spacing: 1px;
     }
     .freq-badge span { color: var(--white2); }
 
-    .search-bar {
-      display: flex;
-      align-items: center;
-      gap: 0;
-    }
+    .search-bar { display: flex; align-items: center; }
     .search-bar input {
-      background: rgba(0,0,0,0.5);
-      border: 1px solid #2a2a2a;
-      border-right: none;
+      background: rgba(0,0,0,0.6);
+      border: 1px solid #2a2a2a; border-right: none;
       border-radius: 3px 0 0 3px;
-      color: var(--white);
-      font-family: var(--font-mono);
-      font-size: 0.68rem;
-      padding: 7px 12px;
-      outline: none;
-      width: 200px;
-      transition: border-color 0.2s;
+      color: var(--white); font-family: var(--font-mono); font-size: 0.68rem;
+      padding: 8px 14px; outline: none; width: 220px; transition: border-color 0.2s;
     }
     .search-bar input:focus { border-color: var(--red); }
-    .search-bar input::placeholder { color: #444; }
+    .search-bar input::placeholder { color: #3a3a3a; }
     .search-bar button {
-      background: var(--red);
-      border: none;
-      border-radius: 0 3px 3px 0;
-      color: var(--white);
-      font-size: 0.85rem;
-      padding: 7px 12px;
-      cursor: pointer;
-      transition: background 0.15s;
+      background: var(--red); border: none; border-radius: 0 3px 3px 0;
+      color: var(--white); font-size: 0.9rem; padding: 8px 14px; cursor: pointer; transition: background 0.15s;
     }
     .search-bar button:hover { background: var(--red-bright); }
 
     /* ── INFO BAR ── */
     .info-bar {
-      background: var(--dark2);
+      background: #0d0d0d;
+      border-top: 1px solid #1a1a1a;
       border-bottom: 1px solid #1a1a1a;
-      padding: 0 28px;
     }
     .info-bar-inner {
-      display: flex;
-      align-items: stretch;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    .info-date-area {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      padding: 9px 24px 9px 0;
-      border-right: 1px solid #222;
-      flex-shrink: 0;
-    }
-    .info-date-text {
-      font-family: var(--font-mono);
-      font-size: 0.62rem;
-      color: var(--gray);
-      letter-spacing: 1px;
-    }
-    .info-date-text .date-main { color: var(--white2); font-size: 0.68rem; display: block; margin-bottom: 2px; }
-    .info-date-time {
-      font-family: var(--font-mono);
-      font-size: 1.1rem;
-      color: var(--white);
-      letter-spacing: 2px;
-      font-weight: bold;
-    }
-
-    .weather-tiles {
-      display: flex;
-      flex: 1;
-      overflow-x: auto;
+      display: flex; align-items: stretch;
+      max-width: 100%; overflow-x: auto;
       scrollbar-width: none;
     }
-    .weather-tiles::-webkit-scrollbar { display: none; }
+    .info-bar-inner::-webkit-scrollbar { display: none; }
+
+    .info-date-area {
+      display: flex; align-items: center; gap: 16px;
+      padding: 10px 24px;
+      border-right: 1px solid #1a1a1a;
+      flex-shrink: 0;
+      background: rgba(204,0,0,0.04);
+    }
+    .info-date-time {
+      font-family: var(--font-mono);
+      font-size: 1.3rem; color: var(--white); letter-spacing: 3px; font-weight: bold;
+    }
+    .info-date-text { font-family: var(--font-mono); font-size: 0.6rem; color: var(--gray); }
+    .info-date-text .date-main { color: var(--white2); font-size: 0.65rem; display: block; margin-bottom: 2px; }
 
     .wtile {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 18px;
-      border-right: 1px solid #1a1a1a;
-      min-width: 170px;
-      flex-shrink: 0;
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 20px;
+      border-right: 1px solid #141414;
+      min-width: 175px; flex-shrink: 0;
       transition: background 0.2s;
     }
-    .wtile:hover { background: rgba(255,255,255,0.02); }
-    .wtile-icon { font-size: 1.3rem; flex-shrink: 0; }
-    .wtile-body {}
+    .wtile:hover { background: rgba(204,0,0,0.04); }
+    .wtile-icon { font-size: 1.4rem; flex-shrink: 0; }
     .wtile-name {
       font-family: var(--font-head);
-      font-size: 0.6rem;
-      letter-spacing: 2px;
-      color: var(--gray);
-      text-transform: uppercase;
-      margin-bottom: 2px;
+      font-size: 0.58rem; letter-spacing: 2px; color: #555;
+      text-transform: uppercase; margin-bottom: 3px;
     }
-    .wtile-val {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      color: var(--white2);
-    }
-    .wtile-dot {
-      display: inline-block;
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      margin-right: 5px;
-      vertical-align: middle;
-      flex-shrink: 0;
-    }
-    .dot-green  { background: var(--green); box-shadow: 0 0 4px var(--green); }
-    .dot-yellow { background: var(--yellow); }
-    .dot-red    { background: var(--red-bright); }
-    .dot-gray   { background: #555; }
-
-    /* Rates tile */
-    .wtile-rate {
-      font-family: var(--font-mono);
-      font-size: 0.68rem;
-      color: var(--white2);
-    }
+    .wtile-val { font-family: var(--font-mono); font-size: 0.68rem; color: var(--white2); line-height: 1.3; }
     .wtile-rate .up   { color: var(--red-bright); font-size: 0.58rem; }
     .wtile-rate .down { color: var(--green); font-size: 0.58rem; }
 
     /* ── NAV ── */
-    .main-nav {
-      background: var(--dark3);
-      border-bottom: 2px solid #1a1a1a;
-      padding: 0 28px;
-    }
-    .main-nav-inner {
-      display: flex;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+    .main-nav { background: var(--dark2); border-bottom: 2px solid #1a1a1a; }
+    .main-nav-inner { display: flex; max-width: 100%; }
     .main-nav a {
-      font-family: var(--font-head);
-      font-size: 0.72rem;
-      letter-spacing: 2px;
-      color: var(--gray-light);
-      text-decoration: none;
-      padding: 11px 18px;
+      font-family: var(--font-head); font-size: 0.72rem; letter-spacing: 2px;
+      color: var(--gray-light); text-decoration: none;
+      padding: 12px 20px;
       border-right: 1px solid #1a1a1a;
-      transition: all 0.15s;
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      white-space: nowrap;
+      transition: all 0.15s; text-transform: uppercase;
+      display: flex; align-items: center; gap: 7px; white-space: nowrap;
     }
     .main-nav a:first-child { border-left: 1px solid #1a1a1a; }
-    .main-nav a:hover, .main-nav a.active {
-      color: var(--white);
-      background: var(--red);
-    }
-    .main-nav a .nav-icon { font-size: 0.85rem; }
+    .main-nav a:hover, .main-nav a.active { color: var(--white); background: var(--red); }
+    .main-nav a .nav-icon { font-size: 0.9rem; }
 
     /* ── PLAYER ZONE ── */
     .player-zone {
@@ -883,42 +775,42 @@
 
 <!-- HEADER -->
 <header class="site-header">
-  <div class="header-main">
 
-    <!-- Logo -->
-    <div class="logo-area">
-      <div class="logo-icon">🎙️</div>
-      <div class="logo-text">
-        <h1><em>RED</em> NEWS</h1>
-        <p class="tagline">Rádio <b>·</b> Jornal <b>·</b> Red County</p>
-      </div>
-    </div>
+  <!-- Hero -->
+  <div class="header-hero">
+    <div class="header-hero-inner">
 
-    <!-- Center map decoration -->
-    <div class="header-center">
-      <div class="pulse-ring"></div>
-      <div class="county-name">Red County</div>
-      <div class="coords">35°22'N  119°01'W &nbsp;·&nbsp; SAN ANDREAS</div>
-    </div>
-
-    <!-- Right panel -->
-    <div class="header-right">
-      <div class="header-badges">
-        <div class="badge-live" id="liveDot">
-          <i></i> <span id="liveLabel">OFF AIR</span>
+      <!-- Logo -->
+      <div class="logo-area">
+        <div class="logo-icon">🎙️</div>
+        <div class="logo-text">
+          <h1><em>RED</em> NEWS</h1>
+          <p class="tagline">Rádio <b>·</b> Jornal <b>·</b> Red County</p>
         </div>
-        <div class="badge-live on">
-          <i></i> AO VIVO
-        </div>
-        <div class="freq-badge">📍 <span>RED COUNTY &nbsp;·&nbsp; 98.9 NOTÍCIAS</span></div>
       </div>
-      <div class="search-bar" style="position:relative">
-        <input type="text" id="searchInput" placeholder="Buscar notícias, eventos, áudios..." autocomplete="off" />
-        <button onclick="doSearch()">🔍</button>
-        <div class="search-results" id="searchResults"></div>
-      </div>
-    </div>
 
+      <!-- Center decoration -->
+      <div class="header-center">
+        <div class="pulse-ring"></div>
+        <div class="county-name">Red County</div>
+        <div class="coords">35°22'N &nbsp; 119°01'W &nbsp;·&nbsp; San Andreas</div>
+      </div>
+
+      <!-- Right -->
+      <div class="header-right">
+        <div class="header-badges">
+          <div class="badge-live" id="liveDot"><i></i> <span id="liveLabel">OFF AIR</span></div>
+          <div class="badge-live on"><i></i> AO VIVO</div>
+          <div class="freq-badge">📍 <span>RED COUNTY &nbsp;·&nbsp; 98.9 NOTÍCIAS</span></div>
+        </div>
+        <div class="search-bar" style="position:relative">
+          <input type="text" id="searchInput" placeholder="Buscar notícias, eventos, áudios..." autocomplete="off" />
+          <button onclick="doSearch()">🔍</button>
+          <div class="search-results" id="searchResults"></div>
+        </div>
+      </div>
+
+    </div>
   </div>
 
   <!-- Info bar -->
@@ -931,46 +823,39 @@
           <span>RED COUNTY, SAN ANDREAS · EST. 2024</span>
         </div>
       </div>
-      <div class="weather-tiles">
-        <!-- DILLIMORE - Temperatura real -->
-        <div class="wtile">
-          <div class="wtile-icon" id="wIcon">🌡️</div>
-          <div class="wtile-body">
-            <div class="wtile-name">Dillimore</div>
-            <div class="wtile-val" id="wTemp">Carregando...</div>
-          </div>
+      <div class="wtile">
+        <div class="wtile-icon" id="wIcon">🌡️</div>
+        <div>
+          <div class="wtile-name">Dillimore</div>
+          <div class="wtile-val" id="wTemp">Carregando...</div>
         </div>
-        <!-- PALOMINO CREEK - Umidade -->
-        <div class="wtile">
-          <div class="wtile-icon">💧</div>
-          <div class="wtile-body">
-            <div class="wtile-name">Palomino Creek</div>
-            <div class="wtile-val" id="wHumidity">— umidade</div>
-          </div>
+      </div>
+      <div class="wtile">
+        <div class="wtile-icon">💧</div>
+        <div>
+          <div class="wtile-name">Palomino Creek</div>
+          <div class="wtile-val" id="wHumidity">— umidade</div>
         </div>
-        <!-- ROTA 68 - Condição de pista -->
-        <div class="wtile">
-          <div class="wtile-icon" id="wRoadIcon">🛣️</div>
-          <div class="wtile-body">
-            <div class="wtile-name">Rota 68</div>
-            <div class="wtile-val" id="wRoad">—</div>
-          </div>
+      </div>
+      <div class="wtile">
+        <div class="wtile-icon" id="wRoadIcon">🛣️</div>
+        <div>
+          <div class="wtile-name">Rota 68</div>
+          <div class="wtile-val" id="wRoad">—</div>
         </div>
-        <!-- USD -->
-        <div class="wtile">
-          <div class="wtile-icon">💵</div>
-          <div class="wtile-body">
-            <div class="wtile-name">Dólar USD</div>
-            <div class="wtile-val wtile-rate" id="wUSD">R$ —</div>
-          </div>
+      </div>
+      <div class="wtile">
+        <div class="wtile-icon">💵</div>
+        <div>
+          <div class="wtile-name">Dólar USD</div>
+          <div class="wtile-val wtile-rate" id="wUSD">R$ —</div>
         </div>
-        <!-- EUR -->
-        <div class="wtile">
-          <div class="wtile-icon">💶</div>
-          <div class="wtile-body">
-            <div class="wtile-name">Euro EUR</div>
-            <div class="wtile-val wtile-rate" id="wEUR">R$ —</div>
-          </div>
+      </div>
+      <div class="wtile">
+        <div class="wtile-icon">💶</div>
+        <div>
+          <div class="wtile-name">Euro EUR</div>
+          <div class="wtile-val wtile-rate" id="wEUR">R$ —</div>
         </div>
       </div>
     </div>
@@ -987,6 +872,7 @@
       <a href="#sobre"><span class="nav-icon">ℹ️</span> Sobre</a>
     </div>
   </nav>
+
 </header>
 
 <!-- PLAYER ZONE -->
