@@ -1,0 +1,2 @@
+# -rednews
+site rednews
