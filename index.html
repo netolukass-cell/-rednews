@@ -106,37 +106,54 @@ input,textarea,select{font-family:inherit}
 .ml-item .num{font-family:'Oswald',sans-serif;font-weight:700;font-size:20px;color:#3a3a40;width:20px;flex-shrink:0}
 .ml-item .txt{font-family:'Source Serif 4',serif;font-size:13.5px;line-height:1.35;color:#cececa}
 
-.ad-banner{border:1px solid #1f1f24;border-radius:8px;background:#0d0d0f;margin-top:16px;overflow:hidden}
-.ad-bar{display:flex;align-items:center;justify-content:space-between;padding:5px 10px;background:#0a0a0c;border-bottom:1px solid #18181c}
-.ad-lbl{font-family:'Share Tech Mono',monospace;font-size:8.5px;letter-spacing:1.5px;color:#54545a;text-transform:uppercase}
-.ad-close{background:none;border:none;color:#54545a;font-size:14px;line-height:1;padding:2px 6px;border-radius:3px;transition:color .15s;cursor:pointer;font-family:monospace}
-.ad-close:hover{color:#f2f2ee}
-/* dark ad — Bar do Joe style */
-.ad-body-dark{
-  display:grid;
-  grid-template-columns:auto 1fr;
-  align-items:center;
-  gap:22px;
-  padding:20px 26px;
-  cursor:pointer;
-  background:radial-gradient(ellipse at 18% 50%,#3d1410 0%,#1e0808 45%,#0e0404 100%);
-  background-image:
-    repeating-linear-gradient(90deg,transparent,transparent 7px,rgba(0,0,0,.07) 7px,rgba(0,0,0,.07) 8px),
-    radial-gradient(ellipse at 18% 50%,#3d1410 0%,#1e0808 45%,#0e0404 100%);
+/* ── FLOATING AD BANNER ────────────────────────────────────────────── */
+@keyframes ad-slidein{from{transform:translateY(120%);opacity:0}to{transform:translateY(0);opacity:1}}
+#float-ad{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  width:min(680px,calc(100vw - 32px));
+  border-radius:10px;overflow:hidden;
+  box-shadow:0 8px 40px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.06);
+  z-index:8000;
+  animation:ad-slidein .45s cubic-bezier(.16,1,.3,1) forwards;
+  display:none;
 }
-.ad-body-dark img{width:100px;height:100px;object-fit:contain;display:block;filter:drop-shadow(0 4px 12px rgba(0,0,0,.6))}
-.ad-content{display:flex;flex-direction:column;min-width:0}
-.ad-ttl-dark{font-family:'Oswald',sans-serif;font-weight:700;font-size:20px;line-height:1.1;letter-spacing:.5px;color:#f3e7cf;text-transform:uppercase}
-.ad-sub-dark{font-family:'Source Serif 4',serif;font-size:13px;line-height:1.5;color:#c9a98a;margin-top:6px}
-.ad-cta-dark{display:inline-block;margin-top:13px;background:#cc0000;color:#fff;font-family:'Oswald',sans-serif;font-weight:600;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;padding:10px 22px;border-radius:5px;transition:background .15s;align-self:flex-start}
-.ad-cta-dark:hover{background:#ff2a2a}
-/* light ad — sidebar style */
-.ad-body-light{background:linear-gradient(158deg,#f4ece0,#e6d6bf);padding:20px 18px 22px;text-align:center;cursor:pointer}
-.ad-body-light img{width:110px;height:auto;object-fit:contain;display:block;margin:0 auto}
-.ad-ttl-light{font-family:'Oswald',sans-serif;font-weight:700;font-size:16px;letter-spacing:.5px;color:#7a1f17;text-transform:uppercase;margin-top:11px}
-.ad-sub-light{font-family:'Source Serif 4',serif;font-size:13px;line-height:1.5;color:#6d4f3a;margin-top:6px}
-.ad-cta-light{display:inline-block;margin-top:13px;background:#7a1f17;color:#f5ece0;font-family:'Oswald',sans-serif;font-weight:600;font-size:11.5px;letter-spacing:1.5px;text-transform:uppercase;padding:9px 20px;border-radius:5px;transition:background .15s}
-.ad-cta-light:hover{background:#9a2a1f}
+#float-ad.show{display:block}
+.fad-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:5px 12px;
+  background:rgba(0,0,0,.85);
+  backdrop-filter:blur(4px);
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.fad-lbl{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:#555;text-transform:uppercase}
+.fad-close{
+  background:rgba(255,255,255,.07);border:none;color:#aaa;
+  font-size:13px;line-height:1;padding:3px 8px;border-radius:4px;
+  cursor:pointer;transition:all .15s;font-family:monospace;
+}
+.fad-close:hover{background:rgba(255,255,255,.15);color:#fff}
+/* dark variant (Bar do Joe) */
+.fad-dark{
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:20px;
+  padding:18px 24px;
+  background:radial-gradient(ellipse at 14% 50%,#3d1410 0%,#1e0808 50%,#0e0404 100%);
+  cursor:pointer;
+}
+.fad-dark img{width:88px;height:88px;object-fit:contain;display:block;filter:drop-shadow(0 4px 14px rgba(0,0,0,.7))}
+.fad-info{display:flex;flex-direction:column;gap:5px;min-width:0}
+.fad-ttl{font-family:'Oswald',sans-serif;font-weight:700;font-size:19px;line-height:1.1;letter-spacing:.5px;color:#f3e7cf;text-transform:uppercase}
+.fad-sub{font-family:'Source Serif 4',serif;font-size:13px;line-height:1.4;color:#c9a98a}
+.fad-cta{display:inline-block;background:#cc0000;color:#fff;font-family:'Oswald',sans-serif;font-weight:600;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;padding:11px 26px;border-radius:6px;transition:background .15s;white-space:nowrap;flex-shrink:0}
+.fad-cta:hover{background:#ff2a2a}
+/* light variant (sidebar widget — keeps original look) */
+.sw-ad{background:#0f0f11;border:1px solid #1d1d22;border-radius:8px;overflow:hidden}
+.sw-ad .fad-bar{border-bottom:1px solid #1d1d22;background:#0a0a0c}
+.sw-ad-body{background:linear-gradient(158deg,#f4ece0,#e6d6bf);padding:18px 16px 20px;text-align:center;cursor:pointer}
+.sw-ad-body img{width:100px;height:auto;object-fit:contain;display:block;margin:0 auto}
+.sw-ad-ttl{font-family:'Oswald',sans-serif;font-weight:700;font-size:16px;letter-spacing:.5px;color:#7a1f17;text-transform:uppercase;margin-top:10px}
+.sw-ad-sub{font-family:'Source Serif 4',serif;font-size:12.5px;line-height:1.5;color:#6d4f3a;margin-top:5px}
+.sw-ad-cta{display:inline-block;margin-top:12px;background:#7a1f17;color:#f5ece0;font-family:'Oswald',sans-serif;font-weight:600;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;padding:9px 20px;border-radius:5px;transition:background .15s}
+.sw-ad-cta:hover{background:#9a2a1f}
 
 .ultimas{max-width:1280px;margin:0 auto;padding:22px 40px 26px}
 .sec-hdr{display:flex;align-items:center;gap:14px;margin-bottom:20px}
@@ -473,6 +490,9 @@ input,textarea,select{font-family:inherit}
   </div>
 </div>
 
+<!-- FLOATING AD -->
+<div id="float-ad"></div>
+
 <div id="toast"></div>
 
 <script>
@@ -579,16 +599,45 @@ function buildMaisLidas(list){
   return `<div class="sw"><div class="sw-head">Mais lidas</div><div class="sw-body">${rows}</div></div>`;
 }
 
-function closeAd(el){el.closest('.ad-banner').style.display='none'}
+// ── FLOATING AD ──────────────────────────────────────────────────────────────
+let adDismissed=false;
 
-function buildAdDark(s){
-  if(!s)return'';
-  return `<div class="ad-banner"><div class="ad-bar"><span class="ad-lbl">Publicidade</span><button class="ad-close" onclick="closeAd(this)" title="Fechar">✕</button></div><div class="ad-body-dark" onclick="window.open('${esc(s.cta_url||'#')}','_blank')"><div class="ad-stripe"></div><img src="${esc(s.image_url)}" alt="${esc(s.name)}"><div class="ad-content"><div class="ad-ttl-dark">${esc(s.name)}</div><div class="ad-sub-dark">${esc(s.tagline)}</div><a class="ad-cta-dark" href="${esc(s.cta_url||'#')}" target="_blank" onclick="event.stopPropagation()">${esc(s.cta_text)}</a></div></div></div>`;
+function showFloatAd(s){
+  if(!s||adDismissed)return;
+  const el=$('float-ad');if(!el)return;
+  el.innerHTML=`
+    <div class="fad-bar">
+      <span class="fad-lbl">Publicidade</span>
+      <button class="fad-close" onclick="dismissAd()" title="Fechar anúncio">✕ Fechar</button>
+    </div>
+    <div class="fad-dark" onclick="window.open('${esc(s.cta_url||'#')}','_blank')">
+      <img src="${esc(s.image_url)}" alt="${esc(s.name)}">
+      <div class="fad-info">
+        <div class="fad-ttl">${esc(s.name)}</div>
+        <div class="fad-sub">${esc(s.tagline)}</div>
+      </div>
+      <a class="fad-cta" href="${esc(s.cta_url||'#')}" target="_blank" onclick="event.stopPropagation()">${esc(s.cta_text)}</a>
+    </div>`;
+  el.classList.add('show');
+}
+
+function dismissAd(){
+  adDismissed=true;
+  const el=$('float-ad');
+  if(el){el.style.transition='transform .3s ease,opacity .3s ease';el.style.transform='translateX(-50%) translateY(120%)';el.style.opacity='0';setTimeout(()=>{el.classList.remove('show');el.style.cssText='';},320);}
 }
 
 function buildAdLight(s){
   if(!s)return'';
-  return `<div class="ad-banner"><div class="ad-bar"><span class="ad-lbl">Publicidade</span><button class="ad-close" onclick="closeAd(this)" title="Fechar">✕</button></div><div class="ad-body-light" onclick="window.open('${esc(s.cta_url||'#')}','_blank')"><img src="${esc(s.image_url)}" alt="${esc(s.name)}"><div class="ad-ttl-light">${esc(s.name)}</div><div class="ad-sub-light">${esc(s.tagline)}</div><a class="ad-cta-light" href="${esc(s.cta_url||'#')}" target="_blank" onclick="event.stopPropagation()">${esc(s.cta_text)}</a></div></div>`;
+  return `<div class="sw-ad">
+    <div class="fad-bar"><span class="fad-lbl">Publicidade</span></div>
+    <div class="sw-ad-body" onclick="window.open('${esc(s.cta_url||'#')}','_blank')">
+      <img src="${esc(s.image_url)}" alt="${esc(s.name)}">
+      <div class="sw-ad-ttl">${esc(s.name)}</div>
+      <div class="sw-ad-sub">${esc(s.tagline)}</div>
+      <a class="sw-ad-cta" href="${esc(s.cta_url||'#')}" target="_blank" onclick="event.stopPropagation()">${esc(s.cta_text)}</a>
+    </div>
+  </div>`;
 }
 
 // ── RENDER HOME ─────────────────────────────────────────────────────────────
@@ -610,11 +659,12 @@ function renderHome(sponsors){
 
   $('page-home').innerHTML=`${buildUtil()}${buildMasthead()}${buildInfoBar()}${buildNav('home')}${buildTicker()}
   <div class="hero-grid">
-    <div>${leadHtml}${buildAdDark(hs.hero)}</div>
+    <div>${leadHtml}</div>
     <div class="side-col">${secsHtml}<div class="mais-lidas"><div class="ml-title">${I.bars}Mais lidas</div>${mlHtml}</div></div>
   </div>
   <div class="ultimas"><div class="sec-hdr"><span class="sec-ttl-bar">Últimas de Red County</span><span class="sec-line"></span><a href="#noticias" class="sec-link">Ver tudo ${I.arr}</a></div><div class="cards-grid">${ulHtml||'<div style="color:#5e5e64;font-family:Share Tech Mono,monospace;font-size:12px">Nenhuma notícia publicada</div>'}</div></div>
   ${buildLive()}${buildFooter()}`;
+  if(!adDismissed)setTimeout(()=>showFloatAd(hs.hero),2200);
 }
 
 // ── RENDER NOTÍCIAS ──────────────────────────────────────────────────────────
