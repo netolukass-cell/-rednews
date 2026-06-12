@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400;1,8..60,600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#08080a;color:#f2f2ee;font-family:'Source Serif 4',serif;min-height:100vh}
@@ -110,9 +112,9 @@ input,textarea,select{font-family:inherit}
 .ad-close{background:none;border:none;color:#54545a;font-size:15px;line-height:1;padding:2px 4px;border-radius:3px;transition:color .15s;cursor:pointer}
 .ad-close:hover{color:#f2f2ee}
 .ad-body-dark{position:relative;display:flex;align-items:center;gap:22px;background:radial-gradient(circle at 16% 50%,#3a1310,#160505 80%);padding:20px 26px;cursor:pointer;overflow:hidden}
-.ad-stripe{position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent,transparent 6px,rgba(0,0,0,.13) 6px,rgba(0,0,0,.13) 7px);opacity:.5;pointer-events:none}
-.ad-body-dark img{position:relative;width:104px;height:104px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 6px 14px rgba(0,0,0,.55))}
-.ad-content{position:relative;flex:1;min-width:0}
+.ad-stripe{position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent,transparent 6px,rgba(0,0,0,.13) 6px,rgba(0,0,0,.13) 7px);opacity:.5;pointer-events:none;z-index:0}
+.ad-body-dark img{position:relative;width:104px;height:104px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 6px 14px rgba(0,0,0,.55));z-index:1}
+.ad-content{position:relative;flex:1;min-width:0;z-index:1}
 .ad-ttl-dark{font-family:'Oswald',sans-serif;font-weight:700;font-size:21px;line-height:1.1;letter-spacing:.5px;color:#f3e7cf;text-transform:uppercase}
 .ad-sub-dark{font-family:'Source Serif 4',serif;font-size:13.5px;line-height:1.5;color:#c9a98a;margin-top:7px}
 .ad-cta-dark{display:inline-block;margin-top:14px;background:#cc0000;color:#fff;font-family:'Oswald',sans-serif;font-weight:600;font-size:12.5px;letter-spacing:1.5px;text-transform:uppercase;padding:11px 24px;border-radius:6px;transition:background .15s}
@@ -309,6 +311,51 @@ input,textarea,select{font-family:inherit}
 .spon-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
 .spon-grid label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:#7a7a82;text-transform:uppercase;display:block;margin-bottom:4px}
 
+/* composer */
+.composer-wrap{background:#08080a;border:1px solid #1d1d22;border-radius:10px;overflow:hidden;margin-bottom:20px}
+.composer-topbar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#0d0d0f;border-bottom:1px solid #1d1d22;flex-wrap:wrap}
+.composer-topbar .ai{flex:1;min-width:120px}
+.composer-field{padding:0 14px 12px}
+.composer-field:first-of-type{padding-top:12px}
+.composer-field label{font-family:'Share Tech Mono',monospace;font-size:9.5px;letter-spacing:1.5px;color:#5e5e64;text-transform:uppercase;display:block;margin-bottom:5px}
+.composer-title{width:100%;background:#0a0a0c;border:1px solid #1d1d22;border-radius:6px;color:#f2f2ee;font-family:'Oswald',sans-serif;font-weight:600;font-size:22px;padding:10px 14px;outline:none;transition:border-color .15s}
+.composer-title:focus{border-color:#cc0000}
+.composer-title::placeholder{color:#3a3a3e;font-weight:400}
+.composer-deck{width:100%;background:#0a0a0c;border:1px solid #1d1d22;border-radius:6px;color:#c8c8c2;font-family:'Source Serif 4',serif;font-size:15px;padding:9px 14px;outline:none;transition:border-color .15s}
+.composer-deck:focus{border-color:#cc0000}
+.composer-deck::placeholder{color:#3a3a3e}
+.img-preview-row{display:flex;align-items:center;gap:10px}
+.img-preview-row .ai{flex:1}
+.img-preview-box{width:54px;height:42px;border-radius:5px;background:#0f0f11;border:1px solid #1d1d22;object-fit:cover;display:none;flex-shrink:0}
+.img-preview-box.show{display:block}
+.quill-wrap{background:#0a0a0c;border:1px solid #1d1d22;border-radius:6px;overflow:hidden}
+.quill-wrap .ql-toolbar{background:#0f0f11;border:none;border-bottom:1px solid #1d1d22;padding:6px 10px}
+.quill-wrap .ql-toolbar .ql-stroke{stroke:#7a7a82}
+.quill-wrap .ql-toolbar .ql-fill{fill:#7a7a82}
+.quill-wrap .ql-toolbar .ql-picker{color:#7a7a82}
+.quill-wrap .ql-toolbar .ql-picker-options{background:#0f0f11;border-color:#1d1d22}
+.quill-wrap .ql-toolbar button:hover .ql-stroke,.quill-wrap .ql-toolbar button.ql-active .ql-stroke{stroke:#ff3a3a}
+.quill-wrap .ql-toolbar button:hover .ql-fill,.quill-wrap .ql-toolbar button.ql-active .ql-fill{fill:#ff3a3a}
+.quill-wrap .ql-toolbar .ql-picker-label:hover,.quill-wrap .ql-toolbar .ql-picker-label.ql-active{color:#ff3a3a}
+.quill-wrap .ql-container{border:none;font-family:'Source Serif 4',serif;font-size:15px;color:#e2e2dc;min-height:180px}
+.quill-wrap .ql-editor{min-height:180px;padding:14px}
+.quill-wrap .ql-editor.ql-blank::before{color:#3a3a3e;font-style:italic}
+.quill-wrap .ql-editor p{margin-bottom:10px;line-height:1.65}
+.quill-wrap .ql-editor h2{font-family:'Oswald',sans-serif;font-weight:600;font-size:20px;color:#f2f2ee;margin:16px 0 8px;text-transform:uppercase;letter-spacing:.5px}
+.quill-wrap .ql-editor h3{font-family:'Oswald',sans-serif;font-weight:500;font-size:16px;color:#d4d4ce;margin:14px 0 6px;letter-spacing:.5px}
+.quill-wrap .ql-editor strong{color:#f2f2ee}
+.quill-wrap .ql-editor em{color:#c8c8c2}
+.quill-wrap .ql-editor a{color:#ff3a3a}
+.quill-wrap .ql-editor blockquote{border-left:3px solid #cc0000;padding-left:14px;margin:12px 0;color:#9a9a96;font-style:italic}
+.quill-wrap .ql-editor img{max-width:100%;border-radius:6px;margin:10px 0}
+.composer-footer{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#0d0d0f;border-top:1px solid #1d1d22;flex-wrap:wrap}
+.composer-footer .ai{max-width:180px}
+.composer-footer .abtn{margin-left:auto}
+.edit-badge{background:#1a1a0f;border:1px solid #3a3a10;color:#cccc40;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;padding:3px 10px;border-radius:4px;display:none}
+.edit-badge.show{display:inline-block}
+.ani .edit{background:none;border:none;color:#5e5e64;cursor:pointer;font-size:14px;line-height:1;flex-shrink:0;transition:color .15s}
+.ani .edit:hover{color:#cccc40}
+
 #toast{position:fixed;bottom:30px;right:30px;background:#1d1d22;border:1px solid #2c2c32;border-radius:8px;padding:12px 20px;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:1px;color:#f2f2ee;z-index:9999;transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none}
 #toast.show{transform:translateY(0);opacity:1}
 #toast.ok{border-color:#2ec27a;color:#2ec27a}
@@ -363,13 +410,47 @@ input,textarea,select{font-family:inherit}
         <button class="abtn sec" onclick="copyBoombox()" style="margin-top:4px">Copiar link boombox</button>
       </div>
       <div class="admin-sec" id="news-sec" style="display:none">
-        <div class="admin-sec-ttl">Publicar notícia</div>
-        <div class="admin-row"><input class="ai" id="n-cat" placeholder="Categoria"><select class="asel" id="n-type"><option value="item">Normal</option><option value="featured">Destaque</option></select></div>
-        <div class="admin-row"><input class="ai" id="n-title" placeholder="Manchete"></div>
-        <div class="admin-row"><input class="ai" id="n-desc" placeholder="Subtítulo (opcional)"></div>
-        <div class="admin-row"><input class="ai" id="n-time" placeholder="Hora (ex: Hoje, 14h32)"><input class="ai" id="n-label" placeholder="Badge (URGENTE)" style="max-width:160px"><button class="abtn" onclick="addNews()">Publicar</button></div>
-        <div class="admin-sec-ttl" style="margin-top:18px">Notícias publicadas</div>
-        <div style="display:flex;gap:8px;margin-bottom:10px"><button class="abtn sec" onclick="loadAdminNews()">Atualizar</button><button class="abtn danger" onclick="resetNews()">Limpar</button></div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+          <div class="admin-sec-ttl" style="margin:0" id="composer-ttl">Compor notícia</div>
+          <span class="edit-badge" id="edit-badge">EDITANDO</span>
+          <button class="abtn sec" id="cancel-edit-btn" style="display:none;margin-left:auto;font-size:10px;padding:5px 12px" onclick="cancelEdit()">Cancelar edição</button>
+        </div>
+        <div class="composer-wrap">
+          <div class="composer-topbar">
+            <input class="ai" id="n-cat" placeholder="Categoria" style="max-width:220px">
+            <select class="asel" id="n-type"><option value="item">Normal</option><option value="featured">Destaque</option></select>
+            <input class="ai" id="n-label" placeholder="Badge (ex: URGENTE, EXCLUSIVO)" style="max-width:200px">
+          </div>
+          <div style="padding:14px 14px 0">
+            <div class="composer-field">
+              <label>Manchete</label>
+              <input class="composer-title" id="n-title" placeholder="Escreva a manchete aqui…">
+            </div>
+            <div class="composer-field">
+              <label>Subtítulo / Chamada</label>
+              <input class="composer-deck" id="n-desc" placeholder="Frase de abertura ou subtítulo (opcional)">
+            </div>
+            <div class="composer-field">
+              <label>Imagem de capa</label>
+              <div class="img-preview-row">
+                <input class="ai" id="n-image" placeholder="URL da imagem (https://… ou assets/…)" oninput="previewImg(this.value)">
+                <img class="img-preview-box" id="n-img-preview" alt="preview">
+              </div>
+            </div>
+            <div class="composer-field" style="padding-bottom:14px">
+              <label>Corpo da notícia</label>
+              <div class="quill-wrap">
+                <div id="quill-editor"></div>
+              </div>
+            </div>
+          </div>
+          <div class="composer-footer">
+            <input class="ai" id="n-time" placeholder="Hora (ex: Hoje, 14h32)" style="max-width:200px">
+            <button class="abtn" id="publish-btn" onclick="addNews()">Publicar</button>
+          </div>
+        </div>
+        <div class="admin-sec-ttl" style="margin-top:4px">Notícias publicadas</div>
+        <div style="display:flex;gap:8px;margin-bottom:10px"><button class="abtn sec" onclick="loadAdminNews()">Atualizar</button><button class="abtn danger" onclick="resetNews()">Limpar todas</button></div>
         <div class="admin-news-list" id="admin-news-list"></div>
       </div>
       <div class="admin-sec" id="spon-sec" style="display:none">
@@ -675,6 +756,65 @@ function togglePlay(){
   }
 }
 
+// ── QUILL INIT ────────────────────────────────────────────────────────────────
+let quill=null,editingNewsId=null;
+function initQuill(){
+  if(quill)return;
+  quill=new Quill('#quill-editor',{
+    theme:'snow',
+    placeholder:'Escreva o corpo completo da notícia… use negrito, títulos, imagens embutidas.',
+    modules:{toolbar:[
+      [{header:[2,3,false]}],
+      ['bold','italic','underline','strike'],
+      ['blockquote','code-block'],
+      [{list:'ordered'},{list:'bullet'}],
+      ['link','image'],
+      ['clean']
+    ]}
+  });
+}
+
+function previewImg(url){
+  const el=$('n-img-preview');if(!el)return;
+  if(url&&url.trim()){el.src=url.trim();el.classList.add('show');}
+  else{el.src='';el.classList.remove('show');}
+}
+
+function cancelEdit(){
+  editingNewsId=null;
+  $('edit-badge').classList.remove('show');
+  $('cancel-edit-btn').style.display='none';
+  $('composer-ttl').textContent='Compor notícia';
+  $('publish-btn').textContent='Publicar';
+  ['n-cat','n-title','n-desc','n-image','n-time','n-label'].forEach(id=>{const el=$(id);if(el)el.value='';});
+  previewImg('');
+  if(quill)quill.setContents([]);
+  $('n-type').value='item';
+}
+
+async function editNews(id){
+  const item=newsData.find(n=>n.id===id);if(!item)return;
+  initQuill();
+  editingNewsId=id;
+  $('n-cat').value=item.cat||'';
+  $('n-type').value=item.type||'item';
+  $('n-label').value=item.label||'';
+  $('n-title').value=item.title||'';
+  $('n-desc').value=item.desc||'';
+  $('n-time').value=item.time_str||'';
+  $('n-image').value=item.image_url||'';
+  previewImg(item.image_url||'');
+  if(quill){
+    if(item.body&&item.body.trim().startsWith('<')){quill.root.innerHTML=item.body;}
+    else{quill.setText(item.body||'');}
+  }
+  $('edit-badge').classList.add('show');
+  $('cancel-edit-btn').style.display='inline-flex';
+  $('composer-ttl').textContent='Editar notícia';
+  $('publish-btn').textContent='Salvar edição';
+  $('news-sec').scrollIntoView({behavior:'smooth'});
+}
+
 // ── ADMIN ─────────────────────────────────────────────────────────────────────
 async function openAdmin(){
   $('admin-overlay').classList.add('open');
@@ -689,14 +829,33 @@ function showAdminIn(){
   $('auth-out').style.display='none';$('auth-in').style.display='block';
   $('radio-sec').style.display='block';$('news-sec').style.display='block';$('spon-sec').style.display='block';
   loadAdminNews();loadAdminStream();loadAdminSponsors();
+  setTimeout(initQuill,100);
 }
 async function doSetup(){const pwd=$('setup-pwd').value;try{const r=await api('POST','/api/auth/setup',{password:pwd});sessionStorage.setItem(TK,r.token);toast('Senha criada!');showAdminIn();}catch(e){toast(e.message,false);}}
 async function doLogin(){const pwd=$('login-pwd').value;try{const r=await api('POST','/api/auth/login',{password:pwd});sessionStorage.setItem(TK,r.token);toast('Autenticado!');showAdminIn();}catch(e){toast(e.message,false);}}
 async function doLogout(){try{await api('POST','/api/auth/logout',null,true);}catch(e){}sessionStorage.removeItem(TK);$('auth-out').style.display='block';$('auth-in').style.display='none';$('radio-sec').style.display='none';$('news-sec').style.display='none';$('spon-sec').style.display='none';}
 async function doReset(){if(!confirm('Resetar TUDO?'))return;try{await api('POST','/api/auth/reset',null,true);toast('Reset concluído');doLogout();}catch(e){toast(e.message,false);}}
 async function doChangePwd(){const cur=$('cpwd-cur').value,nw=$('cpwd-new').value;try{await api('POST','/api/auth/change',{current_password:cur,new_password:nw},true);toast('Senha alterada!');$('cpwd-cur').value='';$('cpwd-new').value='';}catch(e){toast(e.message,false);}}
-async function loadAdminNews(){const list=$('admin-news-list');if(!list)return;try{const news=await api('GET','/api/news');list.innerHTML=news.map(n=>`<div class="ani"><span class="cat-badge">${esc(n.cat)}</span><span class="title">${esc(n.title)}</span><button class="del" onclick="deleteNews('${n.id}')">✕</button></div>`).join('')||'<div style="color:#5e5e64;font-family:Share Tech Mono,monospace;font-size:11px">Nenhuma notícia</div>';}catch(e){}}
-async function addNews(){const item={type:$('n-type').value,cat:$('n-cat').value,title:$('n-title').value,desc:$('n-desc').value,time:$('n-time').value,label:$('n-label').value};if(!item.cat||!item.title){toast('Categoria e manchete obrigatórias',false);return;}try{await api('POST','/api/news',item,true);['n-cat','n-title','n-desc','n-time','n-label'].forEach(id=>$(id).value='');toast('Notícia publicada!');newsData=await api('GET','/api/news');loadAdminNews();const s=await api('GET','/api/sponsors').catch(()=>({}));renderHome(s);}catch(e){toast(e.message,false);}}
+async function loadAdminNews(){const list=$('admin-news-list');if(!list)return;try{const news=await api('GET','/api/news');list.innerHTML=news.map(n=>`<div class="ani"><span class="cat-badge">${esc(n.cat)}</span><span class="title">${esc(n.title)}</span><button class="edit" onclick="editNews('${n.id}')" title="Editar">✎</button><button class="del" onclick="deleteNews('${n.id}')" title="Excluir">✕</button></div>`).join('')||'<div style="color:#5e5e64;font-family:Share Tech Mono,monospace;font-size:11px">Nenhuma notícia</div>';}catch(e){}}
+async function addNews(){
+  const body=quill?quill.root.innerHTML:'';
+  const item={type:$('n-type').value,cat:$('n-cat').value,title:$('n-title').value,desc:$('n-desc').value,body,image_url:$('n-image').value,time:$('n-time').value,label:$('n-label').value};
+  if(!item.cat||!item.title){toast('Categoria e manchete obrigatórias',false);return;}
+  try{
+    if(editingNewsId){
+      await api('PUT',`/api/news/${editingNewsId}`,{...item,time_str:item.time},true);
+      toast('Notícia atualizada!');
+    }else{
+      await api('POST','/api/news',item,true);
+      toast('Notícia publicada!');
+    }
+    cancelEdit();
+    newsData=await api('GET','/api/news');
+    loadAdminNews();
+    const s=await api('GET','/api/sponsors').catch(()=>({}));
+    renderHome(s);
+  }catch(e){toast(e.message,false);}
+}
 async function deleteNews(id){try{await api('DELETE',`/api/news/${id}`,null,true);newsData=await api('GET','/api/news');loadAdminNews();const s=await api('GET','/api/sponsors').catch(()=>({}));renderHome(s);toast('Notícia removida');}catch(e){toast(e.message,false);}}
 async function resetNews(){if(!confirm('Restaurar notícias padrão?'))return;try{await api('POST','/api/news/reset',null,true);newsData=await api('GET','/api/news');loadAdminNews();renderHome({});toast('Feed restaurado');}catch(e){toast(e.message,false);}}
 async function loadAdminStream(){try{streamData=await api('GET','/api/stream');if($('radio-url'))$('radio-url').value=streamData.url||'';if($('live-toggle'))$('live-toggle').checked=streamData.is_live;}catch(e){}}
