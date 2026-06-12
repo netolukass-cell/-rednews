@@ -72,6 +72,7 @@ def init_db():
     conn.close()
     seed_news()
     seed_sponsors()
+    seed_solevan_article()
 
 DEFAULT_NEWS = [
     ("d1","featured","🚔","Segurança Pública",
@@ -121,6 +122,67 @@ def seed_sponsors():
             "INSERT OR IGNORE INTO sponsors (slot,name,tagline,cta_text,cta_url,image_url,theme) VALUES (?,?,?,?,?,?,?)",
             s
         )
+    conn.commit()
+    conn.close()
+
+SOLEVAN_BODY = """
+<div style="text-align:center;margin-bottom:24px">
+  <img src="https://i.imgur.com/mc4iVWI.png" alt="Campeonato de Sinuca" style="max-width:100%;border-radius:8px">
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;margin-bottom:28px">
+  <div style="text-align:center">
+    <img src="https://i.imgur.com/B2O7GeZ.png" alt="Jack Solevan" style="width:100%;max-width:360px;border-radius:8px">
+    <p style="color:#888;font-style:italic;font-size:13px;margin-top:8px">Jack Solevan ergue o cheque de US$ 10.000 momentos após cravar a bola 8 que decidiu o título.</p>
+  </div>
+  <div>
+    <p><strong style="color:#b30000">MONTGOMERY, RED COUNTY</strong> — Foram quase três horas de taco, giz e silêncio tenso entre uma tacada e outra, mas no fim sobrou um nome só: <strong style="color:#b30000">Jack Solevan</strong>, que embolsou <strong>US$ 10.000</strong> ao vencer o Campeonato de Sinuca do <strong>Bar do Joe</strong> na noite desta terça.</p>
+    <p>A casa encheu cedo. Quando o balcão fechou as inscrições, a chave já tinha gente de sobra disputando as mesas — e plateia o bastante pra deixar qualquer iniciante com a mão tremendo no taco.</p>
+    <p>Solevan não foi o favorito declarado. Subiu rodada por rodada, segurou pressão na semifinal e chegou à decisão sem dar muito espetáculo, mas sem errar o que não podia errar. Foi exatamente o que bastou.</p>
+  </div>
+</div>
+<hr style="border:none;border-top:1px solid #2a2a2e;margin:24px 0">
+<table style="width:100%;border-collapse:collapse;text-align:center;margin-bottom:28px">
+  <tr>
+    <td style="padding:14px;border:1px solid #1d1d22"><strong style="color:#b30000;display:block;font-size:11px;letter-spacing:1px;font-family:monospace;margin-bottom:4px">CAMPEÃO</strong><strong>Jack Solevan</strong></td>
+    <td style="padding:14px;border:1px solid #1d1d22"><strong style="color:#b30000;display:block;font-size:11px;letter-spacing:1px;font-family:monospace;margin-bottom:4px">PRÊMIO</strong><strong>US$ 10.000</strong></td>
+    <td style="padding:14px;border:1px solid #1d1d22"><strong style="color:#b30000;display:block;font-size:11px;letter-spacing:1px;font-family:monospace;margin-bottom:4px">LOCAL</strong><strong>Bar do Joe</strong></td>
+    <td style="padding:14px;border:1px solid #1d1d22"><strong style="color:#b30000;display:block;font-size:11px;letter-spacing:1px;font-family:monospace;margin-bottom:4px">EVENTO</strong><strong>Campeonato de Sinuca</strong></td>
+  </tr>
+</table>
+<hr style="border:none;border-top:1px solid #2a2a2e;margin:24px 0">
+<h2>A FINAL QUE PAROU O BAR</h2>
+<p>A decisão colocou frente a frente <strong>Jack Solevan</strong> e <strong>Klaus Vogel</strong>. Vogel abriu vantagem, encaçapou bem no começo e chegou a deixar Solevan na corda bamba. Mas bastou uma bola fácil escapar da caçapa pra virada começar.</p>
+<p>Daí pra frente foi Solevan no controle. Tacada limpa, sem firula, fechando a mesa com a calma de quem já sabia onde ia terminar. A bola 8 caiu na lateral direita e o bar veio abaixo. <strong>Lee Nash</strong>, que tinha caído na semi, foi um dos primeiros a aplaudir.</p>
+<p><strong>Riley Vance</strong>, <strong>Tremaine Hill</strong> e <strong>Uriell Garret</strong> também passaram pelas mesas e ajudaram a fazer a noite render. Mas o cheque, esse, saiu com um dono só.</p>
+<blockquote style="border-left:3px solid #b30000;padding-left:16px;margin:20px 0;color:#ccc;font-style:italic">
+  <p>"No meio da final eu já tava perdendo. Aí o Vogel deixou uma boba escapar e eu pensei: agora é minha. Dez mil dólares mudam a semana de qualquer um."</p>
+  <footer style="color:#b30000;font-style:normal;font-weight:700;margin-top:8px">— Jack Solevan, campeão</footer>
+</blockquote>
+<hr style="border:none;border-top:1px solid #2a2a2e;margin:24px 0">
+<h2 style="color:#b30000">BAR DO JOE: ONDE MONTGOMERY SE ENCONTRA</h2>
+<p>Mais uma vez o <strong>Bar do Joe</strong> provou que, quando chama, a cidade aparece. Mesa cheia, cerveja liberada e aquela mistura de quem joga pra valer com quem só veio comentar tacada alheia.</p>
+<p>E a julgar pelo movimento de ontem, essa não vai ser a última. A organização já dava como certa uma nova edição, com a bolada do prêmio podendo subir ainda mais.</p>
+<p>Fica o aviso da <strong style="color:#b30000">Red News</strong>: na próxima, chegue antes de o balcão fechar as inscrições. As boas histórias de Red County não esperam quem fica em casa.</p>
+<hr style="border:none;border-top:1px solid #2a2a2e;margin:24px 0">
+<div style="text-align:right;color:#888;font-size:13px">
+  <em>Publicado por</em><br>
+  <strong style="color:#b30000;font-size:15px">Beau Hollister</strong><br>
+  <strong>Red News</strong> — Rádio · Jornal · Red County
+</div>
+"""
+
+def seed_solevan_article():
+    conn = get_db()
+    conn.execute(
+        "INSERT OR IGNORE INTO news (id,type,icon,cat,title,desc,body,image_url,time_str,label,created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+        ("solevan-2026-06-11", "featured", "🎱", "Esportes",
+         "Solevan fatura US$ 10 mil e vira o novo rei da sinuca",
+         "Final apertada no Bar do Joe coroa Jack Solevan diante de casa lotada em Montgomery",
+         SOLEVAN_BODY,
+         "https://i.imgur.com/mc4iVWI.png",
+         "Hoje, 11/06", "EXCLUSIVO",
+         1749686400)
+    )
     conn.commit()
     conn.close()
 
