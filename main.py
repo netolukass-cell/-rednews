@@ -181,7 +181,7 @@ def seed_solevan_article():
          SOLEVAN_BODY,
          "https://i.imgur.com/mc4iVWI.png",
          "Hoje, 11/06", "EXCLUSIVO",
-         1749686400)
+         int(time.time()))
     )
     conn.commit()
     conn.close()
