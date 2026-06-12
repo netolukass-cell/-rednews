@@ -252,8 +252,22 @@ class StreamUpdate(BaseModel):
 
 # ── Auth endpoints ────────────────────────────────────────────────────────────
 
+ENV_ADMIN_PWD = os.environ.get("ADMIN_PASSWORD", "")
+
+def _check_password(plain: str) -> bool:
+    h = hashlib.sha256(plain.encode()).hexdigest()
+    # env var takes priority — always works regardless of DB state
+    if ENV_ADMIN_PWD:
+        return plain == ENV_ADMIN_PWD or h == hashlib.sha256(ENV_ADMIN_PWD.encode()).hexdigest()
+    conn = get_db()
+    row = conn.execute("SELECT value FROM settings WHERE key='admin_hash'").fetchone()
+    conn.close()
+    return bool(row) and h == row["value"]
+
 @app.get("/api/auth/status")
 def auth_status():
+    if ENV_ADMIN_PWD:
+        return {"has_password": True}
     conn = get_db()
     has = bool(conn.execute("SELECT 1 FROM settings WHERE key='admin_hash'").fetchone())
     conn.close()
@@ -261,6 +275,11 @@ def auth_status():
 
 @app.post("/api/auth/setup")
 def setup_password(req: SetupReq):
+    if ENV_ADMIN_PWD:
+        # env var set — no DB setup needed, just validate and issue token
+        if not _check_password(req.password):
+            raise HTTPException(401, "Senha incorreta")
+        return {"token": new_token()}
     conn = get_db()
     if conn.execute("SELECT 1 FROM settings WHERE key='admin_hash'").fetchone():
         conn.close()
@@ -275,12 +294,7 @@ def setup_password(req: SetupReq):
 
 @app.post("/api/auth/login")
 def login(req: LoginReq):
-    conn = get_db()
-    row = conn.execute("SELECT value FROM settings WHERE key='admin_hash'").fetchone()
-    conn.close()
-    if not row:
-        raise HTTPException(400, "Nenhuma senha configurada")
-    if hashlib.sha256(req.password.encode()).hexdigest() != row["value"]:
+    if not _check_password(req.password):
         raise HTTPException(401, "Senha incorreta")
     return {"token": new_token()}
 
