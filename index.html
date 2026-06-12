@@ -107,6 +107,8 @@ input,textarea,select{font-family:inherit}
 .ad-banner{border:1px solid #1f1f24;border-radius:8px;overflow:hidden;background:#0d0d0f;margin-top:16px}
 .ad-bar{display:flex;align-items:center;justify-content:space-between;padding:4px 10px;background:#0a0a0c;border-bottom:1px solid #18181c}
 .ad-lbl{font-family:'Share Tech Mono',monospace;font-size:8.5px;letter-spacing:1.5px;color:#54545a;text-transform:uppercase}
+.ad-close{background:none;border:none;color:#54545a;font-size:15px;line-height:1;padding:2px 4px;border-radius:3px;transition:color .15s;cursor:pointer}
+.ad-close:hover{color:#f2f2ee}
 .ad-body-dark{position:relative;display:flex;align-items:center;gap:22px;background:radial-gradient(circle at 16% 50%,#3a1310,#160505 80%);padding:20px 26px;cursor:pointer;overflow:hidden}
 .ad-stripe{position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent,transparent 6px,rgba(0,0,0,.13) 6px,rgba(0,0,0,.13) 7px);opacity:.5;pointer-events:none}
 .ad-body-dark img{position:relative;width:104px;height:104px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 6px 14px rgba(0,0,0,.55))}
@@ -298,12 +300,12 @@ input,textarea,select{font-family:inherit}
 .auth-ok{display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;padding:6px 14px;border-radius:4px;background:#0f2a0f;color:#2ec27a;border:1px solid #1a4a1a}
 .live-toggle-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
 .live-toggle-lbl{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;color:#9a9a96;text-transform:uppercase}
-.sw{position:relative;width:40px;height:22px;flex-shrink:0}
-.sw input{opacity:0;width:0;height:0}
-.sw .sl{position:absolute;inset:0;background:#1d1d22;border-radius:22px;cursor:pointer;transition:background .2s}
-.sw .sl:before{content:'';position:absolute;width:16px;height:16px;background:#6a6a70;border-radius:50%;left:3px;top:3px;transition:all .2s}
-.sw input:checked+.sl{background:#8b0000}
-.sw input:checked+.sl:before{background:#ff2a2a;transform:translateX(18px)}
+.toggler{position:relative;width:40px;height:22px;flex-shrink:0}
+.toggler input{opacity:0;width:0;height:0}
+.toggler .sl{position:absolute;inset:0;background:#1d1d22;border-radius:22px;cursor:pointer;transition:background .2s}
+.toggler .sl:before{content:'';position:absolute;width:16px;height:16px;background:#6a6a70;border-radius:50%;left:3px;top:3px;transition:all .2s}
+.toggler input:checked+.sl{background:#8b0000}
+.toggler input:checked+.sl:before{background:#ff2a2a;transform:translateX(18px)}
 .spon-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
 .spon-grid label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:#7a7a82;text-transform:uppercase;display:block;margin-bottom:4px}
 
@@ -354,7 +356,7 @@ input,textarea,select{font-family:inherit}
       <div class="admin-sec" id="radio-sec" style="display:none">
         <div class="admin-sec-ttl">Rádio ao vivo</div>
         <div class="live-toggle-row">
-          <label class="sw"><input type="checkbox" id="live-toggle" onchange="toggleLive()"><span class="sl"></span></label>
+          <label class="toggler"><input type="checkbox" id="live-toggle" onchange="toggleLive()"><span class="sl"></span></label>
           <span class="live-toggle-lbl">Transmissão ativa</span>
         </div>
         <div class="admin-row"><input class="ai" id="radio-url" type="url" placeholder="URL do stream (mp3/icecast)"><button class="abtn" onclick="saveRadio()">Salvar</button></div>
@@ -484,14 +486,16 @@ function buildMaisLidas(list){
   return `<div class="sw"><div class="sw-head">Mais lidas</div><div class="sw-body">${rows}</div></div>`;
 }
 
+function closeAd(el){el.closest('.ad-banner').style.display='none'}
+
 function buildAdDark(s){
   if(!s)return'';
-  return `<div class="ad-banner"><div class="ad-bar"><span class="ad-lbl">Publicidade</span></div><div class="ad-body-dark" onclick="window.open('${esc(s.cta_url||'#')}','_blank')"><div class="ad-stripe"></div><img src="${esc(s.image_url)}" alt="${esc(s.name)}"><div class="ad-content"><div class="ad-ttl-dark">${esc(s.name)}</div><div class="ad-sub-dark">${esc(s.tagline)}</div><a class="ad-cta-dark" href="${esc(s.cta_url||'#')}" target="_blank">${esc(s.cta_text)}</a></div></div></div>`;
+  return `<div class="ad-banner"><div class="ad-bar"><span class="ad-lbl">Publicidade</span><button class="ad-close" onclick="closeAd(this)" title="Fechar">✕</button></div><div class="ad-body-dark" onclick="window.open('${esc(s.cta_url||'#')}','_blank')"><div class="ad-stripe"></div><img src="${esc(s.image_url)}" alt="${esc(s.name)}"><div class="ad-content"><div class="ad-ttl-dark">${esc(s.name)}</div><div class="ad-sub-dark">${esc(s.tagline)}</div><a class="ad-cta-dark" href="${esc(s.cta_url||'#')}" target="_blank" onclick="event.stopPropagation()">${esc(s.cta_text)}</a></div></div></div>`;
 }
 
 function buildAdLight(s){
   if(!s)return'';
-  return `<div class="ad-banner"><div class="ad-bar"><span class="ad-lbl">Publicidade</span></div><div class="ad-body-light" onclick="window.open('${esc(s.cta_url||'#')}','_blank')"><img src="${esc(s.image_url)}" alt="${esc(s.name)}"><div class="ad-ttl-light">${esc(s.name)}</div><div class="ad-sub-light">${esc(s.tagline)}</div><a class="ad-cta-light" href="${esc(s.cta_url||'#')}" target="_blank">${esc(s.cta_text)}</a></div></div>`;
+  return `<div class="ad-banner"><div class="ad-bar"><span class="ad-lbl">Publicidade</span><button class="ad-close" onclick="closeAd(this)" title="Fechar">✕</button></div><div class="ad-body-light" onclick="window.open('${esc(s.cta_url||'#')}','_blank')"><img src="${esc(s.image_url)}" alt="${esc(s.name)}"><div class="ad-ttl-light">${esc(s.name)}</div><div class="ad-sub-light">${esc(s.tagline)}</div><a class="ad-cta-light" href="${esc(s.cta_url||'#')}" target="_blank" onclick="event.stopPropagation()">${esc(s.cta_text)}</a></div></div>`;
 }
 
 // ── RENDER HOME ─────────────────────────────────────────────────────────────
