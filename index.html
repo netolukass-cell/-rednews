@@ -90,6 +90,8 @@ input,textarea,select{font-family:inherit}
 .lead-meta{display:flex;align-items:center;gap:16px;margin-top:14px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;color:#a6a6a0;text-transform:uppercase}
 .lead-meta span{display:flex;align-items:center;gap:6px}
 .lead-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#4a1c1c}
+.lead-no-img{height:auto!important;min-height:160px}
+.lead-no-img .lead-overlay{position:relative;background:none;padding:24px 24px 20px}
 
 .side-col{display:flex;flex-direction:column;gap:16px}
 .sec-item{display:flex;gap:13px;padding-bottom:16px;border-bottom:1px solid #1d1d22;cursor:pointer}
@@ -647,11 +649,11 @@ function renderHome(sponsors){
   const ultimas=newsData.slice(0,6);
   const hs=sponsors||{};
 
-  const leadHtml=lead?`<div class="lead-card" onclick="openArticle('${lead.id}')">
-    ${lead.img?`<img src="${esc(lead.img)}" alt="">`:`<div class="lead-ph">${I.img}</div>`}
+  const leadHtml=lead?`<div class="lead-card${lead.image_url?'':' lead-no-img'}" onclick="openArticle('${lead.id}')">
+    ${lead.image_url?`<img src="${esc(lead.image_url)}" alt="">`:''}
     <div class="lead-tags"><span class="tag-cat">${esc(lead.cat)}</span>${lead.label?`<span class="tag-live"><span class="dot"></span>${esc(lead.label)}</span>`:''}</div>
     <div class="lead-overlay"><h2>${esc(lead.title)}</h2>${lead.desc?`<div class="lead-dek">${esc(lead.desc)}</div>`:''}<div class="lead-meta"><span>${I.clk}${esc(lead.time_str)}</span></div></div>
-  </div>`:`<div class="lead-card" style="display:flex;align-items:center;justify-content:center;color:#4a1c1c">${I.img}</div>`;
+  </div>`:`<div class="lead-card lead-no-img" style="display:flex;align-items:center;justify-content:center;color:#4a1c1c">${I.img}</div>`;
 
   const secsHtml=secs.map(n=>`<div class="sec-item" onclick="openArticle('${n.id}')"><div class="sec-thumb">${I.ims}</div><div><div class="sec-cat">${esc(n.cat)}</div><div class="sec-ttl">${esc(n.title)}</div><div class="sec-time">${esc(n.time_str)}</div></div></div>`).join('');
   const mlHtml=newsData.slice(0,5).map((n,i)=>`<div class="ml-item"><span class="num">${i+1}</span><span class="txt">${esc(n.title)}</span></div>`).join('');
