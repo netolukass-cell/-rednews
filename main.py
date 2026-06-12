@@ -5,6 +5,8 @@ import sqlite3, hashlib, secrets, time, os
 from typing import Optional
 import httpx
 
+from fastapi.staticfiles import StaticFiles
+
 app = FastAPI(docs_url=None, redoc_url=None)
 
 DB_PATH = os.environ.get("DB_PATH", "rednews.db")
@@ -39,10 +41,28 @@ def init_db():
             token      TEXT PRIMARY KEY,
             created_at INTEGER
         );
+        CREATE TABLE IF NOT EXISTS comments (
+            id         TEXT PRIMARY KEY,
+            article_id TEXT NOT NULL,
+            author     TEXT NOT NULL,
+            body       TEXT NOT NULL,
+            likes      INTEGER DEFAULT 0,
+            created_at INTEGER
+        );
+        CREATE TABLE IF NOT EXISTS sponsors (
+            slot       TEXT PRIMARY KEY,
+            name       TEXT,
+            tagline    TEXT,
+            cta_text   TEXT,
+            cta_url    TEXT,
+            image_url  TEXT,
+            theme      TEXT DEFAULT 'dark'
+        );
     """)
     conn.commit()
     conn.close()
     seed_news()
+    seed_sponsors()
 
 DEFAULT_NEWS = [
     ("d1","featured","🚔","Segurança Pública",
@@ -78,6 +98,21 @@ def seed_news():
                 (*d, t)
             )
         conn.commit()
+    conn.close()
+
+DEFAULT_SPONSORS = [
+    ("hero", "Bar do Joe", "Onde Red County se encontra", "Conheça o Bar do Joe", "#", "assets/spon-bardojoe.png", "dark"),
+    ("sidebar", "Well Stacked Pizza", "A fatia mais alta de Red County", "Ver cardápio", "#", "assets/spon-pizza.png", "light"),
+]
+
+def seed_sponsors():
+    conn = get_db()
+    for s in DEFAULT_SPONSORS:
+        conn.execute(
+            "INSERT OR IGNORE INTO sponsors (slot,name,tagline,cta_text,cta_url,image_url,theme) VALUES (?,?,?,?,?,?,?)",
+            s
+        )
+    conn.commit()
     conn.close()
 
 init_db()
@@ -347,8 +382,77 @@ async def get_rates():
     except Exception:
         return {"usd":{"rate":0,"change":0},"eur":{"rate":0,"change":0}}
 
+# ── Comments endpoints ────────────────────────────────────────────────────────
+
+class CommentItem(BaseModel):
+    author: str
+    body: str
+
+@app.get("/api/comments/{article_id}")
+def get_comments(article_id: str):
+    conn = get_db()
+    rows = conn.execute(
+        "SELECT * FROM comments WHERE article_id=? ORDER BY created_at DESC", (article_id,)
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+@app.post("/api/comments/{article_id}")
+def add_comment(article_id: str, item: CommentItem):
+    if not item.author.strip() or not item.body.strip():
+        raise HTTPException(400, "Nome e comentário obrigatórios")
+    cid = secrets.token_hex(8)
+    conn = get_db()
+    conn.execute(
+        "INSERT INTO comments (id,article_id,author,body,likes,created_at) VALUES (?,?,?,?,0,?)",
+        (cid, article_id, item.author.strip()[:80], item.body.strip()[:2000], int(time.time()))
+    )
+    conn.commit()
+    conn.close()
+    return {"id": cid}
+
+@app.post("/api/comments/{article_id}/{comment_id}/like")
+def like_comment(article_id: str, comment_id: str):
+    conn = get_db()
+    conn.execute(
+        "UPDATE comments SET likes=likes+1 WHERE id=? AND article_id=?", (comment_id, article_id)
+    )
+    conn.commit()
+    conn.close()
+    return {"ok": True}
+
+# ── Sponsors endpoints ────────────────────────────────────────────────────────
+
+class SponsorUpdate(BaseModel):
+    name: Optional[str] = None
+    tagline: Optional[str] = None
+    cta_text: Optional[str] = None
+    cta_url: Optional[str] = None
+    image_url: Optional[str] = None
+    theme: Optional[str] = None
+
+@app.get("/api/sponsors")
+def get_sponsors():
+    conn = get_db()
+    rows = conn.execute("SELECT * FROM sponsors").fetchall()
+    conn.close()
+    return {r["slot"]: dict(r) for r in rows}
+
+@app.put("/api/sponsors/{slot}")
+def update_sponsor(slot: str, data: SponsorUpdate, token: str = Depends(verify_token)):
+    conn = get_db()
+    fields = {k: v for k, v in data.model_dump().items() if v is not None}
+    if fields:
+        sets = ", ".join(f"{k}=?" for k in fields)
+        conn.execute(f"UPDATE sponsors SET {sets} WHERE slot=?", (*fields.values(), slot))
+        conn.commit()
+    conn.close()
+    return {"ok": True}
+
 # ── Static ────────────────────────────────────────────────────────────────────
 
 @app.get("/")
 def index():
     return FileResponse("index.html")
+
+app.mount("/assets", StaticFiles(directory="assets"), name="assets")

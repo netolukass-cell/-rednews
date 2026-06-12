@@ -1,1583 +1,731 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RED NEWS — A Voz de Red County</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --red:        #cc0000;
-      --red-dark:   #8b0000;
-      --red-bright: #ff1a1a;
-      --black:      #080808;
-      --dark:       #0f0f0f;
-      --dark2:      #161616;
-      --dark3:      #1e1e1e;
-      --dark4:      #242424;
-      --gray:       #777777;
-      --gray-light: #aaaaaa;
-      --white:      #f0f0eb;
-      --white2:     #d8d8d0;
-      --green:      #22c55e;
-      --yellow:     #eab308;
-      --font-head:  'Oswald', sans-serif;
-      --font-body:  'Source Serif 4', serif;
-      --font-mono:  'Share Tech Mono', monospace;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background: var(--black);
-      color: var(--white);
-      font-family: var(--font-body);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-    body::before {
-      content: '';
-      position: fixed; inset: 0;
-      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.05) 2px, rgba(0,0,0,0.05) 4px);
-      pointer-events: none;
-      z-index: 9998;
-    }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Red News — Red County, San Andreas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400;1,8..60,600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#08080a;color:#f2f2ee;font-family:'Source Serif 4',serif;min-height:100vh}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer}
+input,textarea,select{font-family:inherit}
+@keyframes rn-ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes rn-pulse{0%,100%{opacity:1}50%{opacity:0.25}}
+@keyframes rn-ripple{0%{box-shadow:0 0 0 0 rgba(204,0,0,0.5)}70%{box-shadow:0 0 0 20px rgba(204,0,0,0)}100%{box-shadow:0 0 0 0 rgba(204,0,0,0)}}
 
-    /* ── TICKER ── */
-    .ticker-wrap {
-      background: var(--red);
-      overflow: hidden;
-      white-space: nowrap;
-      padding: 5px 0;
-      border-bottom: 1px solid var(--red-dark);
-      position: relative;
-      z-index: 10;
-    }
-    .ticker-label {
-      display: inline-block;
-      background: var(--black);
-      color: var(--red);
-      font-family: var(--font-head);
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 3px;
-      padding: 2px 14px;
-      margin-right: 18px;
-      vertical-align: middle;
-    }
-    .ticker-text {
-      display: inline-block;
-      animation: ticker 50s linear infinite;
-      font-family: var(--font-head);
-      font-size: 0.72rem;
-      letter-spacing: 1.5px;
-      color: var(--white);
-      vertical-align: middle;
-    }
-    @keyframes ticker { 0% { transform: translateX(100vw); } 100% { transform: translateX(-100%); } }
+.util-strip{display:flex;align-items:center;justify-content:space-between;padding:8px 40px;background:#0c0c0e;border-bottom:1px solid #1c1c20;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7a7a82}
+.util-strip .left{display:flex;align-items:center;gap:8px;text-transform:uppercase}
+.util-strip .right{display:flex;align-items:center;gap:20px}
+.util-live{display:flex;align-items:center;gap:7px;color:#ff3a3a}
+.util-live .dot{width:7px;height:7px;border-radius:50%;background:#ff2a2a;box-shadow:0 0 8px #ff2a2a;animation:rn-pulse 1.3s ease-in-out infinite}
+.util-item{display:flex;align-items:center;gap:6px}
 
-    /* ── SITE HEADER ── */
-    .site-header { background: var(--dark); border-bottom: 3px solid var(--red); }
+.masthead{display:flex;align-items:center;justify-content:space-between;gap:30px;padding:26px 40px;background:linear-gradient(120deg,#0d0303 0%,#150505 50%,#0b0203 100%);border-bottom:1px solid #240a0a;position:relative;overflow:hidden;min-height:152px}
+.masthead-map{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.masthead-map img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 50%;opacity:.92}
+.masthead-map .g1{position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,2,2,.93) 0%,rgba(10,2,2,.42) 28%,rgba(8,2,2,.3) 55%,rgba(11,2,2,.78) 82%,rgba(9,2,2,.95) 100%)}
+.masthead-map .g2{position:absolute;inset:0;background:linear-gradient(0deg,rgba(8,2,2,.62) 0%,transparent 42%,transparent 70%,rgba(8,2,2,.5) 100%)}
+.map-dot{position:absolute;transform:translate(-50%,-50%)}
+.map-dot-inner{display:block;border-radius:50%}
+.map-dot-ring{position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 0 rgba(204,0,0,.65);animation:rn-ripple 2.4s ease-out infinite}
+.masthead-wm{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;pointer-events:none;user-select:none;z-index:1;text-align:center}
+.masthead-logo{display:flex;align-items:center;gap:16px;position:relative;z-index:2}
+.mast-badge{width:66px;height:66px;border-radius:12px;overflow:hidden;background:#000;border:1px solid #2e0c0c;box-shadow:0 0 30px rgba(204,0,0,.4);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mast-badge img{width:100%;height:100%;object-fit:contain;display:block}
+.mast-title{font-family:'Oswald',sans-serif;font-weight:700;font-size:42px;line-height:.92;letter-spacing:1px;font-style:italic}
+.mast-sub{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:5px;color:#6a4a4a;text-transform:uppercase;margin-top:5px}
+.mast-search{display:flex;align-items:center;background:#0a0a0c;border:1px solid #2c2c32;border-radius:8px;overflow:hidden;width:340px;max-width:38%;position:relative;z-index:2}
+.mast-search input{flex:1;background:transparent;border:none;outline:none;color:#f2f2ee;font-size:14px;padding:11px 15px}
+.mast-search button{background:#cc0000;border:none;color:#fff;padding:0 16px;align-self:stretch;display:flex;align-items:center;transition:background .15s}
+.mast-search button:hover{background:#ff2a2a}
 
-    /* Header hero */
-    .header-hero {
-      position: relative;
-      overflow: hidden;
-      background: linear-gradient(160deg, #0d0000 0%, #1a0505 35%, #0d0000 70%, #110000 100%);
-      min-height: 130px;
-    }
-    /* Animated grid map */
-    .header-hero::before {
-      content: '';
-      position: absolute; inset: 0;
-      background-image:
-        linear-gradient(rgba(204,0,0,0.07) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(204,0,0,0.07) 1px, transparent 1px);
-      background-size: 44px 44px;
-      pointer-events: none;
-    }
-    /* Red glow from center */
-    .header-hero::after {
-      content: '';
-      position: absolute; inset: 0;
-      background:
-        radial-gradient(ellipse 60% 120% at 55% 50%, rgba(180,0,0,0.18) 0%, transparent 70%),
-        radial-gradient(ellipse 30% 80% at 20% 50%, rgba(100,0,0,0.1) 0%, transparent 60%);
-      pointer-events: none;
-    }
+.info-bar{display:flex;align-items:stretch;background:#0c0c0e;border-top:1px solid #1c1c20;border-bottom:1px solid #1c1c20;overflow-x:auto}
+.info-tile{display:flex;align-items:center;gap:13px;padding:13px 24px;border-right:1px solid #18181c;flex:1;min-width:200px}
+.info-tile:last-child{border-right:none}
+.tile-icon{color:#cc0000;display:flex;flex-shrink:0}
+.tile-name{font-family:'Oswald',sans-serif;font-weight:600;font-size:12.5px;letter-spacing:1.5px;color:#dcdcd6;text-transform:uppercase}
+.tile-status{display:flex;align-items:center;gap:7px;margin-top:4px;font-family:'Share Tech Mono',monospace;font-size:11px;color:#8a8a8a}
+.sdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dg{background:#2ec27a}.dy{background:#f5a01a}.dr{background:#ff3a3a}
+.route-badge{flex-shrink:0;width:32px;height:23px;border-radius:4px;background:#cc0000;display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-weight:700;font-size:13px;color:#fff}
 
-    .header-hero-inner {
-      position: relative; z-index: 2;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 28px;
-      gap: 24px;
-    }
+.site-nav{display:flex;align-items:stretch;background:#101012;border-bottom:1px solid #1f1f24;padding:0 30px}
+.site-nav a{font-family:'Oswald',sans-serif;font-weight:600;font-size:13.5px;letter-spacing:2px;text-transform:uppercase;color:#a8a8ae;padding:14px 22px;display:flex;align-items:center;gap:9px;transition:color .15s}
+.site-nav a:hover{color:#fff}
+.site-nav a.active{color:#fff;background:#cc0000}
 
-    /* Logo */
-    .logo-area {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      flex-shrink: 0;
-    }
-    .logo-icon {
-      width: 84px; height: 84px;
-      background: linear-gradient(145deg, var(--red) 0%, #a00000 100%);
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 2.6rem;
-      flex-shrink: 0;
-      box-shadow: 0 0 40px rgba(204,0,0,0.6), 0 0 80px rgba(204,0,0,0.2), inset 0 1px 0 rgba(255,100,100,0.2);
-    }
-    .logo-text h1 {
-      font-family: var(--font-head);
-      font-size: 4rem;
-      font-weight: 700;
-      letter-spacing: 8px;
-      line-height: 1;
-      color: var(--white);
-      text-shadow: 0 2px 20px rgba(0,0,0,0.8), 2px 2px 0 rgba(0,0,0,0.5);
-    }
-    .logo-text h1 em { color: var(--red); font-style: normal; }
-    .logo-text .tagline {
-      font-family: var(--font-mono);
-      font-size: 0.62rem;
-      letter-spacing: 5px;
-      color: #666;
-      margin-top: 7px;
-      text-transform: uppercase;
-    }
-    .logo-text .tagline b { color: rgba(204,0,0,0.7); font-weight: normal; }
+.compact-hdr{display:flex;align-items:center;justify-content:space-between;gap:30px;padding:16px 40px;background:linear-gradient(120deg,#0d0303,#0b0203);border-bottom:1px solid #240a0a}
+.compact-logo{display:flex;align-items:center;gap:13px}
+.compact-badge{width:46px;height:46px;border-radius:9px;overflow:hidden;background:#000;border:1px solid #2e0c0c;box-shadow:0 0 22px rgba(204,0,0,.4);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.compact-badge img{width:100%;height:100%;object-fit:contain;display:block}
+.compact-title{font-family:'Oswald',sans-serif;font-weight:700;font-size:26px;font-style:italic;letter-spacing:.5px;white-space:nowrap}
+.compact-nav{display:flex;align-items:center;gap:8px}
+.compact-nav a{font-family:'Oswald',sans-serif;font-weight:600;font-size:12.5px;letter-spacing:1.5px;text-transform:uppercase;color:#a8a8ae;padding:8px 14px;border-radius:5px;transition:color .15s}
+.compact-nav a:hover{color:#fff}
+.compact-nav a.active{color:#fff;background:#cc0000}
 
-    /* Center map label */
-    .header-center {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-      user-select: none;
-    }
-    .pulse-ring {
-      width: 12px; height: 12px; border-radius: 50%;
-      background: var(--red);
-      box-shadow: 0 0 0 0 rgba(204,0,0,0.6);
-      animation: ripple 2s ease-out infinite;
-      margin-bottom: 8px;
-    }
-    @keyframes ripple {
-      0%   { box-shadow: 0 0 0 0 rgba(204,0,0,0.5); }
-      70%  { box-shadow: 0 0 0 18px rgba(204,0,0,0); }
-      100% { box-shadow: 0 0 0 0 rgba(204,0,0,0); }
-    }
-    .county-name {
-      font-family: var(--font-head);
-      font-size: 1.3rem;
-      letter-spacing: 10px;
-      color: rgba(204,0,0,0.35);
-      text-transform: uppercase;
-    }
-    .coords {
-      font-family: var(--font-mono);
-      font-size: 0.55rem;
-      color: rgba(90,90,90,0.6);
-      letter-spacing: 2px;
-      margin-top: 5px;
-    }
+.ticker{display:flex;align-items:stretch;background:#cc0000;overflow:hidden}
+.ticker-lbl{background:#08080a;color:#ff2a2a;font-family:'Oswald',sans-serif;font-weight:700;font-size:12px;letter-spacing:3px;padding:9px 30px 9px 20px;display:flex;align-items:center;flex-shrink:0;clip-path:polygon(0 0,100% 0,calc(100% - 14px) 100%,0 100%)}
+.ticker-track{flex:1;overflow:hidden;display:flex;align-items:center}
+.ticker-inner{display:flex;white-space:nowrap;animation:rn-ticker 38s linear infinite;font-family:'Oswald',sans-serif;font-weight:500;font-size:13px;letter-spacing:.8px;color:#fff;text-transform:uppercase}
+.ticker-inner .ti{padding:0 26px}
+.ticker-inner .ts{opacity:.5}
 
-    /* Right panel */
-    .header-right {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 12px;
-      flex-shrink: 0;
-    }
-    .header-badges { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.hero-grid{display:grid;grid-template-columns:1fr 372px;gap:26px;padding:30px 40px 14px;max-width:1280px;margin:0 auto}
+.lead-card{position:relative;height:432px;border-radius:8px;overflow:hidden;border:1px solid #241010;background:#0c0202;cursor:pointer}
+.lead-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%}
+.lead-tags{position:absolute;top:16px;left:16px;display:flex;gap:8px;z-index:1}
+.tag-cat{background:#cc0000;color:#fff;font-family:'Oswald',sans-serif;font-weight:700;font-size:11px;letter-spacing:2px;padding:5px 12px;border-radius:3px;text-transform:uppercase}
+.tag-live{display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.72);border:1px solid #cc0000;color:#ff3a3a;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1.5px;padding:5px 10px;border-radius:3px;text-transform:uppercase}
+.tag-live .dot{width:6px;height:6px;border-radius:50%;background:#ff2a2a;animation:rn-pulse 1.3s infinite}
+.lead-overlay{position:absolute;left:0;right:0;bottom:0;padding:34px 28px 24px;background:linear-gradient(0deg,rgba(0,0,0,.95) 0%,rgba(0,0,0,.55) 52%,transparent 100%);z-index:1}
+.lead-overlay h2{font-family:'Oswald',sans-serif;font-weight:700;font-size:38px;line-height:1.02;letter-spacing:.3px;color:#fff;text-transform:uppercase;max-width:780px}
+.lead-dek{font-family:'Source Serif 4',serif;font-size:15.5px;line-height:1.55;color:#d6d6d0;margin-top:12px;max-width:680px}
+.lead-meta{display:flex;align-items:center;gap:16px;margin-top:14px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;color:#a6a6a0;text-transform:uppercase}
+.lead-meta span{display:flex;align-items:center;gap:6px}
+.lead-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#4a1c1c}
 
-    .badge-live {
-      display: flex; align-items: center; gap: 7px;
-      font-family: var(--font-head);
-      font-size: 0.7rem; letter-spacing: 2px;
-      color: var(--gray);
-      padding: 5px 12px;
-      border: 1px solid #252525;
-      border-radius: 3px;
-      background: rgba(0,0,0,0.6);
-      white-space: nowrap;
-    }
-    .badge-live i { width: 8px; height: 8px; border-radius: 50%; background: #2a2a2a; display: inline-block; flex-shrink: 0; }
-    .badge-live.on i { background: var(--red-bright); box-shadow: 0 0 8px var(--red-bright); animation: pulse 1.2s ease-in-out infinite; }
-    .badge-live.on { color: var(--red-bright); border-color: rgba(204,0,0,0.4); background: rgba(180,0,0,0.1); }
-    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.25; } }
+.side-col{display:flex;flex-direction:column;gap:16px}
+.sec-item{display:flex;gap:13px;padding-bottom:16px;border-bottom:1px solid #1d1d22;cursor:pointer}
+.sec-item:hover .sec-ttl{color:#ff3a3a}
+.sec-thumb{width:108px;height:78px;flex-shrink:0;border-radius:5px;background:linear-gradient(150deg,#1e0808,#0e0303);border:1px solid #241010;display:flex;align-items:center;justify-content:center;color:#4a1c1c;overflow:hidden}
+.sec-thumb img{width:100%;height:100%;object-fit:cover}
+.sec-cat{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:#ff3a3a;text-transform:uppercase;margin-bottom:5px}
+.sec-ttl{font-family:'Oswald',sans-serif;font-weight:600;font-size:16px;line-height:1.18;color:#f2f2ee;text-transform:uppercase;transition:color .15s}
+.sec-time{font-family:'Share Tech Mono',monospace;font-size:10px;color:#5e5e64;margin-top:6px;letter-spacing:1px}
 
-    .freq-badge {
-      font-family: var(--font-mono); font-size: 0.62rem;
-      color: var(--gray); display: flex; align-items: center; gap: 6px; letter-spacing: 1px;
-    }
-    .freq-badge span { color: var(--white2); }
+.mais-lidas{background:#101012;border:1px solid #1f1f24;border-radius:8px;padding:14px 16px}
+.ml-title{font-family:'Oswald',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;color:#cc0000;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.ml-item{display:flex;align-items:baseline;gap:12px;padding:9px 0;border-top:1px solid #1c1c20}
+.ml-item .num{font-family:'Oswald',sans-serif;font-weight:700;font-size:20px;color:#3a3a40;width:20px;flex-shrink:0}
+.ml-item .txt{font-family:'Source Serif 4',serif;font-size:13.5px;line-height:1.35;color:#cececa}
 
-    .search-bar { display: flex; align-items: center; }
-    .search-bar input {
-      background: rgba(0,0,0,0.6);
-      border: 1px solid #2a2a2a; border-right: none;
-      border-radius: 3px 0 0 3px;
-      color: var(--white); font-family: var(--font-mono); font-size: 0.68rem;
-      padding: 8px 14px; outline: none; width: 220px; transition: border-color 0.2s;
-    }
-    .search-bar input:focus { border-color: var(--red); }
-    .search-bar input::placeholder { color: #3a3a3a; }
-    .search-bar button {
-      background: var(--red); border: none; border-radius: 0 3px 3px 0;
-      color: var(--white); font-size: 0.9rem; padding: 8px 14px; cursor: pointer; transition: background 0.15s;
-    }
-    .search-bar button:hover { background: var(--red-bright); }
+.ad-banner{border:1px solid #1f1f24;border-radius:8px;overflow:hidden;background:#0d0d0f;margin-top:16px}
+.ad-bar{display:flex;align-items:center;justify-content:space-between;padding:4px 10px;background:#0a0a0c;border-bottom:1px solid #18181c}
+.ad-lbl{font-family:'Share Tech Mono',monospace;font-size:8.5px;letter-spacing:1.5px;color:#54545a;text-transform:uppercase}
+.ad-body-dark{position:relative;display:flex;align-items:center;gap:22px;background:radial-gradient(circle at 16% 50%,#3a1310,#160505 80%);padding:20px 26px;cursor:pointer;overflow:hidden}
+.ad-stripe{position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent,transparent 6px,rgba(0,0,0,.13) 6px,rgba(0,0,0,.13) 7px);opacity:.5;pointer-events:none}
+.ad-body-dark img{position:relative;width:104px;height:104px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 6px 14px rgba(0,0,0,.55))}
+.ad-content{position:relative;flex:1;min-width:0}
+.ad-ttl-dark{font-family:'Oswald',sans-serif;font-weight:700;font-size:21px;line-height:1.1;letter-spacing:.5px;color:#f3e7cf;text-transform:uppercase}
+.ad-sub-dark{font-family:'Source Serif 4',serif;font-size:13.5px;line-height:1.5;color:#c9a98a;margin-top:7px}
+.ad-cta-dark{display:inline-block;margin-top:14px;background:#cc0000;color:#fff;font-family:'Oswald',sans-serif;font-weight:600;font-size:12.5px;letter-spacing:1.5px;text-transform:uppercase;padding:11px 24px;border-radius:6px;transition:background .15s}
+.ad-cta-dark:hover{background:#ff2a2a}
+.ad-body-light{background:linear-gradient(158deg,#f4ece0,#e6d6bf);padding:20px 18px 22px;text-align:center;cursor:pointer}
+.ad-body-light img{width:118px;height:auto;object-fit:contain;display:block;margin:0 auto}
+.ad-ttl-light{font-family:'Oswald',sans-serif;font-weight:700;font-size:17px;letter-spacing:.5px;color:#7a1f17;text-transform:uppercase;margin-top:12px}
+.ad-sub-light{font-family:'Source Serif 4',serif;font-size:13px;line-height:1.5;color:#6d4f3a;margin-top:7px}
+.ad-cta-light{display:inline-block;margin-top:14px;background:#7a1f17;color:#f5ece0;font-family:'Oswald',sans-serif;font-weight:600;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;padding:10px 22px;border-radius:5px;transition:background .15s}
+.ad-cta-light:hover{background:#9a2a1f}
 
-    /* ── INFO BAR ── */
-    .info-bar {
-      background: #0d0d0d;
-      border-top: 1px solid #1a1a1a;
-      border-bottom: 1px solid #1a1a1a;
-    }
-    .info-bar-inner {
-      display: flex; align-items: stretch;
-      max-width: 100%; overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .info-bar-inner::-webkit-scrollbar { display: none; }
+.ultimas{max-width:1280px;margin:0 auto;padding:22px 40px 26px}
+.sec-hdr{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.sec-ttl-bar{font-family:'Oswald',sans-serif;font-weight:700;font-size:17px;letter-spacing:2px;color:#fff;text-transform:uppercase;border-left:4px solid #cc0000;padding-left:12px}
+.sec-line{flex:1;height:1px;background:#1d1d22}
+.sec-link{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1.5px;color:#7a7a82;text-transform:uppercase;display:flex;align-items:center;gap:6px;transition:color .15s}
+.sec-link:hover{color:#ff3a3a}
+.cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.ncard{background:#0f0f11;border:1px solid #1d1d22;border-radius:8px;overflow:hidden;cursor:pointer;transition:border-color .15s}
+.ncard:hover{border-color:#8b0000}
+.ncard .nthumb{height:158px;position:relative;background:linear-gradient(150deg,#1e0808,#0c0202);border-bottom:1px solid #1d1d22;display:flex;align-items:center;justify-content:center;color:#4a1c1c;overflow:hidden}
+.ncard .nthumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ncard .ntag{position:absolute;top:11px;left:11px;background:#cc0000;color:#fff;font-family:'Oswald',sans-serif;font-weight:600;font-size:10px;letter-spacing:1.5px;padding:3px 9px;border-radius:2px;text-transform:uppercase}
+.ncard .nbody{padding:15px 16px 17px}
+.ncard .nbody h3{font-family:'Oswald',sans-serif;font-weight:600;font-size:17px;line-height:1.2;color:#f2f2ee;text-transform:uppercase}
+.ncard .nbody p{font-family:'Source Serif 4',serif;font-size:13.5px;line-height:1.55;color:#9a9a96;margin-top:9px}
+.ncard .nmeta{font-family:'Share Tech Mono',monospace;font-size:10px;color:#5e5e64;margin-top:12px;letter-spacing:1px}
 
-    .info-date-area {
-      display: flex; align-items: center; gap: 16px;
-      padding: 10px 24px;
-      border-right: 1px solid #1a1a1a;
-      flex-shrink: 0;
-      background: rgba(204,0,0,0.04);
-    }
-    .info-date-time {
-      font-family: var(--font-mono);
-      font-size: 1.3rem; color: var(--white); letter-spacing: 3px; font-weight: bold;
-    }
-    .info-date-text { font-family: var(--font-mono); font-size: 0.6rem; color: var(--gray); }
-    .info-date-text .date-main { color: var(--white2); font-size: 0.65rem; display: block; margin-bottom: 2px; }
+.live-strip{max-width:1280px;margin:0 auto;padding:0 40px 40px}
+.live-box{display:flex;align-items:center;gap:20px;background:linear-gradient(120deg,#160404,#0e0303);border:1px solid #2a0a0a;border-radius:10px;padding:16px 22px}
+.live-play{width:46px;height:46px;border-radius:9px;background:#cc0000;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 22px rgba(204,0,0,.4);border:none;transition:background .15s}
+.live-play:hover{background:#ff2a2a}
+.live-play.playing{background:#8b0000}
+.live-info{flex:1;min-width:0}
+.live-title-row{display:flex;align-items:center;gap:10px}
+.live-name{font-family:'Oswald',sans-serif;font-weight:700;font-size:14px;letter-spacing:2px;color:#fff;text-transform:uppercase}
+.live-badge{display:flex;align-items:center;gap:6px;background:rgba(204,0,0,.18);border:1px solid #cc0000;border-radius:3px;padding:2px 9px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1.5px;color:#ff3a3a}
+.live-badge .dot{width:6px;height:6px;border-radius:50%;background:#ff2a2a;animation:rn-pulse 1.3s infinite}
+.live-sub{font-family:'Share Tech Mono',monospace;font-size:11.5px;color:#8a8a8a;margin-top:5px;letter-spacing:.5px}
+.waveform{display:flex;align-items:flex-end;gap:3px;height:30px;flex-shrink:0}
+.waveform span{width:3px;border-radius:2px;background:#cc0000}
+.live-btn{background:#cc0000;border:none;color:#fff;font-family:'Oswald',sans-serif;font-weight:600;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;padding:11px 22px;border-radius:6px;flex-shrink:0;transition:background .15s}
+.live-btn:hover{background:#ff2a2a}
 
-    .wtile {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 20px;
-      border-right: 1px solid #141414;
-      min-width: 175px; flex-shrink: 0;
-      transition: background 0.2s;
-    }
-    .wtile:hover { background: rgba(204,0,0,0.04); }
-    .wtile-icon { font-size: 1.4rem; flex-shrink: 0; }
-    .wtile-name {
-      font-family: var(--font-head);
-      font-size: 0.58rem; letter-spacing: 2px; color: #555;
-      text-transform: uppercase; margin-bottom: 3px;
-    }
-    .wtile-val { font-family: var(--font-mono); font-size: 0.68rem; color: var(--white2); line-height: 1.3; }
-    .wtile-rate .up   { color: var(--red-bright); font-size: 0.58rem; }
-    .wtile-rate .down { color: var(--green); font-size: 0.58rem; }
+.site-footer{background:#0b0b0d;border-top:2px solid #8b0000;padding:30px 40px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.footer-logo{font-family:'Oswald',sans-serif;font-weight:700;font-size:22px;font-style:italic;letter-spacing:1px}
+.footer-sub{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:#5a5a60;text-transform:uppercase;margin-top:6px}
+.footer-copy{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1.5px;color:#3e3e44;text-transform:uppercase}
 
-    /* ── NAV ── */
-    .main-nav { background: var(--dark2); border-bottom: 2px solid #1a1a1a; }
-    .main-nav-inner { display: flex; max-width: 100%; }
-    .main-nav a {
-      font-family: var(--font-head); font-size: 0.72rem; letter-spacing: 2px;
-      color: var(--gray-light); text-decoration: none;
-      padding: 12px 20px;
-      border-right: 1px solid #1a1a1a;
-      transition: all 0.15s; text-transform: uppercase;
-      display: flex; align-items: center; gap: 7px; white-space: nowrap;
-    }
-    .main-nav a:first-child { border-left: 1px solid #1a1a1a; }
-    .main-nav a:hover, .main-nav a.active { color: var(--white); background: var(--red); }
-    .main-nav a .nav-icon { font-size: 0.9rem; }
+.page-head{max-width:1280px;margin:0 auto;padding:30px 40px 8px}
+.breadcrumb{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;color:#6a6a70;text-transform:uppercase;margin-bottom:10px}
+.page-title{font-family:'Oswald',sans-serif;font-weight:700;font-size:40px;letter-spacing:1px;text-transform:uppercase;color:#fff}
+.page-desc{font-family:'Source Serif 4',serif;font-size:15px;color:#9a9a96;margin-top:6px}
+.filter-bar{max-width:1280px;margin:0 auto;padding:20px 40px;display:flex;gap:10px;flex-wrap:wrap;border-bottom:1px solid #1a1a1e}
+.chip{font-family:'Oswald',sans-serif;font-weight:600;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;padding:8px 16px;border-radius:20px;cursor:pointer;transition:all .15s}
+.chip-active{color:#fff;background:#cc0000}
+.chip-inactive{color:#b8b8b2;background:#141417;border:1px solid #26262c}
+.chip-inactive:hover{border-color:#cc0000;color:#fff}
+.news-body{max-width:1280px;margin:0 auto;padding:26px 40px 40px;display:grid;grid-template-columns:1fr 320px;gap:32px}
+.news-list{display:flex;flex-direction:column;gap:18px}
+.hcard{display:flex;gap:20px;background:#0f0f11;border:1px solid #1d1d22;border-radius:9px;overflow:hidden;cursor:pointer;transition:border-color .15s}
+.hcard:hover{border-color:#8b0000}
+.hcard .hthumb{width:260px;flex-shrink:0;position:relative;background:linear-gradient(150deg,#2a0707,#0c0202);display:flex;align-items:center;justify-content:center;color:#4a1c1c;overflow:hidden}
+.hcard .hthumb img{width:100%;height:100%;object-fit:cover}
+.hcard .htag{position:absolute;top:12px;left:12px;background:#cc0000;color:#fff;font-family:'Oswald',sans-serif;font-weight:600;font-size:10px;letter-spacing:1.5px;padding:3px 9px;border-radius:2px;text-transform:uppercase}
+.hcard .hinfo{padding:20px 22px 20px 4px}
+.hcard .hcat{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:#ff3a3a;text-transform:uppercase;margin-bottom:8px}
+.hcard .hinfo h3{font-family:'Oswald',sans-serif;font-weight:700;font-size:26px;line-height:1.08;color:#fff;text-transform:uppercase}
+.hcard .hinfo p{font-family:'Source Serif 4',serif;font-size:14.5px;line-height:1.6;color:#9a9a96;margin-top:11px}
+.hcard .hmeta{font-family:'Share Tech Mono',monospace;font-size:10px;color:#5e5e64;margin-top:14px;letter-spacing:1px}
+.row-item{display:flex;gap:16px;padding:16px 0;border-top:1px solid #1a1a1e;cursor:pointer}
+.row-item:hover .row-ttl{color:#ff3a3a}
+.row-thumb{width:150px;height:96px;flex-shrink:0;border-radius:6px;background:linear-gradient(150deg,#1e0808,#0c0202);border:1px solid #241010;display:flex;align-items:center;justify-content:center;color:#4a1c1c;overflow:hidden}
+.row-thumb img{width:100%;height:100%;object-fit:cover}
+.row-cat{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:#ff3a3a;text-transform:uppercase;margin-bottom:6px}
+.row-ttl{font-family:'Oswald',sans-serif;font-weight:600;font-size:20px;line-height:1.15;color:#f2f2ee;text-transform:uppercase;transition:color .15s}
+.row-desc{font-family:'Source Serif 4',serif;font-size:13.5px;line-height:1.55;color:#8a8a86;margin-top:8px}
+.row-meta{font-family:'Share Tech Mono',monospace;font-size:10px;color:#5e5e64;margin-top:9px;letter-spacing:1px}
 
-    /* ── PLAYER ZONE ── */
-    .player-zone {
-      background: linear-gradient(135deg, #100000 0%, #1a0808 50%, #100000 100%);
-      border-bottom: 2px solid var(--red-dark);
-      padding: 20px 28px;
-    }
-    .player-zone-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    .player-label {
-      font-family: var(--font-head);
-      font-size: 0.68rem;
-      letter-spacing: 3px;
-      color: var(--red);
-      text-transform: uppercase;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .player-label::before { content: '▶'; font-size: 0.6rem; }
-    .player-box {
-      background: rgba(0,0,0,0.5);
-      border: 1px solid #1e1e1e;
-      border-radius: 6px;
-      padding: 14px 18px;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-    .player-status-area { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-    .status-badge {
-      font-family: var(--font-mono);
-      font-size: 0.62rem;
-      letter-spacing: 2px;
-      padding: 3px 10px;
-      border-radius: 2px;
-      text-transform: uppercase;
-      background: #1e1e1e;
-      color: var(--gray);
-      border: 1px solid #2a2a2a;
-      white-space: nowrap;
-    }
-    .status-badge.live { background: rgba(204,0,0,0.2); color: var(--red-bright); border-color: var(--red); }
-    .status-badge.error { background: rgba(255,80,0,0.12); color: #ff8040; border-color: #ff6020; }
-    .player-now {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      color: var(--gray);
-      flex-shrink: 0;
-    }
-    .player-now span { color: var(--white2); }
-    audio#radioPlayer {
-      flex: 1; min-width: 200px; height: 32px;
-      filter: invert(1) hue-rotate(180deg) saturate(2);
-    }
-    .url-display {
-      font-family: var(--font-mono);
-      font-size: 0.58rem;
-      color: #333;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      max-width: 260px;
-    }
-    .url-display.has-url { color: #445; }
-    .offline-banner {
-      display: none;
-      background: rgba(0,0,0,0.4);
-      border: 1px solid #1e1e1e;
-      border-radius: 6px;
-      padding: 16px 20px;
-      text-align: center;
-    }
-    .offline-banner.show { display: block; }
-    .offline-banner p { font-family: var(--font-mono); font-size: 0.7rem; color: var(--gray); }
-    .offline-banner p span { color: var(--red); }
+.sidebar{display:flex;flex-direction:column;gap:18px}
+.sw{background:#0f0f11;border:1px solid #1d1d22;border-radius:8px;overflow:hidden}
+.sw-head{background:#141417;padding:11px 16px;border-bottom:1px solid #222;font-family:'Oswald',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;color:#cc0000;text-transform:uppercase}
+.sw-body{padding:6px 16px 14px}
+.sw-ml{display:flex;align-items:baseline;gap:12px;padding:10px 0;border-bottom:1px solid #1a1a1e}
+.sw-ml:last-child{border-bottom:none}
+.sw-ml .num{font-family:'Oswald',sans-serif;font-weight:700;font-size:22px;color:#3a3a40;width:22px;flex-shrink:0}
+.sw-ml .txt{font-family:'Source Serif 4',serif;font-size:13.5px;line-height:1.35;color:#cececa}
+.w-main{display:flex;align-items:center;gap:14px;padding:16px;border-bottom:1px solid #1a1a1e}
+.w-temp{font-family:'Oswald',sans-serif;font-weight:700;font-size:30px;color:#fff;line-height:1}
+.w-temp span{font-size:16px;color:#7a7a82}
+.w-desc{font-family:'Share Tech Mono',monospace;font-size:11px;color:#9a9a96;margin-top:4px}
+.w-tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 16px 16px}
+.w-tile{background:#141417;border-radius:5px;padding:9px 11px;font-family:'Share Tech Mono',monospace;font-size:10px;color:#7a7a82;text-transform:uppercase}
+.w-tile span{display:block;color:#e6e6e2;font-size:13px;margin-top:3px}
+.sched-row{display:flex;align-items:center;gap:11px;padding:8px 16px;border-bottom:1px solid #1a1a1e}
+.sched-row:last-child{border-bottom:none}
+.sched-t{font-family:'Share Tech Mono',monospace;font-size:10px;color:#7a7a82;flex-shrink:0;min-width:50px}
+.sched-n{font-family:'Oswald',sans-serif;font-weight:600;font-size:14px;text-transform:uppercase;flex:1}
+.sched-live{font-family:'Share Tech Mono',monospace;font-size:9px;color:#ff2a2a;letter-spacing:1px}
 
-    /* ── MAIN WRAP ── */
-    .main-wrap {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 28px 28px;
-      display: grid;
-      grid-template-columns: 1fr 300px;
-      gap: 28px;
-    }
-    @media (max-width: 860px) { .main-wrap { grid-template-columns: 1fr; } }
+.art-head{max-width:820px;margin:0 auto;padding:42px 40px 0}
+.art-kicker{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.art-kicker .tag{background:#cc0000;color:#fff;font-family:'Oswald',sans-serif;font-weight:700;font-size:11px;letter-spacing:2px;padding:5px 12px;border-radius:3px;text-transform:uppercase}
+.art-kicker .sub{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;color:#ff3a3a;text-transform:uppercase}
+.art-h1{font-family:'Oswald',sans-serif;font-weight:700;font-size:48px;line-height:1.04;letter-spacing:.3px;color:#fff;text-transform:uppercase;margin:0}
+.art-dek{font-family:'Source Serif 4',serif;font-size:19px;line-height:1.5;color:#b6b6b0;margin:18px 0 0;font-style:italic}
+.art-byline{display:flex;align-items:center;gap:14px;margin-top:24px;padding-bottom:24px;border-bottom:1px solid #1d1d22}
+.art-avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(150deg,#cc0000,#7a0000);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-weight:700;font-size:15px;color:#fff;flex-shrink:0}
+.art-author{font-family:'Oswald',sans-serif;font-weight:600;font-size:15px;letter-spacing:.5px;color:#f2f2ee}
+.art-meta{font-family:'Share Tech Mono',monospace;font-size:11px;color:#7a7a82;margin-top:3px;letter-spacing:.5px}
+.art-hero{max-width:960px;margin:28px auto 0;padding:0 40px}
+.art-hero img{width:100%;height:430px;object-fit:cover;object-position:center 28%;border-radius:8px;border:1px solid #241010;display:block}
+.art-caption{font-family:'Share Tech Mono',monospace;font-size:11px;color:#6a6a70;margin-top:10px;line-height:1.5;letter-spacing:.3px}
+.art-body{max-width:740px;margin:0 auto;padding:34px 40px 10px}
+.art-body p{font-family:'Source Serif 4',serif;font-size:17.5px;line-height:1.75;color:#cacac4;margin:0 0 22px}
+.drop-cap::first-letter{float:left;font-family:'Oswald',sans-serif;font-weight:700;font-size:66px;line-height:.78;color:#cc0000;margin:6px 14px 0 0}
+.stat-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:28px 0}
+.stat-tile{background:#0f0f11;border:1px solid #1d1d22;border-radius:8px;padding:14px}
+.stat-lbl{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:#ff3a3a;text-transform:uppercase;margin-bottom:8px}
+.stat-val{font-family:'Oswald',sans-serif;font-weight:700;font-size:18px;color:#fff;line-height:1.1}
+.art-body h2{font-family:'Oswald',sans-serif;font-weight:700;font-size:22px;letter-spacing:1px;color:#fff;text-transform:uppercase;border-left:3px solid #cc0000;padding-left:14px;margin:30px 0 16px}
+.art-body blockquote{margin:30px 0;padding:6px 0 6px 24px;border-left:3px solid #cc0000}
+.art-body blockquote p{font-style:italic;font-size:23px;line-height:1.45;color:#ecece6;margin:0}
+.bq-author{font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:1px;color:#ff3a3a;text-transform:uppercase;margin-top:14px}
+.resumo{background:#0f0f11;border:1px solid #1d1d22;border-left:3px solid #cc0000;border-radius:0 8px 8px 0;padding:20px 22px;margin:30px 0 10px}
+.resumo-ttl{font-family:'Oswald',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;color:#cc0000;text-transform:uppercase;margin-bottom:14px}
+.resumo-item{display:flex;align-items:flex-start;gap:11px;padding:6px 0}
+.resumo-item .rdot{width:7px;height:7px;border-radius:50%;background:#cc0000;margin-top:9px;flex-shrink:0}
+.resumo-item span{font-family:'Source Serif 4',serif;font-size:15.5px;line-height:1.6;color:#cacac4}
 
-    /* Section label */
-    .section-label {
-      font-family: var(--font-head);
-      font-size: 0.65rem;
-      letter-spacing: 3px;
-      color: var(--red);
-      text-transform: uppercase;
-      padding-bottom: 8px;
-      border-bottom: 2px solid var(--red);
-      margin-bottom: 18px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+.cmts-wrap{max-width:740px;margin:0 auto;padding:18px 40px 50px}
+.cmts-sep{height:1px;background:#1d1d22;margin-bottom:26px}
+.cmts-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.cmts-title-row{display:flex;align-items:center;gap:11px}
+.cmts-title-row h3{font-family:'Oswald',sans-serif;font-weight:700;font-size:22px;letter-spacing:1px;color:#fff;text-transform:uppercase;margin:0;white-space:nowrap}
+.cmts-count{background:#cc0000;color:#fff;font-family:'Oswald',sans-serif;font-weight:700;font-size:13px;padding:2px 10px;border-radius:20px}
+.composer{background:#0f0f11;border:1px solid #1d1d22;border-radius:10px;padding:16px 18px;margin-bottom:14px}
+.comp-inner{display:flex;gap:13px}
+.comp-av{width:42px;height:42px;border-radius:50%;background:#1a1a1e;border:1px solid #2c2c32;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.comp-form{flex:1;min-width:0}
+.comp-name{width:100%;background:#08080a;border:1px solid #2a2a30;border-radius:6px;padding:9px 13px;color:#f2f2ee;font-family:'Oswald',sans-serif;font-size:14px;margin-bottom:8px;outline:none}
+.comp-name::placeholder{color:#5e5e66}
+.comp-name:focus{border-color:#cc0000}
+.comp-text{width:100%;background:#08080a;border:1px solid #2a2a30;border-radius:8px;padding:13px 15px;color:#f2f2ee;font-family:'Source Serif 4',serif;font-size:14.5px;min-height:64px;resize:vertical;outline:none}
+.comp-text::placeholder{color:#5e5e66}
+.comp-text:focus{border-color:#cc0000}
+.comp-footer{display:flex;justify-content:flex-end;margin-top:11px}
+.comp-submit{background:#cc0000;border:none;color:#fff;font-family:'Oswald',sans-serif;font-weight:600;font-size:12.5px;letter-spacing:1.5px;text-transform:uppercase;padding:10px 20px;border-radius:6px;transition:background .15s}
+.comp-submit:hover{background:#ff2a2a}
+.cmt-item{display:flex;gap:13px;padding:18px 0;border-top:1px solid #1a1a1e}
+.cmt-av{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-weight:700;font-size:14px;color:#fff;flex-shrink:0}
+.cmt-author{font-family:'Oswald',sans-serif;font-weight:600;font-size:15px;color:#f2f2ee;letter-spacing:.3px}
+.cmt-time{font-family:'Share Tech Mono',monospace;font-size:10.5px;color:#6a6a70;margin-left:8px}
+.cmt-body{font-family:'Source Serif 4',serif;font-size:15px;line-height:1.65;color:#c2c2bc;margin:7px 0 0}
+.cmt-actions{display:flex;align-items:center;gap:20px;margin-top:10px;font-family:'Share Tech Mono',monospace;font-size:11px;color:#6a6a70;letter-spacing:.5px}
+.like-btn{display:flex;align-items:center;gap:6px;background:none;border:none;color:#6a6a70;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.5px;cursor:pointer;transition:color .15s}
+.like-btn:hover{color:#ff3a3a}
 
-    /* ── NEWS GRID ── */
-    .featured-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-    @media (max-width: 560px) { .featured-grid { grid-template-columns: 1fr; } }
+.admin-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9000;overflow-y:auto}
+.admin-overlay.open{display:block}
+.admin-panel{max-width:680px;margin:60px auto;background:#0f0f11;border:1px solid #2c2c32;border-radius:12px;overflow:hidden}
+.admin-hdr{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;background:#141417;border-bottom:1px solid #222}
+.admin-ttl{font-family:'Oswald',sans-serif;font-weight:700;font-size:20px;letter-spacing:2px;color:#cc0000;text-transform:uppercase}
+.admin-close{background:none;border:none;color:#a8a8ae;font-size:22px;cursor:pointer;line-height:1;padding:4px 8px}
+.admin-close:hover{color:#fff}
+.admin-body{padding:24px}
+.admin-sec{margin-bottom:28px}
+.admin-sec-ttl{font-family:'Oswald',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;color:#9a9a96;text-transform:uppercase;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #1d1d22}
+.admin-row{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start}
+.ai{flex:1;background:#08080a;border:1px solid #2a2a30;border-radius:6px;padding:10px 13px;color:#f2f2ee;font-size:14px;outline:none}
+.ai:focus{border-color:#cc0000}
+.asel{background:#08080a;border:1px solid #2a2a30;border-radius:6px;padding:10px 13px;color:#f2f2ee;font-family:'Share Tech Mono',monospace;font-size:12px;outline:none}
+.abtn{background:#cc0000;border:none;color:#fff;font-family:'Oswald',sans-serif;font-weight:600;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;padding:10px 18px;border-radius:6px;cursor:pointer;transition:background .15s;white-space:nowrap}
+.abtn:hover{background:#ff2a2a}
+.abtn.sec{background:#1d1d22;color:#a8a8ae}
+.abtn.sec:hover{background:#2a2a30;color:#fff}
+.abtn.danger{background:#4a0a0a}
+.abtn.danger:hover{background:#7a0a0a}
+.admin-news-list{display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto}
+.ani{display:flex;align-items:center;gap:10px;background:#08080a;border:1px solid #1d1d22;border-radius:6px;padding:10px 13px}
+.ani .cat-badge{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;color:#ff3a3a;text-transform:uppercase;flex-shrink:0}
+.ani .title{flex:1;font-family:'Source Serif 4',serif;font-size:13px;color:#cacac4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ani .del{background:none;border:none;color:#5e5e64;cursor:pointer;font-size:18px;line-height:1;flex-shrink:0;transition:color .15s}
+.ani .del:hover{color:#ff3a3a}
+.auth-ok{display:inline-flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;padding:6px 14px;border-radius:4px;background:#0f2a0f;color:#2ec27a;border:1px solid #1a4a1a}
+.live-toggle-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.live-toggle-lbl{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;color:#9a9a96;text-transform:uppercase}
+.sw{position:relative;width:40px;height:22px;flex-shrink:0}
+.sw input{opacity:0;width:0;height:0}
+.sw .sl{position:absolute;inset:0;background:#1d1d22;border-radius:22px;cursor:pointer;transition:background .2s}
+.sw .sl:before{content:'';position:absolute;width:16px;height:16px;background:#6a6a70;border-radius:50%;left:3px;top:3px;transition:all .2s}
+.sw input:checked+.sl{background:#8b0000}
+.sw input:checked+.sl:before{background:#ff2a2a;transform:translateX(18px)}
+.spon-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.spon-grid label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:#7a7a82;text-transform:uppercase;display:block;margin-bottom:4px}
 
-    .news-card {
-      background: var(--dark2);
-      border: 1px solid #1a1a1a;
-      border-radius: 4px;
-      overflow: hidden;
-      transition: border-color 0.2s, transform 0.15s;
-      cursor: default;
-    }
-    .news-card:hover { border-color: var(--red-dark); transform: translateY(-1px); }
-
-    .news-card-thumb {
-      width: 100%; height: 150px;
-      background: linear-gradient(135deg, #150000 0%, #220808 100%);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 2.8rem;
-      position: relative;
-      border-bottom: 1px solid #1e1e1e;
-      overflow: hidden;
-    }
-    .news-card-thumb::after {
-      content: attr(data-label);
-      position: absolute; top: 10px; left: 10px;
-      background: var(--red);
-      color: var(--white);
-      font-family: var(--font-head);
-      font-size: 0.55rem;
-      letter-spacing: 2px;
-      padding: 2px 8px;
-      border-radius: 1px;
-    }
-    .news-card-body { padding: 14px; }
-    .news-cat {
-      font-family: var(--font-mono);
-      font-size: 0.56rem;
-      letter-spacing: 2px;
-      color: var(--red);
-      text-transform: uppercase;
-      margin-bottom: 6px;
-    }
-    .news-title {
-      font-family: var(--font-head);
-      font-size: 0.95rem;
-      font-weight: 600;
-      line-height: 1.3;
-      color: var(--white);
-      margin-bottom: 8px;
-    }
-    .news-desc { font-size: 0.74rem; color: var(--gray-light); line-height: 1.6; }
-    .news-time {
-      font-family: var(--font-mono);
-      font-size: 0.56rem;
-      color: #444;
-      margin-top: 10px;
-    }
-
-    /* News list */
-    .news-list { display: flex; flex-direction: column; gap: 10px; }
-    .news-item {
-      display: flex;
-      gap: 12px;
-      padding: 12px;
-      background: var(--dark2);
-      border: 1px solid #181818;
-      border-radius: 4px;
-      transition: border-color 0.2s;
-      cursor: default;
-    }
-    .news-item:hover { border-color: #2a2a2a; }
-    .news-item-icon { font-size: 1.3rem; flex-shrink: 0; width: 34px; text-align: center; margin-top: 2px; }
-    .news-item-body { flex: 1; min-width: 0; }
-    .news-item-body .news-title { font-size: 0.82rem; margin-bottom: 4px; }
-    .news-item-body .news-time { margin-top: 3px; }
-
-    /* ── SIDEBAR ── */
-    .sidebar { display: flex; flex-direction: column; gap: 20px; }
-
-    .widget {
-      background: var(--dark2);
-      border: 1px solid #1a1a1a;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-    .widget-head {
-      background: var(--dark3);
-      padding: 9px 14px;
-      border-bottom: 1px solid #222;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .widget-head h3 {
-      font-family: var(--font-head);
-      font-size: 0.7rem;
-      letter-spacing: 2px;
-      color: var(--red);
-      text-transform: uppercase;
-    }
-    .widget-head .widget-badge {
-      font-family: var(--font-mono);
-      font-size: 0.55rem;
-      color: var(--gray);
-      letter-spacing: 1px;
-    }
-    .widget-body { padding: 14px; }
-
-    /* Weather widget */
-    .weather-widget-main {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 12px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid #1e1e1e;
-    }
-    .weather-big-icon { font-size: 2.4rem; }
-    .weather-temp { font-family: var(--font-head); font-size: 2rem; color: var(--white); line-height: 1; }
-    .weather-temp small { font-size: 0.9rem; color: var(--gray); }
-    .weather-desc { font-family: var(--font-mono); font-size: 0.62rem; color: var(--gray-light); margin-top: 3px; }
-    .weather-details { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-    .weather-detail {
-      font-family: var(--font-mono);
-      font-size: 0.6rem;
-      color: var(--gray);
-      padding: 5px 8px;
-      background: var(--dark3);
-      border-radius: 3px;
-    }
-    .weather-detail span { color: var(--white2); display: block; font-size: 0.68rem; }
-
-    /* Rates widget */
-    .rate-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid #1a1a1a;
-    }
-    .rate-row:last-child { border-bottom: none; padding-bottom: 0; }
-    .rate-name { font-family: var(--font-head); font-size: 0.75rem; letter-spacing: 1px; color: var(--gray-light); }
-    .rate-val { font-family: var(--font-mono); font-size: 0.9rem; color: var(--white); font-weight: bold; }
-    .rate-change { font-family: var(--font-mono); font-size: 0.6rem; }
-    .rate-change.up { color: var(--red-bright); }
-    .rate-change.down { color: var(--green); }
-
-    /* Boombox */
-    .boombox-url {
-      font-family: var(--font-mono);
-      font-size: 0.58rem;
-      color: #444;
-      background: var(--dark);
-      padding: 7px 10px;
-      border-radius: 3px;
-      border: 1px solid #1a1a1a;
-      word-break: break-all;
-      margin-bottom: 10px;
-      min-height: 34px;
-      display: flex;
-      align-items: center;
-      line-height: 1.5;
-    }
-    .boombox-url.has-url { color: #556; }
-
-    /* Schedule */
-    .prog-list { display: flex; flex-direction: column; gap: 6px; }
-    .prog-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 7px 10px;
-      border-radius: 3px;
-      background: var(--dark3);
-      border-left: 3px solid #2a2a2a;
-    }
-    .prog-item.current { border-left-color: var(--red); background: rgba(204,0,0,0.07); }
-    .prog-time { font-family: var(--font-mono); font-size: 0.6rem; color: var(--gray); flex-shrink: 0; }
-    .prog-name { font-family: var(--font-head); font-size: 0.74rem; color: var(--white2); flex: 1; padding: 0 10px; }
-    .prog-item.current .prog-name { color: var(--red-bright); }
-    .prog-live { font-family: var(--font-mono); font-size: 0.52rem; color: var(--red); letter-spacing: 1px; }
-
-    /* About */
-    .sobre-text { font-size: 0.76rem; color: var(--gray-light); line-height: 1.7; }
-    .sobre-text em { color: var(--red); font-style: italic; }
-
-    /* ── FOOTER ── */
-    footer {
-      background: var(--dark);
-      border-top: 2px solid var(--red-dark);
-      padding: 22px 28px;
-      text-align: center;
-      margin-top: 20px;
-    }
-    .footer-logo { font-family: var(--font-head); font-size: 1.3rem; letter-spacing: 5px; color: var(--white); margin-bottom: 6px; }
-    .footer-logo em { color: var(--red); font-style: normal; }
-    footer p { font-family: var(--font-mono); font-size: 0.58rem; color: #3a3a3a; letter-spacing: 2px; }
-    footer .disclaimer { font-size: 0.6rem; color: #2a2a2a; margin-top: 8px; font-family: var(--font-body); }
-    .footer-admin-link { margin-top: 12px; }
-    .footer-admin-link a { font-family: var(--font-mono); font-size: 0.5rem; color: #1a1a1a; text-decoration: none; letter-spacing: 2px; transition: color 0.2s; }
-    .footer-admin-link a:hover { color: #333; }
-
-    /* ── TOAST ── */
-    #toast {
-      position: fixed; bottom: 22px; right: 22px;
-      background: var(--red);
-      color: var(--white);
-      font-family: var(--font-head);
-      font-size: 0.78rem;
-      letter-spacing: 1px;
-      padding: 10px 20px;
-      border-radius: 4px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-      opacity: 0; transform: translateY(8px);
-      transition: all 0.22s;
-      pointer-events: none;
-      z-index: 9999;
-    }
-    #toast.show { opacity: 1; transform: translateY(0); }
-
-    /* ── SEARCH RESULTS ── */
-    .search-results {
-      position: absolute;
-      top: calc(100% + 4px);
-      right: 0;
-      width: 360px;
-      background: var(--dark2);
-      border: 1px solid #2a2a2a;
-      border-radius: 4px;
-      z-index: 100;
-      overflow: hidden;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.7);
-      display: none;
-    }
-    .search-results.show { display: block; }
-    .search-result-item {
-      padding: 10px 14px;
-      border-bottom: 1px solid #1a1a1a;
-      cursor: default;
-      transition: background 0.15s;
-    }
-    .search-result-item:hover { background: var(--dark3); }
-    .search-result-item:last-child { border-bottom: none; }
-    .sr-cat { font-family: var(--font-mono); font-size: 0.55rem; color: var(--red); letter-spacing: 2px; text-transform: uppercase; }
-    .sr-title { font-family: var(--font-head); font-size: 0.82rem; color: var(--white); margin-top: 3px; line-height: 1.3; }
-    .sr-empty { padding: 16px 14px; font-family: var(--font-mono); font-size: 0.65rem; color: var(--gray); text-align: center; }
-
-    /* ── ADMIN OVERLAY ── */
-    #adminOverlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.97);
-      z-index: 2000;
-      display: none;
-      align-items: flex-start;
-      justify-content: center;
-      overflow-y: auto;
-      padding: 40px 20px;
-    }
-    #adminOverlay.open { display: flex; }
-
-    .admin-box {
-      background: var(--dark);
-      border: 1px solid var(--red-dark);
-      border-radius: 6px;
-      width: 100%; max-width: 720px;
-      box-shadow: 0 0 60px rgba(204,0,0,0.2);
-      margin: auto;
-    }
-    .admin-header {
-      background: var(--dark2);
-      border-bottom: 2px solid var(--red);
-      padding: 14px 20px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .admin-header h2 { font-family: var(--font-head); font-size: 0.9rem; letter-spacing: 3px; color: var(--red); text-transform: uppercase; }
-    .admin-header-right { display: flex; gap: 8px; align-items: center; }
-    .admin-badge { font-family: var(--font-mono); font-size: 0.58rem; color: var(--gray); letter-spacing: 1px; padding: 2px 8px; background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 2px; }
-    .btn-ghost { background: none; border: 1px solid #333; color: var(--gray); font-family: var(--font-mono); font-size: 0.65rem; padding: 4px 12px; border-radius: 3px; cursor: pointer; transition: all 0.15s; letter-spacing: 1px; }
-    .btn-ghost:hover { background: #222; color: var(--white); }
-    .btn-ghost.danger:hover { border-color: var(--red); color: var(--red); }
-    .admin-body { padding: 20px; }
-
-    .login-wrap { max-width: 340px; margin: 0 auto; text-align: center; padding: 20px 0; }
-    .login-logo { font-family: var(--font-head); font-size: 1.6rem; letter-spacing: 4px; color: var(--white); margin-bottom: 4px; }
-    .login-logo em { color: var(--red); font-style: normal; }
-    .login-sub { font-family: var(--font-mono); font-size: 0.6rem; color: var(--gray); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 28px; }
-    .login-err { font-family: var(--font-mono); font-size: 0.65rem; color: #ff6040; margin-top: 10px; min-height: 16px; }
-
-    .admin-tabs { display: flex; border-bottom: 1px solid #2a2a2a; margin-bottom: 20px; }
-    .admin-tab { font-family: var(--font-head); font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; color: var(--gray); padding: 9px 16px; cursor: pointer; border: none; background: none; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
-    .admin-tab.active { color: var(--red); border-bottom-color: var(--red); }
-    .admin-tab:hover { color: var(--white); }
-
-    .tab-pane { display: none; }
-    .tab-pane.active { display: block; }
-
-    .form-group { margin-bottom: 14px; }
-    .form-group label { display: block; font-family: var(--font-mono); font-size: 0.62rem; color: var(--gray); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
-    .form-group input, .form-group textarea, .form-group select {
-      width: 100%; background: var(--black); border: 1px solid #333; border-radius: 4px; color: var(--white);
-      font-family: var(--font-mono); font-size: 0.72rem; padding: 9px 12px; outline: none; transition: border-color 0.2s;
-    }
-    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--red); }
-    .form-group textarea { resize: vertical; min-height: 56px; line-height: 1.5; }
-    .form-group select { cursor: pointer; }
-    .form-group input::placeholder, .form-group textarea::placeholder { color: #444; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    @media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
-
-    .btn { font-family: var(--font-head); font-size: 0.72rem; letter-spacing: 1.5px; text-transform: uppercase; border: none; border-radius: 3px; padding: 9px 16px; cursor: pointer; transition: all 0.15s; }
-    .btn-primary { background: var(--red); color: var(--white); }
-    .btn-primary:hover { background: var(--red-bright); }
-    .btn-secondary { background: #2a2a2a; color: var(--gray-light); border: 1px solid #333; }
-    .btn-secondary:hover { background: #333; color: var(--white); }
-    .btn-danger { background: #3a0000; color: #ff6040; border: 1px solid #5a0000; }
-    .btn-danger:hover { background: #500000; }
-    .btn:active { transform: scale(0.97); }
-    .btn-row { display: flex; gap: 8px; }
-    .btn-row .btn { flex: 1; }
-
-    .admin-news-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; max-height: 280px; overflow-y: auto; }
-    .admin-news-list:empty::after { content: 'Nenhuma notícia cadastrada.'; display: block; font-family: var(--font-mono); font-size: 0.65rem; color: #444; text-align: center; padding: 20px 0; }
-    .admin-ni { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: var(--dark2); border: 1px solid #222; border-radius: 4px; }
-    .admin-ni-icon { font-size: 1.1rem; flex-shrink: 0; }
-    .admin-ni-info { flex: 1; min-width: 0; }
-    .admin-ni-title { font-family: var(--font-head); font-size: 0.78rem; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .admin-ni-meta { font-family: var(--font-mono); font-size: 0.56rem; color: #555; margin-top: 2px; }
-    .admin-ni-featured { font-family: var(--font-mono); font-size: 0.55rem; color: var(--red); margin-right: 4px; }
-    .admin-ni-del { background: none; border: 1px solid #2a2a2a; color: #555; font-family: var(--font-mono); font-size: 0.6rem; padding: 3px 8px; border-radius: 2px; cursor: pointer; flex-shrink: 0; transition: all 0.15s; }
-    .admin-ni-del:hover { border-color: var(--red); color: #ff4040; }
-
-    .add-panel { background: var(--dark2); border: 1px solid #222; border-radius: 4px; padding: 14px; margin-top: 12px; }
-    .add-panel h4 { font-family: var(--font-head); font-size: 0.72rem; letter-spacing: 2px; color: var(--gray); text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid #2a2a2a; }
-
-    .live-control { display: flex; align-items: center; justify-content: space-between; background: var(--dark2); border: 1px solid #222; border-radius: 4px; padding: 14px 16px; margin-bottom: 16px; }
-    .live-status-text { font-family: var(--font-mono); font-size: 0.7rem; color: var(--gray); }
-    .live-status-text strong { font-family: var(--font-head); font-size: 0.85rem; letter-spacing: 2px; display: block; margin-bottom: 2px; }
-    .live-status-text strong.on { color: var(--red-bright); }
-    .live-status-text strong.off { color: var(--gray); }
-    .btn-live { padding: 8px 20px; font-size: 0.7rem; }
-
-    .section-sep { border: none; border-top: 1px solid #2a2a2a; margin: 20px 0; }
-    .info-note { font-family: var(--font-mono); font-size: 0.65rem; color: var(--gray); line-height: 1.6; padding: 10px 12px; background: #0d0d0d; border-left: 2px solid var(--red-dark); border-radius: 0 4px 4px 0; margin-bottom: 14px; }
-    .info-note code { font-family: var(--font-mono); color: var(--red); }
-
-    /* Responsive */
-    @media (max-width: 760px) {
-      .header-main { grid-template-columns: 1fr; gap: 14px; }
-      .header-center { display: none; }
-      .header-right { align-items: flex-start; }
-      .logo-text h1 { font-size: 2.2rem; }
-      .search-bar input { width: 160px; }
-      .info-bar { padding: 0 14px; }
-      .main-nav { padding: 0 14px; }
-      .player-zone, .main-wrap { padding: 16px 14px; }
-    }
-  </style>
+#toast{position:fixed;bottom:30px;right:30px;background:#1d1d22;border:1px solid #2c2c32;border-radius:8px;padding:12px 20px;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:1px;color:#f2f2ee;z-index:9999;transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none}
+#toast.show{transform:translateY(0);opacity:1}
+#toast.ok{border-color:#2ec27a;color:#2ec27a}
+#toast.err{border-color:#ff3a3a;color:#ff3a3a}
+</style>
 </head>
 <body>
 
-<!-- TICKER -->
-<div class="ticker-wrap">
-  <span class="ticker-label">URGENTE</span>
-  <span class="ticker-text" id="tickerText">
-    Carregando últimas notícias de Red County...
-  </span>
-</div>
+<div id="page-home"></div>
+<div id="page-noticias" style="display:none"></div>
+<div id="page-cronicas" style="display:none"></div>
+<div id="page-article" style="display:none"></div>
 
-<!-- HEADER -->
-<header class="site-header">
-
-  <!-- Hero -->
-  <div class="header-hero">
-    <div class="header-hero-inner">
-
-      <!-- Logo -->
-      <div class="logo-area">
-        <div class="logo-icon">🎙️</div>
-        <div class="logo-text">
-          <h1><em>RED</em> NEWS</h1>
-          <p class="tagline">Rádio <b>·</b> Jornal <b>·</b> Red County</p>
-        </div>
-      </div>
-
-      <!-- Center decoration -->
-      <div class="header-center">
-        <div class="pulse-ring"></div>
-        <div class="county-name">Red County</div>
-        <div class="coords">35°22'N &nbsp; 119°01'W &nbsp;·&nbsp; San Andreas</div>
-      </div>
-
-      <!-- Right -->
-      <div class="header-right">
-        <div class="header-badges">
-          <div class="badge-live" id="liveDot"><i></i> <span id="liveLabel">OFF AIR</span></div>
-          <div class="badge-live on"><i></i> AO VIVO</div>
-          <div class="freq-badge">📍 <span>RED COUNTY &nbsp;·&nbsp; 98.9 NOTÍCIAS</span></div>
-        </div>
-        <div class="search-bar" style="position:relative">
-          <input type="text" id="searchInput" placeholder="Buscar notícias, eventos, áudios..." autocomplete="off" />
-          <button onclick="doSearch()">🔍</button>
-          <div class="search-results" id="searchResults"></div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- Info bar -->
-  <div class="info-bar">
-    <div class="info-bar-inner">
-      <div class="info-date-area">
-        <div class="info-date-time" id="clockDisplay">--:--</div>
-        <div class="info-date-text">
-          <span class="date-main" id="dateDisplay">—</span>
-          <span>RED COUNTY, SAN ANDREAS · EST. 2024</span>
-        </div>
-      </div>
-      <div class="wtile">
-        <div class="wtile-icon" id="wIcon">🌡️</div>
-        <div>
-          <div class="wtile-name">Dillimore</div>
-          <div class="wtile-val" id="wTemp">Carregando...</div>
-        </div>
-      </div>
-      <div class="wtile">
-        <div class="wtile-icon">💧</div>
-        <div>
-          <div class="wtile-name">Palomino Creek</div>
-          <div class="wtile-val" id="wHumidity">— umidade</div>
-        </div>
-      </div>
-      <div class="wtile">
-        <div class="wtile-icon" id="wRoadIcon">🛣️</div>
-        <div>
-          <div class="wtile-name">Rota 68</div>
-          <div class="wtile-val" id="wRoad">—</div>
-        </div>
-      </div>
-      <div class="wtile">
-        <div class="wtile-icon">💵</div>
-        <div>
-          <div class="wtile-name">Dólar USD</div>
-          <div class="wtile-val wtile-rate" id="wUSD">R$ —</div>
-        </div>
-      </div>
-      <div class="wtile">
-        <div class="wtile-icon">💶</div>
-        <div>
-          <div class="wtile-name">Euro EUR</div>
-          <div class="wtile-val wtile-rate" id="wEUR">R$ —</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Nav -->
-  <nav class="main-nav">
-    <div class="main-nav-inner">
-      <a href="#" class="active"><span class="nav-icon">🏠</span> Início</a>
-      <a href="#noticias"><span class="nav-icon">📰</span> Notícias</a>
-      <a href="#programacao"><span class="nav-icon">📅</span> Programação</a>
-      <a href="#transmissao"><span class="nav-icon">📡</span> Transmissão</a>
-      <a href="#condado"><span class="nav-icon">🗺️</span> Condado</a>
-      <a href="#sobre"><span class="nav-icon">ℹ️</span> Sobre</a>
-    </div>
-  </nav>
-
-</header>
-
-<!-- PLAYER ZONE -->
-<div class="player-zone" id="transmissao">
-  <div class="player-zone-inner">
-    <div class="player-label">Transmissão ao Vivo</div>
-    <div id="playerBox" class="player-box">
-      <div class="player-status-area">
-        <div class="status-badge" id="statusBadge">AGUARDANDO</div>
-      </div>
-      <div class="player-now">Transmitindo: <span id="nowPlayingText">—</span></div>
-      <audio id="radioPlayer" controls>
-        <source id="radioSource" src="" type="audio/mpeg" />
-      </audio>
-      <div class="url-display" id="urlDisplay">nenhum link configurado</div>
-    </div>
-    <div id="offlineBanner" class="offline-banner">
-      <p>📻 <span>RED NEWS 98.9</span> — Fora do ar no momento. Volte em breve.</p>
-    </div>
-  </div>
-</div>
-
-<!-- MAIN -->
-<div class="main-wrap">
-  <main>
-    <div id="noticias">
-      <div class="section-label">📰 Últimas Notícias</div>
-      <div class="featured-grid" id="featuredNews"></div>
-      <div class="news-list" id="newsList"></div>
-    </div>
-  </main>
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-
-    <!-- Clima -->
-    <div class="widget" id="condado">
-      <div class="widget-head">
-        <h3>🌤 Clima — Red County</h3>
-        <span class="widget-badge" id="weatherUpdated">—</span>
-      </div>
-      <div class="widget-body">
-        <div class="weather-widget-main">
-          <div class="weather-big-icon" id="wBigIcon">🌡️</div>
-          <div>
-            <div class="weather-temp" id="wBigTemp">—<small>°C</small></div>
-            <div class="weather-desc" id="wBigDesc">Carregando...</div>
-          </div>
-        </div>
-        <div class="weather-details">
-          <div class="weather-detail">Umidade<span id="wDetailHum">—</span></div>
-          <div class="weather-detail">Vento<span id="wDetailWind">—</span></div>
-          <div class="weather-detail">Pista<span id="wDetailRoad">—</span></div>
-          <div class="weather-detail">Região<span>Bakersfield, CA</span></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Cotações -->
-    <div class="widget">
-      <div class="widget-head">
-        <h3>💹 Cotações</h3>
-        <span class="widget-badge" id="ratesUpdated">—</span>
-      </div>
-      <div class="widget-body">
-        <div class="rate-row">
-          <span class="rate-name">USD / BRL</span>
-          <div>
-            <div class="rate-val" id="rUSD">R$ —</div>
-            <div class="rate-change" id="rUSDChange">—</div>
-          </div>
-        </div>
-        <div class="rate-row">
-          <span class="rate-name">EUR / BRL</span>
-          <div>
-            <div class="rate-val" id="rEUR">R$ —</div>
-            <div class="rate-change" id="rEURChange">—</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Transmissão / Boombox -->
-    <div class="widget" id="boombox">
-      <div class="widget-head"><h3>📡 Link da Transmissão</h3></div>
-      <div class="widget-body">
-        <div style="font-size:0.72rem;color:var(--gray-light);margin-bottom:10px;line-height:1.6;">
-          Use este link para ouvir a Red News em qualquer player externo.
-        </div>
-        <div class="boombox-url" id="boomboxUrl">Nenhum link configurado</div>
-        <button class="btn btn-primary" style="width:100%" onclick="copyBoombox()">Copiar link</button>
-      </div>
-    </div>
-
-    <!-- Programação -->
-    <div class="widget" id="programacao">
-      <div class="widget-head"><h3>📅 Programação</h3></div>
-      <div class="widget-body">
-        <div class="prog-list">
-          <div class="prog-item"><div class="prog-time">00–06h</div><div class="prog-name">Madrugada Sertaneja</div></div>
-          <div class="prog-item"><div class="prog-time">06–09h</div><div class="prog-name">Bom Dia Red County</div></div>
-          <div class="prog-item current"><div class="prog-time">09–12h</div><div class="prog-name">Noticiário da Manhã</div><div class="prog-live">AO VIVO</div></div>
-          <div class="prog-item"><div class="prog-time">12–14h</div><div class="prog-name">Almoço com Notícias</div></div>
-          <div class="prog-item"><div class="prog-time">14–18h</div><div class="prog-name">Tarde Livre</div></div>
-          <div class="prog-item"><div class="prog-time">18–22h</div><div class="prog-name">Noite de Red County</div></div>
-          <div class="prog-item"><div class="prog-time">22–00h</div><div class="prog-name">Crimes &amp; Causos</div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Sobre -->
-    <div class="widget" id="sobre">
-      <div class="widget-head"><h3>📰 Sobre a Red News</h3></div>
-      <div class="widget-body">
-        <p class="sobre-text">
-          A <em>Red News</em> é a única rádio e agência de notícias do interior de
-          Red County — e vai continuar sendo, porque ninguém mais quer o emprego.<br><br>
-          Cobrimos tudo: assaltos, tiroteios, fugas de rebanho, e as declarações
-          do prefeito que ele sempre jura nunca ter dado.<br><br>
-          <em>Transmitindo ao vivo. Ou quase isso.</em>
-        </p>
-      </div>
-    </div>
-
-  </aside>
-</div>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-logo"><em>RED</em> NEWS</div>
-  <p>A VOZ QUE RED COUNTY MERECIA. OU NÃO.</p>
-  <p class="disclaimer">Red News — Red County, San Andreas. Todos os direitos reservados.</p>
-  <div class="footer-admin-link"><a href="#admin">⬛</a></div>
-</footer>
-
-<!-- TOAST -->
-<div id="toast"></div>
-
-<!-- ══════════════════════════════════════════════
-     ADMIN OVERLAY
-══════════════════════════════════════════════ -->
-<div id="adminOverlay">
-  <div class="admin-box">
-    <div class="admin-header">
-      <h2>⚙ Painel Admin — Red News</h2>
-      <div class="admin-header-right">
-        <span class="admin-badge" id="adminBadge">NÃO AUTENTICADO</span>
-        <button class="btn-ghost danger" id="adminLogoutBtn" style="display:none" onclick="adminLogout()">Sair</button>
-        <button class="btn-ghost" onclick="closeAdmin()">✕ Fechar</button>
-      </div>
+<!-- ADMIN -->
+<div class="admin-overlay" id="admin-overlay">
+  <div class="admin-panel">
+    <div class="admin-hdr">
+      <span class="admin-ttl">Painel Red News</span>
+      <button class="admin-close" onclick="closeAdmin()">✕</button>
     </div>
     <div class="admin-body">
-
-      <!-- LOGIN -->
-      <div id="loginScreen">
-        <div class="login-wrap">
-          <div class="login-logo"><em>RED</em> NEWS</div>
-          <div class="login-sub">Área restrita</div>
-          <div id="setupForm">
-            <p style="font-family:var(--font-mono);font-size:0.65rem;color:var(--gray);margin-bottom:20px;line-height:1.6;">Nenhuma senha configurada.<br>Defina uma senha para continuar.</p>
-            <div class="form-group"><label>Nova senha</label><input type="password" id="setupPwd1" placeholder="Digite a senha" /></div>
-            <div class="form-group"><label>Confirmar senha</label><input type="password" id="setupPwd2" placeholder="Repita a senha" /></div>
-            <button class="btn btn-primary" style="width:100%" onclick="setupPassword()">Definir senha</button>
-            <div class="login-err" id="setupErr"></div>
+      <div class="admin-sec" id="admin-auth-sec">
+        <div class="admin-sec-ttl">Acesso</div>
+        <div id="auth-out">
+          <div id="setup-form" style="display:none">
+            <p style="font-family:'Source Serif 4',serif;font-size:14px;color:#9a9a96;margin-bottom:12px">Crie uma senha para proteger o painel.</p>
+            <div class="admin-row"><input class="ai" type="password" id="setup-pwd" placeholder="Nova senha (mín. 6 chars)"><button class="abtn" onclick="doSetup()">Criar</button></div>
           </div>
-          <div id="loginForm" style="display:none">
-            <div class="form-group"><label>Senha</label><input type="password" id="loginPwd" placeholder="••••••••" /></div>
-            <button class="btn btn-primary" style="width:100%" onclick="doLogin()">Entrar</button>
-            <div class="login-err" id="loginErr"></div>
+          <div id="login-form">
+            <div class="admin-row"><input class="ai" type="password" id="login-pwd" placeholder="Senha" onkeydown="if(event.key==='Enter')doLogin()"><button class="abtn" onclick="doLogin()">Entrar</button></div>
+          </div>
+        </div>
+        <div id="auth-in" style="display:none">
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+            <span class="auth-ok">● AUTENTICADO</span>
+            <button class="abtn sec" onclick="doLogout()">Sair</button>
+            <button class="abtn danger" onclick="doReset()" style="margin-left:auto">Reset geral</button>
+          </div>
+          <div style="margin-top:14px">
+            <div class="admin-sec-ttl">Alterar senha</div>
+            <div class="admin-row"><input class="ai" type="password" id="cpwd-cur" placeholder="Senha atual"><input class="ai" type="password" id="cpwd-new" placeholder="Nova senha"><button class="abtn" onclick="doChangePwd()">Salvar</button></div>
           </div>
         </div>
       </div>
-
-      <!-- DASHBOARD -->
-      <div id="adminDashboard" style="display:none">
-        <div class="admin-tabs">
-          <button class="admin-tab active" onclick="switchTab('tabNews',this)">📰 Notícias</button>
-          <button class="admin-tab" onclick="switchTab('tabRadio',this)">📻 Transmissão</button>
-          <button class="admin-tab" onclick="switchTab('tabSec',this)">🔒 Segurança</button>
+      <div class="admin-sec" id="radio-sec" style="display:none">
+        <div class="admin-sec-ttl">Rádio ao vivo</div>
+        <div class="live-toggle-row">
+          <label class="sw"><input type="checkbox" id="live-toggle" onchange="toggleLive()"><span class="sl"></span></label>
+          <span class="live-toggle-lbl">Transmissão ativa</span>
         </div>
-
-        <div class="tab-pane active" id="tabNews">
-          <div class="admin-news-list" id="adminNewsList"></div>
-          <button class="btn btn-secondary" style="width:100%;font-size:0.65rem" onclick="resetDefaultNews()">Restaurar padrão</button>
-          <div class="add-panel">
-            <h4>+ Adicionar notícia</h4>
-            <div class="form-row">
-              <div class="form-group"><label>Ícone (emoji)</label><input type="text" id="nIcon" placeholder="🚔" maxlength="4" /></div>
-              <div class="form-group"><label>Categoria</label><input type="text" id="nCat" placeholder="Segurança Pública" /></div>
-            </div>
-            <div class="form-group"><label>Título</label><input type="text" id="nTitle" placeholder="Título da notícia..." /></div>
-            <div class="form-group"><label>Descrição <span style="color:#444">(opcional)</span></label><textarea id="nDesc" placeholder="Descrição curta..."></textarea></div>
-            <div class="form-row">
-              <div class="form-group"><label>Hora/Fonte</label><input type="text" id="nTime" placeholder="Hoje, 14:32 · Red County" /></div>
-              <div class="form-group"><label>Tipo</label>
-                <select id="nType">
-                  <option value="item">Lista</option>
-                  <option value="featured">Destaque</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-group" id="labelGroup" style="display:none"><label>Etiqueta</label><input type="text" id="nLabel" placeholder="EXCLUSIVO" /></div>
-            <button class="btn btn-primary" style="width:100%" onclick="addNews()">Publicar notícia</button>
-          </div>
-        </div>
-
-        <div class="tab-pane" id="tabRadio">
-          <div class="live-control">
-            <div class="live-status-text">
-              <strong id="liveControlStatus" class="off">FORA DO AR</strong>
-              <span>Status da transmissão ao vivo</span>
-            </div>
-            <button class="btn btn-primary btn-live" id="liveToggleBtn" onclick="toggleLive()">Ir ao Vivo</button>
-          </div>
-          <div class="info-note">🔴 Ligue a rádio com o <code>Ligar_RD.bat</code>, copie o link gerado e cole abaixo.</div>
-          <div class="form-group"><label>URL da transmissão</label><input type="url" id="radioUrlInput" placeholder="https://xxxx.trycloudflare.com/rednews.mp3" /></div>
-          <div class="btn-row">
-            <button class="btn btn-primary" onclick="saveRadioUrl()">Salvar link</button>
-            <button class="btn btn-secondary" onclick="clearRadioUrl()">Limpar</button>
-          </div>
-        </div>
-
-        <div class="tab-pane" id="tabSec">
-          <p style="font-family:var(--font-mono);font-size:0.65rem;color:var(--gray);line-height:1.7;margin-bottom:20px;">Altere a senha de administrador.</p>
-          <div class="form-group"><label>Senha atual</label><input type="password" id="pwdCurrent" placeholder="••••••••" /></div>
-          <div class="form-group"><label>Nova senha</label><input type="password" id="pwdNew1" placeholder="••••••••" /></div>
-          <div class="form-group"><label>Confirmar nova senha</label><input type="password" id="pwdNew2" placeholder="••••••••" /></div>
-          <button class="btn btn-primary" onclick="changePassword()">Alterar senha</button>
-          <div class="login-err" id="pwdErr"></div>
-          <hr class="section-sep" />
-          <p style="font-family:var(--font-mono);font-size:0.6rem;color:#444;line-height:1.6;">⚠ Reset completo apaga senha, notícias e URL.</p>
-          <button class="btn btn-danger" style="margin-top:10px" onclick="factoryReset()">Reset completo</button>
-        </div>
+        <div class="admin-row"><input class="ai" id="radio-url" type="url" placeholder="URL do stream (mp3/icecast)"><button class="abtn" onclick="saveRadio()">Salvar</button></div>
+        <button class="abtn sec" onclick="copyBoombox()" style="margin-top:4px">Copiar link boombox</button>
+      </div>
+      <div class="admin-sec" id="news-sec" style="display:none">
+        <div class="admin-sec-ttl">Publicar notícia</div>
+        <div class="admin-row"><input class="ai" id="n-cat" placeholder="Categoria"><select class="asel" id="n-type"><option value="item">Normal</option><option value="featured">Destaque</option></select></div>
+        <div class="admin-row"><input class="ai" id="n-title" placeholder="Manchete"></div>
+        <div class="admin-row"><input class="ai" id="n-desc" placeholder="Subtítulo (opcional)"></div>
+        <div class="admin-row"><input class="ai" id="n-time" placeholder="Hora (ex: Hoje, 14h32)"><input class="ai" id="n-label" placeholder="Badge (URGENTE)" style="max-width:160px"><button class="abtn" onclick="addNews()">Publicar</button></div>
+        <div class="admin-sec-ttl" style="margin-top:18px">Notícias publicadas</div>
+        <div style="display:flex;gap:8px;margin-bottom:10px"><button class="abtn sec" onclick="loadAdminNews()">Atualizar</button><button class="abtn danger" onclick="resetNews()">Limpar</button></div>
+        <div class="admin-news-list" id="admin-news-list"></div>
+      </div>
+      <div class="admin-sec" id="spon-sec" style="display:none">
+        <div class="admin-sec-ttl">Anunciantes</div>
+        <div id="spon-editor"></div>
       </div>
     </div>
   </div>
 </div>
 
+<div id="toast"></div>
+
 <script>
-// ════════════════════════════════════════════
-// API
-// ════════════════════════════════════════════
-const TOKEN_KEY = 'rednews_token';
-function getToken() { return sessionStorage.getItem(TOKEN_KEY); }
-function setToken(t) { sessionStorage.setItem(TOKEN_KEY, t); }
-function clearToken() { sessionStorage.removeItem(TOKEN_KEY); }
-function isLoggedIn() { return !!getToken(); }
+const TK='rednews_token';
+let currentPage='home',currentArticle=null,weatherData=null,streamData={url:'',is_live:false},newsData=[],audio=null,isPlaying=false;
+const $=id=>document.getElementById(id);
+async function api(m,p,b,auth){
+  const h={'Content-Type':'application/json'};
+  if(auth){const t=sessionStorage.getItem(TK);if(t)h['Authorization']='Bearer '+t;}
+  const r=await fetch(p,{method:m,headers:h,body:b?JSON.stringify(b):undefined});
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(d.detail||'Erro');
+  return d;
+}
+function toast(msg,ok=true){const el=$('toast');el.textContent=msg;el.className='show '+(ok?'ok':'err');clearTimeout(el._t);el._t=setTimeout(()=>el.className='',2800);}
+function timeAgo(ts){const d=Math.floor(Date.now()/1000-ts);if(d<60)return'agora';if(d<3600)return`há ${Math.floor(d/60)}min`;if(d<86400)return`há ${Math.floor(d/3600)}h`;return`há ${Math.floor(d/86400)}d`;}
+function initials(n){return n.trim().split(/\s+/).slice(0,2).map(w=>w[0].toUpperCase()).join('');}
+function avatarBg(n){const c=['linear-gradient(150deg,#cc0000,#7a0000)','linear-gradient(150deg,#4b5563,#262b33)','linear-gradient(150deg,#a16207,#5a3a06)','linear-gradient(150deg,#1e3a5f,#0a1a2e)','linear-gradient(150deg,#2e5c2e,#0f2a0f)'];let h=0;for(let x of n)h=(h*31+x.charCodeAt(0))&0xffff;return c[h%c.length];}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-async function api(method, path, body) {
-  const opts = { method, headers: { 'Content-Type': 'application/json' } };
-  const token = getToken();
-  if (token) opts.headers['Authorization'] = `Bearer ${token}`;
-  if (body !== undefined) opts.body = JSON.stringify(body);
-  const res = await fetch(path, opts);
-  if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.detail || `Erro ${res.status}`); }
-  return res.json();
+const I={
+  cal:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cc0000" stroke-width="2" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>`,
+  clk:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7a7a82" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5l3 2"/></svg>`,
+  pin:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7a7a82" stroke-width="2" stroke-linecap="round"><path d="M12 21s7-6.4 7-11a7 7 0 1 0-14 0c0 4.6 7 11 7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg>`,
+  traf:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="6" cy="19" r="2.2"/><circle cx="18" cy="5" r="2.2"/><path d="M8.2 18.5H14a3.5 3.5 0 0 0 0-7H10a3.5 3.5 0 0 1 0-7h5.6"/></svg>`,
+  sun:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"/></svg>`,
+  bld:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 21h18M5 21V9l7-4 7 4v12M9.5 21v-5h5v5M9 12h.01M15 12h.01"/></svg>`,
+  hom:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 11l9-7 9 7M5 10v9h14v-9"/></svg>`,
+  nws:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 5h13v14H6a2 2 0 0 1-2-2zM17 8h3v9a2 2 0 0 1-2 2M7 9h7M7 13h7"/></svg>`,
+  pen:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>`,
+  cal2:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>`,
+  rad:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4.9 4.9a10 10 0 0 0 0 14.2M19.1 4.9a10 10 0 0 1 0 14.2M7.8 7.8a6 6 0 0 0 0 8.4M16.2 7.8a6 6 0 0 1 0 8.4"/><circle cx="12" cy="12" r="2"/></svg>`,
+  map:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 4 3 6.5v13L9 17l6 2.5 6-2.5v-13L15 6.5 9 4zM9 4v13M15 6.5v13"/></svg>`,
+  inf:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>`,
+  bars:`<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19V9m5 10V5m5 14v-7m5 7V11"/></svg>`,
+  hrt:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>`,
+  arr:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`,
+  suno:`<svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#cc0000" stroke-width="1.4" stroke-linecap="round"><circle cx="12" cy="11" r="4"/><path d="M12 2v2M12 18v2M3 11H1M23 11h-2M5 4l1.4 1.4M17.6 5.4 19 4"/></svg>`,
+  img:`<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m3 17 5-4 4 3 3-3 6 5"/></svg>`,
+  ims:`<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m3 17 5-4 4 3 3-3 6 5"/></svg>`,
+  iml:`<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m3 17 5-4 4 3 3-3 6 5"/></svg>`,
+  play:`<svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M8 5v14l11-7z"/></svg>`,
+  pause:`<svg width="22" height="22" viewBox="0 0 24 24" fill="#fff" stroke="none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`,
+  usr:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6a6a70" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>`,
+};
+
+function buildUtil(){
+  const n=new Date();
+  const days=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+  const mos=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const ds=`${days[n.getDay()]} · ${n.getDate()} ${mos[n.getMonth()]} ${n.getFullYear()}`;
+  const ts=n.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  return `<div class="util-strip"><div class="left">${I.cal}${ds}</div><div class="right"><span class="util-live"><span class="dot"></span>NO AR · 98.9 FM</span><span class="util-item">${I.clk}<span id="util-time">${ts}</span></span><span class="util-item">${I.pin}Red County, SA</span></div></div>`;
 }
 
-// ════════════════════════════════════════════
-// CLOCK
-// ════════════════════════════════════════════
-function updateClock() {
-  const now = new Date();
-  document.getElementById('clockDisplay').textContent =
-    now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-}
-setInterval(updateClock, 1000);
-updateClock();
-
-// ════════════════════════════════════════════
-// WEATHER
-// ════════════════════════════════════════════
-async function fetchWeather() {
-  try {
-    const w = await api('GET', '/api/weather');
-    // Tiles
-    document.getElementById('wIcon').textContent     = w.icon;
-    document.getElementById('wTemp').textContent     = `${w.temp}°C — ${w.description}`;
-    document.getElementById('wHumidity').textContent = `${w.humidity}% umidade`;
-    document.getElementById('wRoadIcon').textContent = w.road_icon;
-    document.getElementById('wRoad').textContent     = w.road_text;
-    // Sidebar widget
-    document.getElementById('wBigIcon').textContent    = w.icon;
-    document.getElementById('wBigTemp').innerHTML      = `${w.temp}<small>°C</small>`;
-    document.getElementById('wBigDesc').textContent    = w.description;
-    document.getElementById('wDetailHum').textContent  = `${w.humidity}%`;
-    document.getElementById('wDetailWind').textContent = `${w.wind} km/h`;
-    document.getElementById('wDetailRoad').textContent = w.road_text;
-    const now = new Date();
-    const updated = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-    document.getElementById('weatherUpdated').textContent = `Atualizado ${updated}`;
-  } catch { /* silent fail */ }
+function buildMasthead(){
+  return `<div class="masthead"><div class="masthead-map"><img src="assets/red-county-map.png" alt="Mapa"><div class="g1"></div><div class="g2"></div><span class="map-dot" style="left:53.2%;top:15%"><span class="map-dot-inner" style="width:10px;height:10px;background:#ff4a4a;box-shadow:0 0 14px 5px rgba(255,45,45,.9)"></span><span class="map-dot-ring"></span></span><span class="map-dot" style="left:85.7%;top:59.5%"><span class="map-dot-inner" style="width:9px;height:9px;background:#ff3a3a;box-shadow:0 0 11px 4px rgba(255,45,45,.8)"></span><span class="map-dot-ring" style="animation-delay:.8s"></span></span><span class="map-dot" style="left:18.7%;top:83%"><span class="map-dot-inner" style="width:9px;height:9px;background:#ff3a3a;box-shadow:0 0 11px 4px rgba(255,45,45,.8)"></span><span class="map-dot-ring" style="animation-delay:1.4s"></span></span></div><div class="masthead-wm"><div style="font-family:'Oswald',sans-serif;font-weight:600;font-size:19px;letter-spacing:11px;color:rgba(235,75,75,.4);text-transform:uppercase;text-shadow:0 0 20px rgba(0,0,0,.85)">Red County</div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:rgba(190,140,140,.6);margin-top:7px;text-shadow:0 0 12px rgba(0,0,0,.9)">35°22'N · 119°01'W · San Andreas</div></div><div class="masthead-logo"><div class="mast-badge"><img src="assets/rn-badge.png" alt="Red News"></div><div><div class="mast-title"><span style="color:#ff1f1f">RED</span> <span style="color:#fff">NEWS</span></div><div class="mast-sub">Rádio · Jornal · Red County</div></div></div><div class="mast-search"><input type="text" id="search-input" placeholder="Buscar notícias, eventos, áudios…"><button onclick="doSearch()">${I.arr}</button></div></div>`;
 }
 
-// ════════════════════════════════════════════
-// RATES
-// ════════════════════════════════════════════
-async function fetchRates() {
-  try {
-    const r = await api('GET', '/api/rates');
-    const usd = r.usd, eur = r.eur;
-
-    // Tiles
-    const usdSign = usd.change >= 0 ? '▲' : '▼';
-    const eurSign = eur.change >= 0 ? '▲' : '▼';
-    document.getElementById('wUSD').innerHTML =
-      `R$ ${usd.rate.toFixed(2)} <span class="${usd.change >= 0 ? 'up' : 'down'}">${usdSign}${Math.abs(usd.change).toFixed(2)}%</span>`;
-    document.getElementById('wEUR').innerHTML =
-      `R$ ${eur.rate.toFixed(2)} <span class="${eur.change >= 0 ? 'up' : 'down'}">${eurSign}${Math.abs(eur.change).toFixed(2)}%</span>`;
-    // Sidebar
-    document.getElementById('rUSD').textContent = `R$ ${usd.rate.toFixed(2)}`;
-    document.getElementById('rEUR').textContent = `R$ ${eur.rate.toFixed(2)}`;
-    const rUSDc = document.getElementById('rUSDChange');
-    rUSDc.textContent = `${usdSign} ${Math.abs(usd.change).toFixed(2)}% hoje`;
-    rUSDc.className = `rate-change ${usd.change >= 0 ? 'up' : 'down'}`;
-    const rEURc = document.getElementById('rEURChange');
-    rEURc.textContent = `${eurSign} ${Math.abs(eur.change).toFixed(2)}% hoje`;
-    rEURc.className = `rate-change ${eur.change >= 0 ? 'up' : 'down'}`;
-
-    const now = new Date();
-    document.getElementById('ratesUpdated').textContent =
-      `Atualizado ${now.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' })}`;
-  } catch { /* silent fail */ }
+function buildInfoBar(){
+  const w=weatherData||{};
+  const road=w.road_text||'Carregando…';
+  const dc=w.road_icon==='🟢'?'dg':w.road_icon==='🔴'?'dr':'dy';
+  const temp=w.temp?`${w.temp}°C · ${(w.description||'').toLowerCase()}`:'Carregando…';
+  return `<div class="info-bar"><div class="info-tile"><span class="tile-icon">${I.traf}</span><div><div class="tile-name">Palomino Creek</div><div class="tile-status"><span class="sdot dy"></span>Trânsito leve</div></div></div><div class="info-tile"><span class="tile-icon">${I.sun}</span><div><div class="tile-name">Dillimore</div><div class="tile-status"><span class="sdot dg"></span>${temp}</div></div></div><div class="info-tile"><span class="route-badge">68</span><div><div class="tile-name">Rota 68</div><div class="tile-status"><span class="sdot ${dc}"></span>${road}</div></div></div><div class="info-tile"><span class="tile-icon">${I.bld}</span><div><div class="tile-name">Downtown · Banco</div><div class="tile-status"><span class="sdot dg"></span>Calmo · operando</div></div></div></div>`;
 }
 
-// Refresh every 10 min
-setInterval(() => { fetchWeather(); fetchRates(); }, 600000);
-
-// ════════════════════════════════════════════
-// SEARCH
-// ════════════════════════════════════════════
-let allNews = [];
-
-function doSearch() {
-  const q = document.getElementById('searchInput').value.trim().toLowerCase();
-  const box = document.getElementById('searchResults');
-  if (!q) { box.classList.remove('show'); return; }
-  const hits = allNews.filter(n =>
-    n.title.toLowerCase().includes(q) || n.cat.toLowerCase().includes(q)
-  ).slice(0, 6);
-  if (hits.length === 0) {
-    box.innerHTML = `<div class="sr-empty">Nenhum resultado para "${q}"</div>`;
-  } else {
-    box.innerHTML = hits.map(n => `
-      <div class="search-result-item">
-        <div class="sr-cat">${esc(n.cat)}</div>
-        <div class="sr-title">${esc(n.title)}</div>
-      </div>
-    `).join('');
-  }
-  box.classList.add('show');
+function buildNav(active){
+  const items=[['home','Início',I.hom],['noticias','Notícias',I.nws],['cronicas','Crônicas',I.pen],['programacao','Programação',I.cal2],['transmissao','Transmissão',I.rad],['condado','Condado',I.map],['sobre','Sobre',I.inf]];
+  return `<nav class="site-nav">${items.map(([p,l,ic])=>`<a href="#${p}" class="${active===p?'active':''}">${ic}${l}</a>`).join('')}</nav>`;
 }
 
-document.getElementById('searchInput').addEventListener('input', doSearch);
-document.getElementById('searchInput').addEventListener('keydown', e => { if (e.key === 'Escape') document.getElementById('searchResults').classList.remove('show'); });
-document.addEventListener('click', e => { if (!e.target.closest('.search-bar')) document.getElementById('searchResults').classList.remove('show'); });
-
-// ════════════════════════════════════════════
-// PLAYER
-// ════════════════════════════════════════════
-const player    = document.getElementById('radioPlayer');
-const source    = document.getElementById('radioSource');
-const badge     = document.getElementById('statusBadge');
-const nowPlay   = document.getElementById('nowPlayingText');
-const urlDisp   = document.getElementById('urlDisplay');
-const boomEl    = document.getElementById('boomboxUrl');
-const liveDot   = document.getElementById('liveDot');
-const liveLabel = document.getElementById('liveLabel');
-let currentStreamUrl = '';
-
-function setStatus(state) {
-  badge.className = 'status-badge';
-  liveDot.className = 'badge-live';
-  if (state === 'live') {
-    badge.textContent = '● AO VIVO'; badge.classList.add('live');
-    liveDot.classList.add('on'); liveLabel.textContent = 'ON AIR';
-    nowPlay.textContent = 'Red News 98.9';
-  } else if (state === 'error') {
-    badge.textContent = '✕ FORA DO AR'; badge.classList.add('error');
-    liveLabel.textContent = 'OFF AIR'; nowPlay.textContent = 'Sem sinal';
-  } else {
-    badge.textContent = 'AGUARDANDO';
-    liveLabel.textContent = 'OFF AIR'; nowPlay.textContent = '—';
-  }
+function buildCompact(active){
+  const ls=[['home','Início'],['noticias','Notícias'],['cronicas','Crônicas']];
+  return `<div class="compact-hdr"><div class="compact-logo"><div class="compact-badge"><img src="assets/rn-badge.png" alt="Red News"></div><div class="compact-title"><span style="color:#ff1f1f">RED</span> <span style="color:#fff">NEWS</span></div></div><div class="compact-nav">${ls.map(([p,l])=>`<a href="#${p}" class="${active===p?'active':''}">${l}</a>`).join('')}</div></div>`;
 }
 
-function applyUrl(url) {
-  currentStreamUrl = url || '';
-  if (!url || !url.startsWith('http')) {
-    setStatus('idle');
-    urlDisp.textContent = 'nenhum link configurado'; urlDisp.classList.remove('has-url');
-    boomEl.textContent = 'Nenhum link configurado'; boomEl.classList.remove('has-url');
-    return;
-  }
-  source.src = url;
-  urlDisp.textContent = url; urlDisp.classList.add('has-url');
-  boomEl.textContent = url; boomEl.classList.add('has-url');
-  player.load(); player.play().catch(() => {});
-  setStatus('live');
+function buildTicker(){
+  const hs=newsData.length>0?[...newsData.map(n=>n.title),...newsData.map(n=>n.title)]:['Red News 98.9 FM','Red County, San Andreas','Red News 98.9 FM','Red County, San Andreas'];
+  return `<div class="ticker"><div class="ticker-lbl">URGENTE</div><div class="ticker-track"><div class="ticker-inner">${hs.map(h=>`<span class="ti">${esc(h)}</span><span class="ts">•</span>`).join('')}</div></div></div>`;
 }
 
-function applyLiveState(isLive, url) {
-  document.getElementById('playerBox').style.display = isLive ? '' : 'none';
-  document.getElementById('offlineBanner').classList.toggle('show', !isLive);
-  if (isLive && url) applyUrl(url);
+function buildLive(){
+  return `<div class="live-strip"><div class="live-box"><button class="live-play" id="play-btn" onclick="togglePlay()">${I.play}</button><div class="live-info"><div class="live-title-row"><span class="live-name">Red News 98.9</span><span class="live-badge" id="live-badge" style="${streamData.is_live?'':'display:none'}"><span class="dot"></span>AO VIVO</span></div><div class="live-sub" id="live-sub">${streamData.url?'Clique para ouvir ao vivo':'Transmissão offline no momento'}</div></div><div class="waveform"><span style="height:40%"></span><span style="height:80%"></span><span style="height:55%;background:#8b0000"></span><span style="height:100%;background:#ff2a2a"></span><span style="height:65%"></span><span style="height:35%;background:#8b0000"></span><span style="height:75%"></span><span style="height:50%;background:#8b0000"></span></div><button class="live-btn" onclick="togglePlay()" id="live-cta">Ouvir</button></div></div>`;
 }
 
-player.addEventListener('playing', () => setStatus('live'));
-player.addEventListener('error',   () => { if (currentStreamUrl) setStatus('error'); });
-player.addEventListener('stalled', () => { if (currentStreamUrl) setStatus('error'); });
-player.addEventListener('waiting', () => { if (currentStreamUrl) setStatus('error'); });
-
-async function toggleLive() {
-  try {
-    const data = await api('GET', '/api/stream');
-    const newLive = !data.is_live;
-    await api('PUT', '/api/stream', { is_live: newLive });
-    applyLiveState(newLive, data.url);
-    syncRadioAdminUI(newLive, data.url);
-    showToast(newLive ? 'Rádio marcada como AO VIVO.' : 'Rádio marcada como Fora do Ar.');
-  } catch (e) { showToast('Erro: ' + e.message); }
+function buildFooter(){
+  return `<footer class="site-footer"><div><div class="footer-logo"><span style="color:#ff1f1f">RED</span> <span style="color:#fff">NEWS</span></div><div class="footer-sub">A voz de Red County, San Andreas · Est. 2026</div></div><div class="footer-copy">© 2026 Red News · Todos os direitos reservados</div></footer>`;
 }
 
-async function saveRadioUrl() {
-  const url = document.getElementById('radioUrlInput').value.trim();
-  if (!url) { showToast('Cole o link primeiro!'); return; }
-  if (!url.startsWith('http')) { showToast('Link inválido. Use https://...'); return; }
-  try { await api('PUT', '/api/stream', { url }); applyUrl(url); showToast('Link salvo!'); }
-  catch (e) { showToast('Erro: ' + e.message); }
+function buildWeather(){
+  const w=weatherData||{};
+  return `<div class="sw"><div class="sw-head">Clima — Red County</div><div class="w-main">${I.suno}<div><div class="w-temp">${w.temp||'—'}<span>°C</span></div><div class="w-desc">${w.description||'Carregando…'} · Dillimore</div></div></div><div class="w-tiles"><div class="w-tile">Umidade<span>${w.humidity||'—'}%</span></div><div class="w-tile">Pista<span>${w.road_text||'—'}</span></div></div></div>`;
 }
 
-async function clearRadioUrl() {
-  try {
-    await api('PUT', '/api/stream', { url: '' });
-    source.src = ''; player.load(); currentStreamUrl = ''; setStatus('idle');
-    urlDisp.textContent = 'nenhum link configurado'; urlDisp.classList.remove('has-url');
-    boomEl.textContent = 'Nenhum link configurado'; boomEl.classList.remove('has-url');
-    const inp = document.getElementById('radioUrlInput'); if (inp) inp.value = '';
-    showToast('Link removido.');
-  } catch (e) { showToast('Erro: ' + e.message); }
+function buildSchedule(){
+  const h=new Date().getHours();
+  const rows=[{t:'06–09h',n:'Bom Dia Red County',l:h>=6&&h<9},{t:'09–12h',n:'Noticiário da Manhã',l:h>=9&&h<12},{t:'12–14h',n:'Almoço com Notícias',l:h>=12&&h<14},{t:'14–18h',n:'Tarde Livre',l:h>=14&&h<18},{t:'18–22h',n:'Noite no Condado',l:h>=18&&h<22},{t:'22–06h',n:'Red County Noturno',l:h>=22||h<6}];
+  return `<div class="sw"><div class="sw-head">No ar agora</div>${rows.map(r=>`<div class="sched-row"><span class="sched-t">${r.t}</span><span class="sched-n" style="color:${r.l?'#ff3a3a':'#c8c8c2'}">${r.n}</span>${r.l?'<span class="sched-live">● AO VIVO</span>':''}</div>`).join('')}</div>`;
 }
 
-function syncRadioAdminUI(isLive, url) {
-  const st = document.getElementById('liveControlStatus');
-  const tb = document.getElementById('liveToggleBtn');
-  if (st) { st.textContent = isLive ? 'AO VIVO' : 'FORA DO AR'; st.className = isLive ? 'on' : 'off'; }
-  if (tb) tb.textContent = isLive ? 'Encerrar Transmissão' : 'Ir ao Vivo';
-  const inp = document.getElementById('radioUrlInput'); if (inp && url) inp.value = url;
+function buildMaisLidas(list){
+  const rows=list.slice(0,5).map((n,i)=>`<div class="sw-ml"><span class="num">${i+1}</span><span class="txt">${esc(n.title)}</span></div>`).join('');
+  return `<div class="sw"><div class="sw-head">Mais lidas</div><div class="sw-body">${rows}</div></div>`;
 }
 
-// ════════════════════════════════════════════
-// BOOMBOX
-// ════════════════════════════════════════════
-function copyBoombox() {
-  if (!currentStreamUrl) { showToast('Nenhum link configurado!'); return; }
-  navigator.clipboard.writeText(currentStreamUrl)
-    .then(() => showToast('Link copiado!'))
-    .catch(() => {
-      const ta = document.createElement('textarea'); ta.value = currentStreamUrl;
-      document.body.appendChild(ta); ta.select(); document.execCommand('copy');
-      document.body.removeChild(ta); showToast('Link copiado!');
-    });
+function buildAdDark(s){
+  if(!s)return'';
+  return `<div class="ad-banner"><div class="ad-bar"><span class="ad-lbl">Publicidade</span></div><div class="ad-body-dark" onclick="window.open('${esc(s.cta_url||'#')}','_blank')"><div class="ad-stripe"></div><img src="${esc(s.image_url)}" alt="${esc(s.name)}"><div class="ad-content"><div class="ad-ttl-dark">${esc(s.name)}</div><div class="ad-sub-dark">${esc(s.tagline)}</div><a class="ad-cta-dark" href="${esc(s.cta_url||'#')}" target="_blank">${esc(s.cta_text)}</a></div></div></div>`;
 }
 
-// ════════════════════════════════════════════
-// NEWS
-// ════════════════════════════════════════════
-function esc(str) {
-  const d = document.createElement('div'); d.textContent = String(str || ''); return d.innerHTML;
+function buildAdLight(s){
+  if(!s)return'';
+  return `<div class="ad-banner"><div class="ad-bar"><span class="ad-lbl">Publicidade</span></div><div class="ad-body-light" onclick="window.open('${esc(s.cta_url||'#')}','_blank')"><img src="${esc(s.image_url)}" alt="${esc(s.name)}"><div class="ad-ttl-light">${esc(s.name)}</div><div class="ad-sub-light">${esc(s.tagline)}</div><a class="ad-cta-light" href="${esc(s.cta_url||'#')}" target="_blank">${esc(s.cta_text)}</a></div></div>`;
 }
 
-function renderNews(news) {
-  allNews = news;
-  const featured = news.filter(n => n.type === 'featured');
-  const items    = news.filter(n => n.type === 'item');
+// ── RENDER HOME ─────────────────────────────────────────────────────────────
+function renderHome(sponsors){
+  const lead=newsData[0]||null;
+  const secs=newsData.slice(1,3);
+  const ultimas=newsData.slice(0,6);
+  const hs=sponsors||{};
 
-  document.getElementById('featuredNews').innerHTML = featured.map(n => `
-    <div class="news-card">
-      <div class="news-card-thumb" data-label="${esc(n.label)}">${esc(n.icon||'📰')}</div>
-      <div class="news-card-body">
-        <div class="news-cat">${esc(n.cat)}</div>
-        <div class="news-title">${esc(n.title)}</div>
-        ${n.desc ? `<div class="news-desc">${esc(n.desc)}</div>` : ''}
-        <div class="news-time">${esc(n.time_str)}</div>
-      </div>
+  const leadHtml=lead?`<div class="lead-card" onclick="openArticle('${lead.id}')">
+    ${lead.img?`<img src="${esc(lead.img)}" alt="">`:`<div class="lead-ph">${I.img}</div>`}
+    <div class="lead-tags"><span class="tag-cat">${esc(lead.cat)}</span>${lead.label?`<span class="tag-live"><span class="dot"></span>${esc(lead.label)}</span>`:''}</div>
+    <div class="lead-overlay"><h2>${esc(lead.title)}</h2>${lead.desc?`<div class="lead-dek">${esc(lead.desc)}</div>`:''}<div class="lead-meta"><span>${I.clk}${esc(lead.time_str)}</span></div></div>
+  </div>`:`<div class="lead-card" style="display:flex;align-items:center;justify-content:center;color:#4a1c1c">${I.img}</div>`;
+
+  const secsHtml=secs.map(n=>`<div class="sec-item" onclick="openArticle('${n.id}')"><div class="sec-thumb">${I.ims}</div><div><div class="sec-cat">${esc(n.cat)}</div><div class="sec-ttl">${esc(n.title)}</div><div class="sec-time">${esc(n.time_str)}</div></div></div>`).join('');
+  const mlHtml=newsData.slice(0,5).map((n,i)=>`<div class="ml-item"><span class="num">${i+1}</span><span class="txt">${esc(n.title)}</span></div>`).join('');
+  const ulHtml=ultimas.map(n=>`<div class="ncard" onclick="openArticle('${n.id}')"><div class="nthumb">${I.img}<span class="ntag">${esc(n.cat)}</span></div><div class="nbody"><h3>${esc(n.title)}</h3>${n.desc?`<p>${esc(n.desc)}</p>`:''}<div class="nmeta">${esc(n.time_str)}</div></div></div>`).join('');
+
+  $('page-home').innerHTML=`${buildUtil()}${buildMasthead()}${buildInfoBar()}${buildNav('home')}${buildTicker()}
+  <div class="hero-grid">
+    <div>${leadHtml}${buildAdDark(hs.hero)}</div>
+    <div class="side-col">${secsHtml}<div class="mais-lidas"><div class="ml-title">${I.bars}Mais lidas</div>${mlHtml}</div></div>
+  </div>
+  <div class="ultimas"><div class="sec-hdr"><span class="sec-ttl-bar">Últimas de Red County</span><span class="sec-line"></span><a href="#noticias" class="sec-link">Ver tudo ${I.arr}</a></div><div class="cards-grid">${ulHtml||'<div style="color:#5e5e64;font-family:Share Tech Mono,monospace;font-size:12px">Nenhuma notícia publicada</div>'}</div></div>
+  ${buildLive()}${buildFooter()}`;
+}
+
+// ── RENDER NOTÍCIAS ──────────────────────────────────────────────────────────
+let currentFilter=null;
+function renderNoticias(filter,sponsors){
+  const filtered=filter&&filter!=='Tudo'?newsData.filter(n=>n.cat===filter):newsData;
+  const cats=['Tudo',...new Set(newsData.map(n=>n.cat))];
+  const chips=cats.map(c=>`<span class="chip ${(filter||'Tudo')===c?'chip-active':'chip-inactive'}" onclick="filterNews('${esc(c)}')">${esc(c)}</span>`).join('');
+  const [feat,...rest]=filtered;
+  const featHtml=feat?`<div class="hcard" onclick="openArticle('${feat.id}')"><div class="hthumb">${I.iml}<span class="htag">${esc(feat.cat)}</span></div><div class="hinfo"><div class="hcat">${esc(feat.cat)}</div><h3>${esc(feat.title)}</h3>${feat.desc?`<p>${esc(feat.desc)}</p>`:''}<div class="hmeta">${esc(feat.time_str)}</div></div></div>`:'';
+  const rowsHtml=rest.map(n=>`<div class="row-item" onclick="openArticle('${n.id}')"><div class="row-thumb">${I.ims}</div><div><div class="row-cat">${esc(n.cat)}</div><div class="row-ttl">${esc(n.title)}</div>${n.desc?`<div class="row-desc">${esc(n.desc)}</div>`:''}<div class="row-meta">${esc(n.time_str)}</div></div></div>`).join('');
+  const hs=sponsors||{};
+
+  $('page-noticias').innerHTML=`${buildCompact('noticias')}
+  <div class="page-head"><div class="breadcrumb">Início / Notícias</div><div class="page-title">Notícias</div><div class="page-desc">Tudo o que acontece em Red County, atualizado em tempo real.</div></div>
+  <div class="filter-bar">${chips}</div>
+  <div class="news-body">
+    <div class="news-list">${featHtml}${rowsHtml||'<div style="color:#5e5e64;font-family:Share Tech Mono,monospace;font-size:12px;padding:20px 0">Nenhuma notícia encontrada</div>'}</div>
+    <div class="sidebar">${buildMaisLidas(newsData)}${buildWeather()}${buildSchedule()}${buildAdLight(hs.sidebar)}</div>
+  </div>${buildFooter()}`;
+}
+
+function filterNews(cat){
+  currentFilter=cat;
+  api('GET','/api/sponsors').then(s=>renderNoticias(cat,s)).catch(()=>renderNoticias(cat,{}));
+  showPage('noticias');
+}
+
+// ── RENDER CRÔNICAS ──────────────────────────────────────────────────────────
+function renderCronicas(sponsors){
+  const hs=sponsors||{};
+  const cards=newsData.filter(n=>n.cat==='Crônica'||n.type==='featured').map(n=>`<div class="ncard" onclick="openArticle('${n.id}')"><div class="nthumb">${I.img}<span class="ntag">${esc(n.cat)}</span></div><div class="nbody"><h3>${esc(n.title)}</h3>${n.desc?`<p>${esc(n.desc)}</p>`:''}<div class="nmeta">${esc(n.time_str)}</div></div></div>`).join('');
+
+  $('page-cronicas').innerHTML=`${buildCompact('cronicas')}
+  <div class="page-head"><div class="breadcrumb">Início / Crônicas</div><div class="page-title">Crônicas</div><div class="page-desc">Histórias e coberturas especiais de Red County.</div></div>
+  <div class="news-body">
+    <div class="news-list">
+      <div class="hcard" onclick="openArticle('s1')"><div class="hthumb" style="background:linear-gradient(150deg,#2a0707,#0c0202)"><img src="assets/sinuca-photo.png" alt="Sinuca" style="width:100%;height:100%;object-fit:cover"><span class="htag">Esporte</span></div><div class="hinfo"><div class="hcat">Esporte · Red County</div><h3>Solevan fatura US$ 10 mil e vira o novo rei da sinuca</h3><p>Final apertada no Bar do Joe coroa Jack Solevan diante de casa lotada em Montgomery.</p><div class="hmeta">11 Jun · 22h40 · Por Beau Hollister</div></div></div>
+      ${cards?`<div class="cards-grid" style="margin-top:8px">${cards}</div>`:''}
     </div>
-  `).join('');
+    <div class="sidebar">${buildMaisLidas(newsData)}${buildWeather()}${buildAdLight(hs.sidebar)}</div>
+  </div>${buildFooter()}`;
+}
 
-  document.getElementById('newsList').innerHTML = items.map(n => `
-    <div class="news-item">
-      <div class="news-item-icon">${esc(n.icon||'📰')}</div>
-      <div class="news-item-body">
-        <div class="news-cat">${esc(n.cat)}</div>
-        <div class="news-title">${esc(n.title)}</div>
-        <div class="news-time">${esc(n.time_str)}</div>
-      </div>
+// ── RENDER ARTICLE ───────────────────────────────────────────────────────────
+async function renderArticle(id){
+  let sponsors={};
+  try{sponsors=await api('GET','/api/sponsors');}catch(e){}
+  if(id==='s1'){renderSinuca(sponsors);return;}
+  const news=newsData.find(n=>n.id===id);
+  if(!news){showPage('home');return;}
+  let comments=[];
+  try{comments=await api('GET',`/api/comments/${id}`);}catch(e){}
+  $('page-article').innerHTML=`${buildCompact(currentPage)}
+  <div class="art-head"><div class="breadcrumb">Início / Notícias</div><div class="art-kicker"><span class="tag">${esc(news.cat)}</span></div><h1 class="art-h1">${esc(news.title)}</h1>${news.desc?`<p class="art-dek">${esc(news.desc)}</p>`:''}<div class="art-byline"><div class="art-avatar">RN</div><div><div class="art-author">Redação Red News</div><div class="art-meta">Red News · ${esc(news.time_str)}</div></div></div></div>
+  <div class="art-body"><p class="drop-cap">Red County — ${esc(news.title)}.</p>${news.desc?`<p>${esc(news.desc)}</p>`:''}<p>Acompanhe o desenvolvimento desta notícia através dos canais oficiais da Red News 98.9 FM.</p></div>
+  ${buildComments(id,comments)}${buildFooter()}`;
+}
+
+function renderSinuca(sponsors){
+  api('GET','/api/comments/s1').then(comments=>{
+    $('page-article').innerHTML=`${buildCompact('cronicas')}
+    <div class="art-head"><div class="breadcrumb">Início / Crônicas / Esporte</div><div class="art-kicker"><span class="tag">Esporte</span><span class="sub">Red County · Cobertura ao vivo</span></div><h1 class="art-h1">Solevan fatura US$ 10 mil e vira o novo rei da sinuca</h1><p class="art-dek">Final apertada no Bar do Joe coroa Jack Solevan diante de casa lotada em Montgomery.</p><div class="art-byline"><div class="art-avatar">BH</div><div><div class="art-author">Por Beau Hollister</div><div class="art-meta">Red News · Montgomery, Red County · 11/06 · 22h40</div></div></div></div>
+    <div class="art-hero"><img src="assets/sinuca-photo.png" alt="Jack Solevan campeão"><div class="art-caption">Jack Solevan ergue o cheque de US$ 10.000 momentos após cravar a bola 8 que decidiu o título. · Foto / Red News</div></div>
+    <div class="art-body">
+      <p class="drop-cap">MONTGOMERY, RED COUNTY — Foram quase três horas de taco, giz e silêncio tenso entre uma tacada e outra, mas no fim sobrou um nome só: Jack Solevan, que embolsou US$ 10.000 ao vencer o Campeonato de Sinuca do Bar do Joe na noite desta terça.</p>
+      <p>A casa encheu cedo. Quando o balcão fechou as inscrições, a chave já tinha gente de sobra disputando as mesas — e plateia o bastante pra deixar qualquer iniciante com a mão tremendo no taco.</p>
+      <p>Solevan não foi o favorito declarado. Subiu rodada por rodada, segurou pressão na semifinal e chegou à decisão sem dar muito espetáculo, mas sem errar o que não podia errar. Foi exatamente o que bastou.</p>
+      <div class="stat-tiles"><div class="stat-tile"><div class="stat-lbl">Campeão</div><div class="stat-val">Jack Solevan</div></div><div class="stat-tile"><div class="stat-lbl">Prêmio</div><div class="stat-val">US$ 10.000</div></div><div class="stat-tile"><div class="stat-lbl">Local</div><div class="stat-val">Bar do Joe</div></div><div class="stat-tile"><div class="stat-lbl">Evento</div><div class="stat-val">Camp. Sinuca</div></div></div>
+      <h2>A final que parou o bar</h2>
+      <p>A decisão colocou frente a frente Jack Solevan e Klaus Vogel. Vogel abriu vantagem, encaçapou bem no começo e chegou a deixar Solevan na corda bamba. Mas bastou uma bola fácil escapar da caçapa pra virada começar.</p>
+      <p>Daí pra frente foi Solevan no controle. Tacada limpa, sem firula, fechando a mesa com a calma de quem já sabia onde ia terminar. A bola 8 caiu na lateral direita e o bar veio abaixo.</p>
+      <blockquote><p>"No meio da final eu já tava perdendo. Aí o Vogel deixou uma boba escapar e eu pensei: agora é minha. Dez mil dólares mudam a semana de qualquer um."</p><div class="bq-author">— Jack Solevan, campeão</div></blockquote>
+      <h2>Bar do Joe: onde Montgomery se encontra</h2>
+      <p>Mais uma vez o Bar do Joe provou que, quando chama, a cidade aparece. Mesa cheia, cerveja liberada e aquela mistura de quem joga pra valer com quem só veio comentar tacada alheia.</p>
+      <div class="resumo"><div class="resumo-ttl">Resumo da Red News</div><div class="resumo-item"><span class="rdot"></span><span>Jack Solevan venceu e levou US$ 10.000.</span></div><div class="resumo-item"><span class="rdot"></span><span>Klaus Vogel parou na final.</span></div><div class="resumo-item"><span class="rdot"></span><span>O Bar do Joe lotou.</span></div><div class="resumo-item"><span class="rdot"></span><span>Montgomery já espera a próxima edição.</span></div></div>
     </div>
-  `).join('');
-
-  // Update ticker with news headlines
-  const headlines = news.map(n => n.title).join(' ·· ');
-  if (headlines) document.getElementById('tickerText').textContent = headlines;
+    ${buildComments('s1',comments)}${buildFooter()}`;
+  }).catch(()=>{
+    $('page-article').innerHTML+=buildComments('s1',[])+buildFooter();
+  });
 }
 
-function renderAdminNews(news) {
-  document.getElementById('adminNewsList').innerHTML = news.map(n => `
-    <div class="admin-ni">
-      <div class="admin-ni-icon">${esc(n.icon||'📰')}</div>
-      <div class="admin-ni-info">
-        <div class="admin-ni-title">${n.type==='featured'?'<span class="admin-ni-featured">★</span>':''}${esc(n.title)}</div>
-        <div class="admin-ni-meta">${esc(n.cat)} · ${esc(n.time_str)}</div>
-      </div>
-      <button class="admin-ni-del" onclick="deleteNews('${n.id}')">✕</button>
-    </div>
-  `).join('');
+function buildComments(aid,comments){
+  const ch=comments.map(c=>{
+    const ini=initials(c.author),bg=avatarBg(c.author);
+    return `<div class="cmt-item"><div class="cmt-av" style="background:${bg}">${ini}</div><div style="flex:1;min-width:0"><div><span class="cmt-author">${esc(c.author)}</span><span class="cmt-time">· ${timeAgo(c.created_at)}</span></div><p class="cmt-body">${esc(c.body)}</p><div class="cmt-actions"><button class="like-btn" onclick="likeComment('${aid}','${c.id}',this)">${I.hrt}${c.likes}</button><span>Responder</span></div></div></div>`;
+  }).join('');
+  return `<div class="cmts-wrap"><div class="cmts-sep"></div><div class="cmts-hdr"><div class="cmts-title-row"><h3>Comentários</h3><span class="cmts-count">${comments.length}</span></div></div><div class="composer"><div class="comp-inner"><div class="comp-av">${I.usr}</div><div class="comp-form"><input class="comp-name" id="cn-${aid}" placeholder="Seu nome ou personagem"><textarea class="comp-text" id="cb-${aid}" placeholder="Comente como seu personagem…" rows="3"></textarea><div class="comp-footer"><button class="comp-submit" onclick="postComment('${aid}')">Publicar</button></div></div></div></div><div id="cl-${aid}">${ch}</div></div>`;
 }
 
-async function refreshNews() {
-  try { const news = await api('GET', '/api/news'); renderNews(news); return news; } catch { return []; }
+async function postComment(aid){
+  const author=$(`cn-${aid}`)?.value?.trim(),body=$(`cb-${aid}`)?.value?.trim();
+  if(!author||!body){toast('Preencha nome e comentário',false);return;}
+  try{
+    await api('POST',`/api/comments/${aid}`,{author,body});
+    $(`cn-${aid}`).value='';$(`cb-${aid}`).value='';
+    const cs=await api('GET',`/api/comments/${aid}`);
+    const ch=cs.map(c=>{const ini=initials(c.author),bg=avatarBg(c.author);return`<div class="cmt-item"><div class="cmt-av" style="background:${bg}">${ini}</div><div style="flex:1;min-width:0"><div><span class="cmt-author">${esc(c.author)}</span><span class="cmt-time">· ${timeAgo(c.created_at)}</span></div><p class="cmt-body">${esc(c.body)}</p><div class="cmt-actions"><button class="like-btn" onclick="likeComment('${aid}','${c.id}',this)">${I.hrt}${c.likes}</button><span>Responder</span></div></div></div>`;}).join('');
+    const cl=$(`cl-${aid}`);if(cl)cl.innerHTML=ch;
+    const cnt=document.querySelector('.cmts-count');if(cnt)cnt.textContent=cs.length;
+    toast('Comentário publicado!');
+  }catch(e){toast(e.message,false);}
 }
 
-async function addNews() {
-  const icon  = document.getElementById('nIcon').value.trim()  || '📰';
-  const cat   = document.getElementById('nCat').value.trim();
-  const title = document.getElementById('nTitle').value.trim();
-  const desc  = document.getElementById('nDesc').value.trim();
-  const time  = document.getElementById('nTime').value.trim();
-  const type  = document.getElementById('nType').value;
-  const label = document.getElementById('nLabel').value.trim() || 'NOVO';
-  if (!cat || !title) { showToast('Preencha categoria e título.'); return; }
-  try {
-    await api('POST', '/api/news', { type, icon, cat, title, desc, time, label });
-    const news = await refreshNews(); renderAdminNews(news);
-    ['nIcon','nCat','nTitle','nDesc','nTime','nLabel'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('nType').value = 'item';
-    document.getElementById('labelGroup').style.display = 'none';
-    showToast('Notícia publicada!');
-  } catch (e) { showToast('Erro: ' + e.message); }
+async function likeComment(aid,cid,btn){
+  try{await api('POST',`/api/comments/${aid}/${cid}/like`);const m=btn.textContent.match(/\d+/);btn.innerHTML=I.hrt+(m?parseInt(m[0])+1:1);}catch(e){}
 }
 
-async function deleteNews(id) {
-  try {
-    await api('DELETE', `/api/news/${id}`);
-    const news = await refreshNews(); renderAdminNews(news);
-    showToast('Notícia removida.');
-  } catch (e) { showToast('Erro: ' + e.message); }
+// ── ROUTING ──────────────────────────────────────────────────────────────────
+function showPage(name){
+  ['home','noticias','cronicas','article'].forEach(p=>{$(`page-${p}`).style.display=p===name?'block':'none';});
+  currentPage=name;window.scrollTo(0,0);
 }
 
-async function resetDefaultNews() {
-  if (!confirm('Restaurar notícias padrão?')) return;
-  try {
-    await api('POST', '/api/news/reset');
-    const news = await refreshNews(); renderAdminNews(news);
-    showToast('Notícias restauradas.');
-  } catch (e) { showToast('Erro: ' + e.message); }
+function openArticle(id){
+  currentArticle=id;showPage('article');renderArticle(id);history.pushState(null,'',`#article-${id}`);
 }
 
-// ════════════════════════════════════════════
-// ADMIN AUTH
-// ════════════════════════════════════════════
-async function adminLogout() {
-  try { await api('POST', '/api/auth/logout'); } catch {}
-  clearToken(); showAdminUI(); showToast('Sessão encerrada.');
+async function navigate(hash){
+  if(!hash||hash==='#home'||hash==='#'||hash===''){showPage('home');history.replaceState(null,'','#home');}
+  else if(hash==='#noticias'){const s=await api('GET','/api/sponsors').catch(()=>({}));renderNoticias(currentFilter,s);showPage('noticias');}
+  else if(hash==='#cronicas'){const s=await api('GET','/api/sponsors').catch(()=>({}));renderCronicas(s);showPage('cronicas');}
+  else if(hash.startsWith('#article-')){const id=hash.replace('#article-','');showPage('article');renderArticle(id);}
+  else if(hash==='#admin'){openAdmin();}
+  else{showPage('home');}
 }
 
-async function openAdmin() {
-  document.getElementById('adminOverlay').classList.add('open');
-  await showAdminUI();
-}
-
-function closeAdmin() {
-  document.getElementById('adminOverlay').classList.remove('open');
-  history.replaceState(null, '', ' ');
-}
-
-async function showAdminUI() {
-  const loggedIn = isLoggedIn();
-  document.getElementById('loginScreen').style.display    = loggedIn ? 'none' : 'block';
-  document.getElementById('adminDashboard').style.display = loggedIn ? 'block' : 'none';
-  document.getElementById('adminLogoutBtn').style.display = loggedIn ? '' : 'none';
-  document.getElementById('adminBadge').textContent       = loggedIn ? 'AUTENTICADO' : 'NÃO AUTENTICADO';
-  if (!loggedIn) {
-    try {
-      const s = await api('GET', '/api/auth/status');
-      document.getElementById('setupForm').style.display = s.has_password ? 'none' : 'block';
-      document.getElementById('loginForm').style.display = s.has_password ? 'block' : 'none';
-    } catch { document.getElementById('setupForm').style.display = 'block'; document.getElementById('loginForm').style.display = 'none'; }
-    document.getElementById('loginErr').textContent = '';
-    document.getElementById('setupErr').textContent = '';
-    document.getElementById('loginPwd').value = '';
-  } else {
-    const [news, stream] = await Promise.all([
-      api('GET', '/api/news').catch(() => []),
-      api('GET', '/api/stream').catch(() => ({ url: '', is_live: false })),
-    ]);
-    renderAdminNews(news);
-    syncRadioAdminUI(stream.is_live, stream.url);
-  }
-}
-
-async function setupPassword() {
-  const p1 = document.getElementById('setupPwd1').value;
-  const p2 = document.getElementById('setupPwd2').value;
-  const err = document.getElementById('setupErr');
-  if (!p1) { err.textContent = 'Digite uma senha.'; return; }
-  if (p1 !== p2) { err.textContent = 'As senhas não coincidem.'; return; }
-  try {
-    const res = await api('POST', '/api/auth/setup', { password: p1 });
-    setToken(res.token);
-    document.getElementById('setupPwd1').value = '';
-    document.getElementById('setupPwd2').value = '';
-    await showAdminUI();
-    showToast('Senha definida! Bem-vindo ao painel.');
-  } catch (e) { err.textContent = e.message; }
-}
-
-async function doLogin() {
-  const pwd = document.getElementById('loginPwd').value;
-  const err = document.getElementById('loginErr');
-  if (!pwd) { err.textContent = 'Digite a senha.'; return; }
-  try {
-    const res = await api('POST', '/api/auth/login', { password: pwd });
-    setToken(res.token);
-    document.getElementById('loginPwd').value = '';
-    await showAdminUI();
-    showToast('Bem-vindo, administrador.');
-  } catch (e) { err.textContent = e.message; document.getElementById('loginPwd').value = ''; }
-}
-
-async function changePassword() {
-  const cur = document.getElementById('pwdCurrent').value;
-  const n1  = document.getElementById('pwdNew1').value;
-  const n2  = document.getElementById('pwdNew2').value;
-  const err = document.getElementById('pwdErr');
-  if (!cur || !n1 || !n2) { err.textContent = 'Preencha todos os campos.'; return; }
-  if (n1 !== n2) { err.textContent = 'As novas senhas não coincidem.'; return; }
-  try {
-    await api('POST', '/api/auth/change', { current_password: cur, new_password: n1 });
-    ['pwdCurrent','pwdNew1','pwdNew2'].forEach(id => document.getElementById(id).value = '');
-    err.textContent = '';
-    showToast('Senha alterada!');
-  } catch (e) { err.textContent = e.message; }
-}
-
-async function factoryReset() {
-  if (!confirm('Tem certeza? Isso apagará tudo.')) return;
-  try {
-    await api('POST', '/api/auth/reset');
-    clearToken(); await refreshNews(); applyLiveState(false, ''); await showAdminUI();
-    showToast('Reset completo realizado.');
-  } catch (e) { showToast('Erro: ' + e.message); }
-}
-
-function switchTab(id, btn) {
-  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.admin-tab').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  btn.classList.add('active');
-}
-
-document.addEventListener('change', e => {
-  if (e.target.id === 'nType')
-    document.getElementById('labelGroup').style.display = e.target.value === 'featured' ? 'block' : 'none';
+window.addEventListener('popstate',()=>navigate(location.hash));
+document.addEventListener('click',e=>{
+  const a=e.target.closest('a[href^="#"]');if(!a)return;
+  const h=a.getAttribute('href');if(!h)return;
+  e.preventDefault();history.pushState(null,'',h);navigate(h);
 });
+function doSearch(){navigate('#noticias');}
 
-// ════════════════════════════════════════════
-// TOAST
-// ════════════════════════════════════════════
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
+// ── AUDIO ─────────────────────────────────────────────────────────────────────
+function togglePlay(){
+  if(!streamData.url){toast('Nenhum stream configurado',false);return;}
+  if(!audio)audio=new Audio(streamData.url);
+  if(isPlaying){
+    audio.pause();isPlaying=false;
+    const pb=$('play-btn');if(pb){pb.innerHTML=I.play;pb.classList.remove('playing');}
+    const lb=$('live-cta');if(lb)lb.textContent='Ouvir';
+    const ls=$('live-sub');if(ls)ls.textContent='Clique para ouvir ao vivo';
+  }else{
+    audio.play().catch(()=>toast('Erro ao reproduzir stream',false));isPlaying=true;
+    const pb=$('play-btn');if(pb){pb.innerHTML=I.pause;pb.classList.add('playing');}
+    const lb=$('live-cta');if(lb)lb.textContent='Pausar';
+    const ls=$('live-sub');if(ls)ls.textContent='Reproduzindo agora…';
+  }
 }
 
-// ════════════════════════════════════════════
-// ROUTING
-// ════════════════════════════════════════════
-window.addEventListener('hashchange', () => { if (window.location.hash === '#admin') openAdmin(); });
-document.getElementById('loginPwd').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-document.getElementById('setupPwd2').addEventListener('keydown', e => { if (e.key === 'Enter') setupPassword(); });
+// ── ADMIN ─────────────────────────────────────────────────────────────────────
+async function openAdmin(){
+  $('admin-overlay').classList.add('open');
+  const status=await api('GET','/api/auth/status').catch(()=>({has_password:false}));
+  if(!status.has_password){$('setup-form').style.display='block';$('login-form').style.display='none';}
+  else{$('setup-form').style.display='none';$('login-form').style.display='block';}
+  const token=sessionStorage.getItem(TK);
+  if(token){try{await api('GET','/api/news',null,true);showAdminIn();}catch(e){sessionStorage.removeItem(TK);}}
+}
+function closeAdmin(){$('admin-overlay').classList.remove('open');history.replaceState(null,'','#home');}
+function showAdminIn(){
+  $('auth-out').style.display='none';$('auth-in').style.display='block';
+  $('radio-sec').style.display='block';$('news-sec').style.display='block';$('spon-sec').style.display='block';
+  loadAdminNews();loadAdminStream();loadAdminSponsors();
+}
+async function doSetup(){const pwd=$('setup-pwd').value;try{const r=await api('POST','/api/auth/setup',{password:pwd});sessionStorage.setItem(TK,r.token);toast('Senha criada!');showAdminIn();}catch(e){toast(e.message,false);}}
+async function doLogin(){const pwd=$('login-pwd').value;try{const r=await api('POST','/api/auth/login',{password:pwd});sessionStorage.setItem(TK,r.token);toast('Autenticado!');showAdminIn();}catch(e){toast(e.message,false);}}
+async function doLogout(){try{await api('POST','/api/auth/logout',null,true);}catch(e){}sessionStorage.removeItem(TK);$('auth-out').style.display='block';$('auth-in').style.display='none';$('radio-sec').style.display='none';$('news-sec').style.display='none';$('spon-sec').style.display='none';}
+async function doReset(){if(!confirm('Resetar TUDO?'))return;try{await api('POST','/api/auth/reset',null,true);toast('Reset concluído');doLogout();}catch(e){toast(e.message,false);}}
+async function doChangePwd(){const cur=$('cpwd-cur').value,nw=$('cpwd-new').value;try{await api('POST','/api/auth/change',{current_password:cur,new_password:nw},true);toast('Senha alterada!');$('cpwd-cur').value='';$('cpwd-new').value='';}catch(e){toast(e.message,false);}}
+async function loadAdminNews(){const list=$('admin-news-list');if(!list)return;try{const news=await api('GET','/api/news');list.innerHTML=news.map(n=>`<div class="ani"><span class="cat-badge">${esc(n.cat)}</span><span class="title">${esc(n.title)}</span><button class="del" onclick="deleteNews('${n.id}')">✕</button></div>`).join('')||'<div style="color:#5e5e64;font-family:Share Tech Mono,monospace;font-size:11px">Nenhuma notícia</div>';}catch(e){}}
+async function addNews(){const item={type:$('n-type').value,cat:$('n-cat').value,title:$('n-title').value,desc:$('n-desc').value,time:$('n-time').value,label:$('n-label').value};if(!item.cat||!item.title){toast('Categoria e manchete obrigatórias',false);return;}try{await api('POST','/api/news',item,true);['n-cat','n-title','n-desc','n-time','n-label'].forEach(id=>$(id).value='');toast('Notícia publicada!');newsData=await api('GET','/api/news');loadAdminNews();const s=await api('GET','/api/sponsors').catch(()=>({}));renderHome(s);}catch(e){toast(e.message,false);}}
+async function deleteNews(id){try{await api('DELETE',`/api/news/${id}`,null,true);newsData=await api('GET','/api/news');loadAdminNews();const s=await api('GET','/api/sponsors').catch(()=>({}));renderHome(s);toast('Notícia removida');}catch(e){toast(e.message,false);}}
+async function resetNews(){if(!confirm('Restaurar notícias padrão?'))return;try{await api('POST','/api/news/reset',null,true);newsData=await api('GET','/api/news');loadAdminNews();renderHome({});toast('Feed restaurado');}catch(e){toast(e.message,false);}}
+async function loadAdminStream(){try{streamData=await api('GET','/api/stream');if($('radio-url'))$('radio-url').value=streamData.url||'';if($('live-toggle'))$('live-toggle').checked=streamData.is_live;}catch(e){}}
+async function saveRadio(){const url=$('radio-url').value.trim();try{await api('PUT','/api/stream',{url},true);streamData.url=url;toast('URL salvo!');}catch(e){toast(e.message,false);}}
+async function toggleLive(){const v=$('live-toggle').checked;try{await api('PUT','/api/stream',{is_live:v},true);streamData.is_live=v;toast(v?'Transmissão ativa':'Transmissão pausada');}catch(e){toast(e.message,false);}}
+function copyBoombox(){const url=$('radio-url').value.trim()||streamData.url;if(!url){toast('Nenhuma URL configurada',false);return;}navigator.clipboard.writeText(url).then(()=>toast('Link copiado!')).catch(()=>toast('Copie: '+url,false));}
 
-// ════════════════════════════════════════════
-// INIT
-// ════════════════════════════════════════════
-(async function init() {
-  // Date
-  const d = new Date();
-  document.getElementById('dateDisplay').textContent =
-    d.toLocaleDateString('pt-BR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+async function loadAdminSponsors(){
+  const editor=$('spon-editor');if(!editor)return;
+  let sponsors={};try{sponsors=await api('GET','/api/sponsors');}catch(e){}
+  editor.innerHTML=Object.values(sponsors).map(s=>`<div style="background:#08080a;border:1px solid #1d1d22;border-radius:8px;padding:16px;margin-bottom:14px"><div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:#cc0000;text-transform:uppercase;margin-bottom:12px">Slot: ${s.slot}</div><div class="spon-grid"><div><label>Nome</label><input class="ai" id="sp-${s.slot}-name" value="${esc(s.name||'')}"></div><div><label>Tagline</label><input class="ai" id="sp-${s.slot}-tagline" value="${esc(s.tagline||'')}"></div></div><div class="spon-grid"><div><label>Texto botão</label><input class="ai" id="sp-${s.slot}-cta_text" value="${esc(s.cta_text||'')}"></div><div><label>URL destino</label><input class="ai" id="sp-${s.slot}-cta_url" value="${esc(s.cta_url||'')}"></div></div><div class="spon-grid"><div><label>URL imagem</label><input class="ai" id="sp-${s.slot}-image_url" value="${esc(s.image_url||'')}"></div><div><label>Tema</label><select class="asel" id="sp-${s.slot}-theme"><option value="dark" ${s.theme==='dark'?'selected':''}>Escuro</option><option value="light" ${s.theme==='light'?'selected':''}>Claro</option></select></div></div><button class="abtn" onclick="saveSponsor('${s.slot}')">Salvar</button></div>`).join('');
+}
 
-  // Load everything in parallel
-  const [news, stream] = await Promise.all([
-    api('GET', '/api/news').catch(() => []),
-    api('GET', '/api/stream').catch(() => ({ url: '', is_live: false })),
-  ]);
+async function saveSponsor(slot){const data={name:$(`sp-${slot}-name`)?.value,tagline:$(`sp-${slot}-tagline`)?.value,cta_text:$(`sp-${slot}-cta_text`)?.value,cta_url:$(`sp-${slot}-cta_url`)?.value,image_url:$(`sp-${slot}-image_url`)?.value,theme:$(`sp-${slot}-theme`)?.value};try{await api('PUT',`/api/sponsors/${slot}`,data,true);toast('Anunciante salvo!');}catch(e){toast(e.message,false);}}
 
-  renderNews(news);
-  applyLiveState(stream.is_live, stream.url);
+// ── INIT ───────────────────────────────────────────────────────────────────────
+async function init(){
+  try{newsData=await api('GET','/api/news');}catch(e){newsData=[];}
+  try{weatherData=await api('GET','/api/weather');}catch(e){}
+  try{streamData=await api('GET','/api/stream');}catch(e){}
+  let sponsors={};try{sponsors=await api('GET','/api/sponsors');}catch(e){}
 
-  // Load weather and rates (can take longer, non-blocking)
-  fetchWeather();
-  fetchRates();
+  renderHome(sponsors);
+  renderNoticias(null,sponsors);
+  renderCronicas(sponsors);
 
-  if (window.location.hash === '#admin') openAdmin();
-})();
+  const hash=location.hash||'#home';
+  navigate(hash);
+
+  setInterval(async()=>{try{weatherData=await api('GET','/api/weather');}catch(e){}},600000);
+  setInterval(()=>{const el=$('util-time');if(el)el.textContent=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});},30000);
+}
+init();
 </script>
 </body>
 </html>
