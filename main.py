@@ -33,6 +33,8 @@ def init_db():
             cat        TEXT,
             title      TEXT,
             desc       TEXT,
+            body       TEXT DEFAULT '',
+            image_url  TEXT DEFAULT '',
             time_str   TEXT,
             label      TEXT,
             created_at INTEGER
@@ -59,6 +61,13 @@ def init_db():
             theme      TEXT DEFAULT 'dark'
         );
     """)
+    # migrate: add columns if missing (safe on existing DB)
+    for col, definition in [("body","TEXT DEFAULT ''"), ("image_url","TEXT DEFAULT ''")]:
+        try:
+            conn.execute(f"ALTER TABLE news ADD COLUMN {col} {definition}")
+            conn.commit()
+        except Exception:
+            pass
     conn.commit()
     conn.close()
     seed_news()
@@ -160,8 +169,20 @@ class NewsItem(BaseModel):
     cat: str
     title: str
     desc: str = ""
+    body: str = ""
+    image_url: str = ""
     time: str = ""
     label: str = ""
+
+class NewsEdit(BaseModel):
+    type: Optional[str] = None
+    cat: Optional[str] = None
+    title: Optional[str] = None
+    desc: Optional[str] = None
+    body: Optional[str] = None
+    image_url: Optional[str] = None
+    time_str: Optional[str] = None
+    label: Optional[str] = None
 
 class StreamUpdate(BaseModel):
     url: Optional[str] = None
@@ -244,11 +265,22 @@ def add_news(item: NewsItem, token: str = Depends(verify_token)):
     nid = secrets.token_hex(8)
     conn = get_db()
     conn.execute(
-        "INSERT INTO news (id,type,icon,cat,title,desc,time_str,label,created_at) VALUES (?,?,?,?,?,?,?,?,?)",
-        (nid, item.type, item.icon, item.cat, item.title, item.desc, item.time, item.label, int(time.time()))
+        "INSERT INTO news (id,type,icon,cat,title,desc,body,image_url,time_str,label,created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+        (nid, item.type, item.icon, item.cat, item.title, item.desc, item.body, item.image_url, item.time, item.label, int(time.time()))
     )
     conn.commit(); conn.close()
     return {"id": nid}
+
+@app.put("/api/news/{news_id}")
+def edit_news(news_id: str, data: NewsEdit, token: str = Depends(verify_token)):
+    conn = get_db()
+    fields = {k: v for k, v in data.model_dump().items() if v is not None}
+    if fields:
+        sets = ", ".join(f"{k}=?" for k in fields)
+        conn.execute(f"UPDATE news SET {sets} WHERE id=?", (*fields.values(), news_id))
+        conn.commit()
+    conn.close()
+    return {"ok": True}
 
 @app.delete("/api/news/{news_id}")
 def delete_news(news_id: str, token: str = Depends(verify_token)):
@@ -381,6 +413,34 @@ async def get_rates():
         return data
     except Exception:
         return {"usd":{"rate":0,"change":0},"eur":{"rate":0,"change":0}}
+
+# ── Ticker endpoint ───────────────────────────────────────────────────────────
+
+class TickerUpdate(BaseModel):
+    text: Optional[str] = None
+    use_custom: Optional[bool] = None
+
+@app.get("/api/ticker")
+def get_ticker():
+    conn = get_db()
+    text_row = conn.execute("SELECT value FROM settings WHERE key='ticker_text'").fetchone()
+    custom_row = conn.execute("SELECT value FROM settings WHERE key='ticker_custom'").fetchone()
+    conn.close()
+    return {
+        "text": text_row["value"] if text_row else "",
+        "use_custom": (custom_row["value"] == "1") if custom_row else False,
+    }
+
+@app.put("/api/ticker")
+def update_ticker(data: TickerUpdate, token: str = Depends(verify_token)):
+    conn = get_db()
+    if data.text is not None:
+        conn.execute("INSERT OR REPLACE INTO settings (key,value) VALUES ('ticker_text',?)", (data.text,))
+    if data.use_custom is not None:
+        conn.execute("INSERT OR REPLACE INTO settings (key,value) VALUES ('ticker_custom',?)",
+                     ("1" if data.use_custom else "0",))
+    conn.commit(); conn.close()
+    return {"ok": True}
 
 # ── Comments endpoints ────────────────────────────────────────────────────────
 
