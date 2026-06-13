@@ -404,6 +404,21 @@ def get_stream():
         "is_live": rows.get("is_live") == "1",
     }
 
+class StreamPublish(BaseModel):
+    password: str
+    url: str
+    is_live: bool = True
+
+@app.post("/api/stream/publish")
+def publish_stream(data: StreamPublish):
+    if not _check_password(data.password):
+        raise HTTPException(401, "Senha incorreta")
+    conn = get_db(); cur = conn.cursor()
+    cur.execute("INSERT INTO settings (key,value) VALUES ('stream_url',%s) ON CONFLICT (key) DO UPDATE SET value=EXCLUDED.value", (data.url,))
+    cur.execute("INSERT INTO settings (key,value) VALUES ('is_live',%s) ON CONFLICT (key) DO UPDATE SET value=EXCLUDED.value", ("1" if data.is_live else "0",))
+    conn.commit(); cur.close(); conn.close()
+    return {"ok": True, "url": data.url}
+
 @app.put("/api/stream")
 def update_stream(data: StreamUpdate, token: str = Depends(verify_token)):
     conn = get_db(); cur = conn.cursor()
