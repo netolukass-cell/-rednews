@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends, Header
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
-import sqlite3, hashlib, secrets, time, os
+import psycopg2, psycopg2.extras, hashlib, secrets, time, os
 from typing import Optional
 import httpx
 
@@ -9,67 +9,68 @@ from fastapi.staticfiles import StaticFiles
 
 app = FastAPI(docs_url=None, redoc_url=None)
 
-DB_PATH = os.environ.get("DB_PATH", "rednews.db")
+DATABASE_URL = os.environ.get("DATABASE_URL", "")
 TOKEN_TTL = 86400  # 24h
 
 # ── DB ────────────────────────────────────────────────────────────────────────
 
 def get_db():
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
+    conn = psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.extras.RealDictCursor)
     return conn
 
 def init_db():
     conn = get_db()
-    conn.executescript("""
+    cur = conn.cursor()
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS settings (
             key   TEXT PRIMARY KEY,
             value TEXT
-        );
+        )
+    """)
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS news (
             id         TEXT PRIMARY KEY,
             type       TEXT DEFAULT 'item',
             icon       TEXT,
             cat        TEXT,
             title      TEXT,
-            desc       TEXT,
+            "desc"     TEXT,
             body       TEXT DEFAULT '',
             image_url  TEXT DEFAULT '',
             time_str   TEXT,
             label      TEXT,
-            created_at INTEGER
-        );
+            created_at BIGINT
+        )
+    """)
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS tokens (
             token      TEXT PRIMARY KEY,
-            created_at INTEGER
-        );
+            created_at BIGINT
+        )
+    """)
+    cur.execute("""
         CREATE TABLE IF NOT EXISTS comments (
             id         TEXT PRIMARY KEY,
             article_id TEXT NOT NULL,
             author     TEXT NOT NULL,
             body       TEXT NOT NULL,
             likes      INTEGER DEFAULT 0,
-            created_at INTEGER
-        );
-        CREATE TABLE IF NOT EXISTS sponsors (
-            slot       TEXT PRIMARY KEY,
-            name       TEXT,
-            tagline    TEXT,
-            cta_text   TEXT,
-            cta_url    TEXT,
-            image_url  TEXT,
-            theme      TEXT DEFAULT 'dark'
-        );
+            created_at BIGINT
+        )
     """)
-    # migrate: add columns if missing (safe on existing DB)
-    for col, definition in [("body","TEXT DEFAULT ''"), ("image_url","TEXT DEFAULT ''")]:
-        try:
-            conn.execute(f"ALTER TABLE news ADD COLUMN {col} {definition}")
-            conn.commit()
-        except Exception:
-            pass
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS sponsors (
+            slot      TEXT PRIMARY KEY,
+            name      TEXT,
+            tagline   TEXT,
+            cta_text  TEXT,
+            cta_url   TEXT,
+            image_url TEXT,
+            theme     TEXT DEFAULT 'dark'
+        )
+    """)
     conn.commit()
-    conn.close()
+    cur.close(); conn.close()
     seed_news()
     seed_sponsors()
     seed_solevan_article()
@@ -98,17 +99,16 @@ DEFAULT_NEWS = [
 ]
 
 def seed_news():
-    conn = get_db()
-    count = conn.execute("SELECT COUNT(*) FROM news").fetchone()[0]
-    if count == 0:
+    conn = get_db(); cur = conn.cursor()
+    cur.execute("SELECT COUNT(*) FROM news")
+    if cur.fetchone()["count"] == 0:
         t = int(time.time())
         for d in DEFAULT_NEWS:
-            conn.execute(
-                "INSERT OR IGNORE INTO news (id,type,icon,cat,title,desc,time_str,label,created_at) VALUES (?,?,?,?,?,?,?,?,?)",
+            cur.execute(
+                'INSERT INTO news (id,type,icon,cat,title,"desc",time_str,label,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO NOTHING',
                 (*d, t)
             )
-        conn.commit()
-    conn.close()
+    conn.commit(); cur.close(); conn.close()
 
 DEFAULT_SPONSORS = [
     ("hero", "Bar do Joe", "Onde Red County se encontra", "Conheça o Bar do Joe", "#", "assets/spon-bardojoe.png", "dark"),
@@ -116,14 +116,13 @@ DEFAULT_SPONSORS = [
 ]
 
 def seed_sponsors():
-    conn = get_db()
+    conn = get_db(); cur = conn.cursor()
     for s in DEFAULT_SPONSORS:
-        conn.execute(
-            "INSERT OR IGNORE INTO sponsors (slot,name,tagline,cta_text,cta_url,image_url,theme) VALUES (?,?,?,?,?,?,?)",
+        cur.execute(
+            "INSERT INTO sponsors (slot,name,tagline,cta_text,cta_url,image_url,theme) VALUES (%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (slot) DO NOTHING",
             s
         )
-    conn.commit()
-    conn.close()
+    conn.commit(); cur.close(); conn.close()
 
 SOLEVAN_BODY = """
 <div style="text-align:center;margin-bottom:24px">
@@ -172,46 +171,56 @@ SOLEVAN_BODY = """
 """
 
 def seed_solevan_article():
-    conn = get_db()
-    conn.execute(
-        "INSERT OR IGNORE INTO news (id,type,icon,cat,title,desc,body,image_url,time_str,label,created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+    conn = get_db(); cur = conn.cursor()
+    cur.execute(
+        'INSERT INTO news (id,type,icon,cat,title,"desc",body,image_url,time_str,label,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO NOTHING',
         ("solevan-2026-06-11", "featured", "🎱", "Esportes",
          "Solevan fatura US$ 10 mil e vira o novo rei da sinuca",
          "Final apertada no Bar do Joe coroa Jack Solevan diante de casa lotada em Montgomery",
-         SOLEVAN_BODY,
-         "https://i.imgur.com/mc4iVWI.png",
-         "Hoje, 11/06", "EXCLUSIVO",
-         int(time.time()))
+         SOLEVAN_BODY, "https://i.imgur.com/mc4iVWI.png",
+         "Hoje, 11/06", "EXCLUSIVO", int(time.time()))
     )
-    conn.commit()
-    conn.close()
+    conn.commit(); cur.close(); conn.close()
 
 init_db()
 
 # ── Auth helper ───────────────────────────────────────────────────────────────
 
+ENV_ADMIN_PWD = os.environ.get("ADMIN_PASSWORD", "")
+
 def verify_token(authorization: Optional[str] = Header(None)):
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(401, "Não autorizado")
     token = authorization[7:]
-    conn = get_db()
-    row = conn.execute("SELECT created_at FROM tokens WHERE token=?", (token,)).fetchone()
-    conn.close()
+    conn = get_db(); cur = conn.cursor()
+    cur.execute("SELECT created_at FROM tokens WHERE token=%s", (token,))
+    row = cur.fetchone()
+    cur.close(); conn.close()
     if not row:
         raise HTTPException(401, "Token inválido")
     if time.time() - row["created_at"] > TOKEN_TTL:
-        conn = get_db()
-        conn.execute("DELETE FROM tokens WHERE token=?", (token,))
-        conn.commit(); conn.close()
+        conn = get_db(); cur = conn.cursor()
+        cur.execute("DELETE FROM tokens WHERE token=%s", (token,))
+        conn.commit(); cur.close(); conn.close()
         raise HTTPException(401, "Sessão expirada")
     return token
 
 def new_token():
     token = secrets.token_hex(32)
-    conn = get_db()
-    conn.execute("INSERT INTO tokens (token,created_at) VALUES (?,?)", (token, int(time.time())))
-    conn.commit(); conn.close()
+    conn = get_db(); cur = conn.cursor()
+    cur.execute("INSERT INTO tokens (token,created_at) VALUES (%s,%s)", (token, int(time.time())))
+    conn.commit(); cur.close(); conn.close()
     return token
+
+def _check_password(plain: str) -> bool:
+    h = hashlib.sha256(plain.encode()).hexdigest()
+    if ENV_ADMIN_PWD:
+        return plain == ENV_ADMIN_PWD
+    conn = get_db(); cur = conn.cursor()
+    cur.execute("SELECT value FROM settings WHERE key='admin_hash'")
+    row = cur.fetchone()
+    cur.close(); conn.close()
+    return bool(row) and h == row["value"]
 
 # ── Models ────────────────────────────────────────────────────────────────────
 
@@ -250,46 +259,51 @@ class StreamUpdate(BaseModel):
     url: Optional[str] = None
     is_live: Optional[bool] = None
 
+class TickerUpdate(BaseModel):
+    text: Optional[str] = None
+    use_custom: Optional[bool] = None
+
+class CommentItem(BaseModel):
+    author: str
+    body: str
+
+class SponsorUpdate(BaseModel):
+    name: Optional[str] = None
+    tagline: Optional[str] = None
+    cta_text: Optional[str] = None
+    cta_url: Optional[str] = None
+    image_url: Optional[str] = None
+    theme: Optional[str] = None
+
 # ── Auth endpoints ────────────────────────────────────────────────────────────
-
-ENV_ADMIN_PWD = os.environ.get("ADMIN_PASSWORD", "")
-
-def _check_password(plain: str) -> bool:
-    h = hashlib.sha256(plain.encode()).hexdigest()
-    # env var takes priority — always works regardless of DB state
-    if ENV_ADMIN_PWD:
-        return plain == ENV_ADMIN_PWD or h == hashlib.sha256(ENV_ADMIN_PWD.encode()).hexdigest()
-    conn = get_db()
-    row = conn.execute("SELECT value FROM settings WHERE key='admin_hash'").fetchone()
-    conn.close()
-    return bool(row) and h == row["value"]
 
 @app.get("/api/auth/status")
 def auth_status():
     if ENV_ADMIN_PWD:
         return {"has_password": True}
-    conn = get_db()
-    has = bool(conn.execute("SELECT 1 FROM settings WHERE key='admin_hash'").fetchone())
-    conn.close()
+    conn = get_db(); cur = conn.cursor()
+    cur.execute("SELECT 1 FROM settings WHERE key='admin_hash'")
+    has = bool(cur.fetchone())
+    cur.close(); conn.close()
     return {"has_password": has}
 
 @app.post("/api/auth/setup")
 def setup_password(req: SetupReq):
     if ENV_ADMIN_PWD:
-        # env var set — no DB setup needed, just validate and issue token
         if not _check_password(req.password):
             raise HTTPException(401, "Senha incorreta")
         return {"token": new_token()}
-    conn = get_db()
-    if conn.execute("SELECT 1 FROM settings WHERE key='admin_hash'").fetchone():
-        conn.close()
+    conn = get_db(); cur = conn.cursor()
+    cur.execute("SELECT 1 FROM settings WHERE key='admin_hash'")
+    if cur.fetchone():
+        cur.close(); conn.close()
         raise HTTPException(400, "Senha já configurada")
     if len(req.password) < 6:
-        conn.close()
+        cur.close(); conn.close()
         raise HTTPException(400, "Mínimo 6 caracteres")
     h = hashlib.sha256(req.password.encode()).hexdigest()
-    conn.execute("INSERT INTO settings (key,value) VALUES ('admin_hash',?)", (h,))
-    conn.commit(); conn.close()
+    cur.execute("INSERT INTO settings (key,value) VALUES ('admin_hash',%s)", (h,))
+    conn.commit(); cur.close(); conn.close()
     return {"token": new_token()}
 
 @app.post("/api/auth/login")
@@ -300,30 +314,33 @@ def login(req: LoginReq):
 
 @app.post("/api/auth/logout")
 def logout(token: str = Depends(verify_token)):
-    conn = get_db()
-    conn.execute("DELETE FROM tokens WHERE token=?", (token,))
-    conn.commit(); conn.close()
+    conn = get_db(); cur = conn.cursor()
+    cur.execute("DELETE FROM tokens WHERE token=%s", (token,))
+    conn.commit(); cur.close(); conn.close()
     return {"ok": True}
 
 @app.post("/api/auth/change")
 def change_password(req: ChangePwdReq, token: str = Depends(verify_token)):
     if len(req.new_password) < 6:
         raise HTTPException(400, "Mínimo 6 caracteres")
-    conn = get_db()
-    row = conn.execute("SELECT value FROM settings WHERE key='admin_hash'").fetchone()
-    if hashlib.sha256(req.current_password.encode()).hexdigest() != row["value"]:
-        conn.close()
+    conn = get_db(); cur = conn.cursor()
+    cur.execute("SELECT value FROM settings WHERE key='admin_hash'")
+    row = cur.fetchone()
+    if not row or hashlib.sha256(req.current_password.encode()).hexdigest() != row["value"]:
+        cur.close(); conn.close()
         raise HTTPException(401, "Senha atual incorreta")
     h = hashlib.sha256(req.new_password.encode()).hexdigest()
-    conn.execute("UPDATE settings SET value=? WHERE key='admin_hash'", (h,))
-    conn.commit(); conn.close()
+    cur.execute("UPDATE settings SET value=%s WHERE key='admin_hash'", (h,))
+    conn.commit(); cur.close(); conn.close()
     return {"ok": True}
 
 @app.post("/api/auth/reset")
 def factory_reset(token: str = Depends(verify_token)):
-    conn = get_db()
-    conn.executescript("DELETE FROM settings; DELETE FROM news; DELETE FROM tokens;")
-    conn.commit(); conn.close()
+    conn = get_db(); cur = conn.cursor()
+    cur.execute("DELETE FROM settings")
+    cur.execute("DELETE FROM news")
+    cur.execute("DELETE FROM tokens")
+    conn.commit(); cur.close(); conn.close()
     seed_news()
     return {"ok": True}
 
@@ -331,45 +348,46 @@ def factory_reset(token: str = Depends(verify_token)):
 
 @app.get("/api/news")
 def get_news():
-    conn = get_db()
-    rows = conn.execute("SELECT * FROM news ORDER BY created_at DESC").fetchall()
-    conn.close()
+    conn = get_db(); cur = conn.cursor()
+    cur.execute('SELECT id,type,icon,cat,title,"desc",body,image_url,time_str,label,created_at FROM news ORDER BY created_at DESC')
+    rows = cur.fetchall()
+    cur.close(); conn.close()
     return [dict(r) for r in rows]
 
 @app.post("/api/news")
 def add_news(item: NewsItem, token: str = Depends(verify_token)):
     nid = secrets.token_hex(8)
-    conn = get_db()
-    conn.execute(
-        "INSERT INTO news (id,type,icon,cat,title,desc,body,image_url,time_str,label,created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+    conn = get_db(); cur = conn.cursor()
+    cur.execute(
+        'INSERT INTO news (id,type,icon,cat,title,"desc",body,image_url,time_str,label,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
         (nid, item.type, item.icon, item.cat, item.title, item.desc, item.body, item.image_url, item.time, item.label, int(time.time()))
     )
-    conn.commit(); conn.close()
+    conn.commit(); cur.close(); conn.close()
     return {"id": nid}
 
 @app.put("/api/news/{news_id}")
 def edit_news(news_id: str, data: NewsEdit, token: str = Depends(verify_token)):
-    conn = get_db()
     fields = {k: v for k, v in data.model_dump().items() if v is not None}
     if fields:
-        sets = ", ".join(f"{k}=?" for k in fields)
-        conn.execute(f"UPDATE news SET {sets} WHERE id=?", (*fields.values(), news_id))
-        conn.commit()
-    conn.close()
+        conn = get_db(); cur = conn.cursor()
+        col_map = {"desc": '"desc"'}
+        sets = ", ".join(f"{col_map.get(k,k)}=%s" for k in fields)
+        cur.execute(f"UPDATE news SET {sets} WHERE id=%s", (*fields.values(), news_id))
+        conn.commit(); cur.close(); conn.close()
     return {"ok": True}
 
 @app.delete("/api/news/{news_id}")
 def delete_news(news_id: str, token: str = Depends(verify_token)):
-    conn = get_db()
-    conn.execute("DELETE FROM news WHERE id=?", (news_id,))
-    conn.commit(); conn.close()
+    conn = get_db(); cur = conn.cursor()
+    cur.execute("DELETE FROM news WHERE id=%s", (news_id,))
+    conn.commit(); cur.close(); conn.close()
     return {"ok": True}
 
 @app.post("/api/news/reset")
 def reset_news(token: str = Depends(verify_token)):
-    conn = get_db()
-    conn.execute("DELETE FROM news")
-    conn.commit(); conn.close()
+    conn = get_db(); cur = conn.cursor()
+    cur.execute("DELETE FROM news")
+    conn.commit(); cur.close(); conn.close()
     seed_news()
     return {"ok": True}
 
@@ -377,31 +395,30 @@ def reset_news(token: str = Depends(verify_token)):
 
 @app.get("/api/stream")
 def get_stream():
-    conn = get_db()
-    url_row  = conn.execute("SELECT value FROM settings WHERE key='stream_url'").fetchone()
-    live_row = conn.execute("SELECT value FROM settings WHERE key='is_live'").fetchone()
-    conn.close()
+    conn = get_db(); cur = conn.cursor()
+    cur.execute("SELECT key,value FROM settings WHERE key IN ('stream_url','is_live')")
+    rows = {r["key"]: r["value"] for r in cur.fetchall()}
+    cur.close(); conn.close()
     return {
-        "url":     url_row["value"]  if url_row  else "",
-        "is_live": live_row["value"] == "1" if live_row else False,
+        "url": rows.get("stream_url", ""),
+        "is_live": rows.get("is_live") == "1",
     }
 
 @app.put("/api/stream")
 def update_stream(data: StreamUpdate, token: str = Depends(verify_token)):
-    conn = get_db()
+    conn = get_db(); cur = conn.cursor()
     if data.url is not None:
-        conn.execute("INSERT OR REPLACE INTO settings (key,value) VALUES ('stream_url',?)", (data.url,))
+        cur.execute("INSERT INTO settings (key,value) VALUES ('stream_url',%s) ON CONFLICT (key) DO UPDATE SET value=EXCLUDED.value", (data.url,))
     if data.is_live is not None:
-        conn.execute("INSERT OR REPLACE INTO settings (key,value) VALUES ('is_live',?)",
-                     ("1" if data.is_live else "0",))
-    conn.commit(); conn.close()
+        cur.execute("INSERT INTO settings (key,value) VALUES ('is_live',%s) ON CONFLICT (key) DO UPDATE SET value=EXCLUDED.value", ("1" if data.is_live else "0",))
+    conn.commit(); cur.close(); conn.close()
     return {"ok": True}
 
 # ── Weather & Rates ───────────────────────────────────────────────────────────
 
 _weather_cache = {"data": None, "ts": 0}
 _rates_cache   = {"data": None, "ts": 0}
-CACHE_TTL = 600  # 10 min
+CACHE_TTL = 600
 
 WMO_DESC = {
     0:"Céu limpo", 1:"Predominantemente limpo", 2:"Parcialmente nublado",
@@ -414,22 +431,22 @@ WMO_DESC = {
 }
 
 def wmo_icon(code):
-    if code in (0, 1):         return "☀️"
-    if code in (2, 3):         return "⛅"
-    if code in (45, 48):       return "🌫️"
-    if 51 <= code <= 55:       return "🌦️"
-    if 61 <= code <= 65:       return "🌧️"
-    if 71 <= code <= 75:       return "❄️"
-    if 80 <= code <= 82:       return "🌧️"
-    if code >= 95:             return "⛈️"
+    if code in (0, 1):       return "☀️"
+    if code in (2, 3):       return "⛅"
+    if code in (45, 48):     return "🌫️"
+    if 51 <= code <= 55:     return "🌦️"
+    if 61 <= code <= 65:     return "🌧️"
+    if 71 <= code <= 75:     return "❄️"
+    if 80 <= code <= 82:     return "🌧️"
+    if code >= 95:           return "⛈️"
     return "🌡️"
 
 def road_condition(code, wind):
-    if code >= 95:  return "⛔", "Risco alto — evite sair"
-    if code >= 80:  return "🔴", "Pista alagada — cuidado"
-    if code >= 61:  return "🟡", "Pista molhada"
-    if code in (45, 48): return "🟠", "Visibilidade reduzida"
-    if wind > 50:   return "🟡", "Vento forte"
+    if code >= 95:       return "⛔", "Risco alto — evite sair"
+    if code >= 80:       return "🔴", "Pista alagada — cuidado"
+    if code >= 61:       return "🟡", "Pista molhada"
+    if code in (45,48):  return "🟠", "Visibilidade reduzida"
+    if wind > 50:        return "🟡", "Vento forte"
     return "🟢", "Pista seca — normal"
 
 @app.get("/api/weather")
@@ -441,29 +458,17 @@ async def get_weather():
         async with httpx.AsyncClient(timeout=8) as client:
             r = await client.get(
                 "https://api.open-meteo.com/v1/forecast",
-                params={
-                    "latitude": 35.37, "longitude": -119.02,
-                    "current": "temperature_2m,weather_code,wind_speed_10m,relative_humidity_2m",
-                    "timezone": "America/Los_Angeles",
-                }
+                params={"latitude":35.37,"longitude":-119.02,
+                        "current":"temperature_2m,weather_code,wind_speed_10m,relative_humidity_2m",
+                        "timezone":"America/Los_Angeles"}
             )
             raw = r.json()
-        c    = raw["current"]
-        code = c["weather_code"]
-        wind = c["wind_speed_10m"]
+        c = raw["current"]; code = c["weather_code"]; wind = c["wind_speed_10m"]
         rd_icon, rd_text = road_condition(code, wind)
-        data = {
-            "temp":        round(c["temperature_2m"]),
-            "humidity":    c["relative_humidity_2m"],
-            "wind":        round(wind),
-            "code":        code,
-            "description": WMO_DESC.get(code, "—"),
-            "icon":        wmo_icon(code),
-            "road_icon":   rd_icon,
-            "road_text":   rd_text,
-        }
-        _weather_cache["data"] = data
-        _weather_cache["ts"]   = now
+        data = {"temp":round(c["temperature_2m"]),"humidity":c["relative_humidity_2m"],
+                "wind":round(wind),"code":code,"description":WMO_DESC.get(code,"—"),
+                "icon":wmo_icon(code),"road_icon":rd_icon,"road_text":rd_text}
+        _weather_cache["data"] = data; _weather_cache["ts"] = now
         return data
     except Exception:
         return {"temp":"—","humidity":"—","wind":"—","code":0,
@@ -478,59 +483,42 @@ async def get_rates():
         async with httpx.AsyncClient(timeout=8) as client:
             r = await client.get("https://economia.awesomeapi.com.br/json/last/USD-BRL,EUR-BRL")
             raw = r.json()
-        usd = raw["USDBRL"]
-        eur = raw["EURBRL"]
-        data = {
-            "usd": {"rate": float(usd["bid"]), "change": float(usd["pctChange"])},
-            "eur": {"rate": float(eur["bid"]), "change": float(eur["pctChange"])},
-        }
-        _rates_cache["data"] = data
-        _rates_cache["ts"]   = now
+        usd = raw["USDBRL"]; eur = raw["EURBRL"]
+        data = {"usd":{"rate":float(usd["bid"]),"change":float(usd["pctChange"])},
+                "eur":{"rate":float(eur["bid"]),"change":float(eur["pctChange"])}}
+        _rates_cache["data"] = data; _rates_cache["ts"] = now
         return data
     except Exception:
         return {"usd":{"rate":0,"change":0},"eur":{"rate":0,"change":0}}
 
 # ── Ticker endpoint ───────────────────────────────────────────────────────────
 
-class TickerUpdate(BaseModel):
-    text: Optional[str] = None
-    use_custom: Optional[bool] = None
-
 @app.get("/api/ticker")
 def get_ticker():
-    conn = get_db()
-    text_row = conn.execute("SELECT value FROM settings WHERE key='ticker_text'").fetchone()
-    custom_row = conn.execute("SELECT value FROM settings WHERE key='ticker_custom'").fetchone()
-    conn.close()
-    return {
-        "text": text_row["value"] if text_row else "",
-        "use_custom": (custom_row["value"] == "1") if custom_row else False,
-    }
+    conn = get_db(); cur = conn.cursor()
+    cur.execute("SELECT key,value FROM settings WHERE key IN ('ticker_text','ticker_custom')")
+    rows = {r["key"]: r["value"] for r in cur.fetchall()}
+    cur.close(); conn.close()
+    return {"text": rows.get("ticker_text",""), "use_custom": rows.get("ticker_custom") == "1"}
 
 @app.put("/api/ticker")
 def update_ticker(data: TickerUpdate, token: str = Depends(verify_token)):
-    conn = get_db()
+    conn = get_db(); cur = conn.cursor()
     if data.text is not None:
-        conn.execute("INSERT OR REPLACE INTO settings (key,value) VALUES ('ticker_text',?)", (data.text,))
+        cur.execute("INSERT INTO settings (key,value) VALUES ('ticker_text',%s) ON CONFLICT (key) DO UPDATE SET value=EXCLUDED.value", (data.text,))
     if data.use_custom is not None:
-        conn.execute("INSERT OR REPLACE INTO settings (key,value) VALUES ('ticker_custom',?)",
-                     ("1" if data.use_custom else "0",))
-    conn.commit(); conn.close()
+        cur.execute("INSERT INTO settings (key,value) VALUES ('ticker_custom',%s) ON CONFLICT (key) DO UPDATE SET value=EXCLUDED.value", ("1" if data.use_custom else "0",))
+    conn.commit(); cur.close(); conn.close()
     return {"ok": True}
 
 # ── Comments endpoints ────────────────────────────────────────────────────────
 
-class CommentItem(BaseModel):
-    author: str
-    body: str
-
 @app.get("/api/comments/{article_id}")
 def get_comments(article_id: str):
-    conn = get_db()
-    rows = conn.execute(
-        "SELECT * FROM comments WHERE article_id=? ORDER BY created_at DESC", (article_id,)
-    ).fetchall()
-    conn.close()
+    conn = get_db(); cur = conn.cursor()
+    cur.execute("SELECT * FROM comments WHERE article_id=%s ORDER BY created_at DESC", (article_id,))
+    rows = cur.fetchall()
+    cur.close(); conn.close()
     return [dict(r) for r in rows]
 
 @app.post("/api/comments/{article_id}")
@@ -538,51 +526,39 @@ def add_comment(article_id: str, item: CommentItem):
     if not item.author.strip() or not item.body.strip():
         raise HTTPException(400, "Nome e comentário obrigatórios")
     cid = secrets.token_hex(8)
-    conn = get_db()
-    conn.execute(
-        "INSERT INTO comments (id,article_id,author,body,likes,created_at) VALUES (?,?,?,?,0,?)",
+    conn = get_db(); cur = conn.cursor()
+    cur.execute(
+        "INSERT INTO comments (id,article_id,author,body,likes,created_at) VALUES (%s,%s,%s,%s,0,%s)",
         (cid, article_id, item.author.strip()[:80], item.body.strip()[:2000], int(time.time()))
     )
-    conn.commit()
-    conn.close()
+    conn.commit(); cur.close(); conn.close()
     return {"id": cid}
 
 @app.post("/api/comments/{article_id}/{comment_id}/like")
 def like_comment(article_id: str, comment_id: str):
-    conn = get_db()
-    conn.execute(
-        "UPDATE comments SET likes=likes+1 WHERE id=? AND article_id=?", (comment_id, article_id)
-    )
-    conn.commit()
-    conn.close()
+    conn = get_db(); cur = conn.cursor()
+    cur.execute("UPDATE comments SET likes=likes+1 WHERE id=%s AND article_id=%s", (comment_id, article_id))
+    conn.commit(); cur.close(); conn.close()
     return {"ok": True}
 
 # ── Sponsors endpoints ────────────────────────────────────────────────────────
 
-class SponsorUpdate(BaseModel):
-    name: Optional[str] = None
-    tagline: Optional[str] = None
-    cta_text: Optional[str] = None
-    cta_url: Optional[str] = None
-    image_url: Optional[str] = None
-    theme: Optional[str] = None
-
 @app.get("/api/sponsors")
 def get_sponsors():
-    conn = get_db()
-    rows = conn.execute("SELECT * FROM sponsors").fetchall()
-    conn.close()
+    conn = get_db(); cur = conn.cursor()
+    cur.execute("SELECT * FROM sponsors")
+    rows = cur.fetchall()
+    cur.close(); conn.close()
     return {r["slot"]: dict(r) for r in rows}
 
 @app.put("/api/sponsors/{slot}")
 def update_sponsor(slot: str, data: SponsorUpdate, token: str = Depends(verify_token)):
-    conn = get_db()
     fields = {k: v for k, v in data.model_dump().items() if v is not None}
     if fields:
-        sets = ", ".join(f"{k}=?" for k in fields)
-        conn.execute(f"UPDATE sponsors SET {sets} WHERE slot=?", (*fields.values(), slot))
-        conn.commit()
-    conn.close()
+        conn = get_db(); cur = conn.cursor()
+        sets = ", ".join(f"{k}=%s" for k in fields)
+        cur.execute(f"UPDATE sponsors SET {sets} WHERE slot=%s", (*fields.values(), slot))
+        conn.commit(); cur.close(); conn.close()
     return {"ok": True}
 
 # ── Static ────────────────────────────────────────────────────────────────────
