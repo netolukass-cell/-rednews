@@ -470,9 +470,14 @@ input,textarea,select{font-family:inherit}
             <div class="composer-field">
               <label>Imagem de capa</label>
               <div class="img-preview-row">
-                <input class="ai" id="n-image" placeholder="URL da imagem (https://… ou assets/…)" oninput="previewImg(this.value)">
+                <input class="ai" id="n-image" placeholder="URL da imagem ou clique em Escolher…" oninput="previewImg(this.value)">
+                <label class="abtn sec" style="cursor:pointer;white-space:nowrap;padding:8px 14px;font-size:11px">
+                  Escolher…
+                  <input type="file" id="n-image-file" accept="image/*" style="display:none" onchange="uploadImage(this)">
+                </label>
                 <img class="img-preview-box" id="n-img-preview" alt="preview">
               </div>
+              <div id="upload-status" style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#7a7a82;margin-top:4px;display:none"></div>
             </div>
             <div class="composer-field" style="padding-bottom:14px">
               <label>Corpo da notícia</label>
@@ -853,6 +858,25 @@ function previewImg(url){
   const el=$('n-img-preview');if(!el)return;
   if(url&&url.trim()){el.src=url.trim();el.classList.add('show');}
   else{el.src='';el.classList.remove('show');}
+}
+
+async function uploadImage(input){
+  const file=input.files[0];if(!file)return;
+  const status=$('upload-status');
+  status.textContent='Enviando…';status.style.display='block';status.style.color='#7a7a82';
+  try{
+    const fd=new FormData();fd.append('file',file);
+    const t=sessionStorage.getItem(TK);
+    const r=await fetch('/api/upload',{method:'POST',headers:{Authorization:'Bearer '+t},body:fd});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.detail||'Erro');
+    $('n-image').value=d.url;
+    previewImg(d.url);
+    status.textContent='✓ Imagem carregada';status.style.color='#2ec27a';
+  }catch(e){
+    status.textContent='Erro: '+e.message;status.style.color='#ff3a3a';
+  }
+  input.value='';
 }
 
 function cancelEdit(){

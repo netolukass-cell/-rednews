@@ -1,7 +1,7 @@
-from fastapi import FastAPI, HTTPException, Depends, Header
+from fastapi import FastAPI, HTTPException, Depends, Header, UploadFile, File
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
-import psycopg2, psycopg2.extras, hashlib, secrets, time, os
+import psycopg2, psycopg2.extras, hashlib, secrets, time, os, base64
 from typing import Optional
 import httpx
 
@@ -560,6 +560,22 @@ def update_sponsor(slot: str, data: SponsorUpdate, token: str = Depends(verify_t
         cur.execute(f"UPDATE sponsors SET {sets} WHERE slot=%s", (*fields.values(), slot))
         conn.commit(); cur.close(); conn.close()
     return {"ok": True}
+
+# ── Upload endpoint ───────────────────────────────────────────────────────────
+
+ALLOWED_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
+MAX_SIZE = 4 * 1024 * 1024  # 4 MB
+
+@app.post("/api/upload")
+async def upload_image(file: UploadFile = File(...), token: str = Depends(verify_token)):
+    if file.content_type not in ALLOWED_TYPES:
+        raise HTTPException(400, "Formato inválido. Use JPG, PNG, WebP ou GIF.")
+    data = await file.read()
+    if len(data) > MAX_SIZE:
+        raise HTTPException(400, "Imagem muito grande. Máximo 4MB.")
+    b64 = base64.b64encode(data).decode()
+    data_url = f"data:{file.content_type};base64,{b64}"
+    return {"url": data_url}
 
 # ── Static ────────────────────────────────────────────────────────────────────
 
