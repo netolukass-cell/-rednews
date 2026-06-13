@@ -49,7 +49,7 @@ if errorlevel 1 (
     exit /b 1
 )
 
-powershell -NoProfile -ExecutionPolicy Bypass -Command "Get-ChildItem '%MusicasDir%' -Filter *.mp3 | ForEach-Object { 'file ''' + $_.FullName + '''' } | Set-Content '%Lista%' -Encoding ASCII"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$OutputEncoding=[System.Text.Encoding]::UTF8; Get-ChildItem '%MusicasDir%' -Filter *.mp3 | ForEach-Object { 'file ''' + ($_.FullName -replace '''','''''') + '''' } | Out-File -FilePath '%Lista%' -Encoding utf8NoBOM"
 echo OK: lista.txt atualizado.
 
 echo [5/10] Procurando Icecast...
@@ -107,7 +107,7 @@ start "ICECAST - RED NEWS" /D "%RadioDir%" "%IceExe%" -c "%Config%"
 timeout /t 4 >nul
 
 echo [8/10] Iniciando transmissao FFmpeg...
-start "FFMPEG - RED NEWS RADIO" cmd /k "cd /d "%RadioDir%" && ffmpeg -re -stream_loop -1 -f concat -safe 0 -i lista.txt -vn -c:a libmp3lame -b:a 128k -content_type audio/mpeg -f mp3 icecast://source:%Senha%@localhost:%Porta%/%Mount%"
+start "FFMPEG - RED NEWS RADIO" cmd /k "cd /d "%RadioDir%" && ffmpeg -re -stream_loop -1 -f concat -safe 0 -err_detect ignore_err -i lista.txt -vn -c:a libmp3lame -b:a 128k -content_type audio/mpeg -f mp3 icecast://source:%Senha%@localhost:%Porta%/%Mount%"
 timeout /t 5 >nul
 
 echo Abrindo radio local...
