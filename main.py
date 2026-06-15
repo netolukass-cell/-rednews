@@ -15,6 +15,7 @@ TOKEN_TTL = 86400  # 24h
 SQLITE_PATH = os.environ.get("SQLITE_PATH", "rednews.local.db")
 ADMIN_ENABLED = os.environ.get("ADMIN_ENABLED", "").lower() in {"1", "true", "yes"}
 ADMIN_API_KEY = os.environ.get("ADMIN_API_KEY", "")
+DEFAULT_STREAM_URL = os.environ.get("DEFAULT_STREAM_URL", "http://207.58.172.237:8000/rednews.mp3")
 
 # ── DB ────────────────────────────────────────────────────────────────────────
 
@@ -471,9 +472,10 @@ def get_stream():
     db_execute(cur, "SELECT key,value FROM settings WHERE key IN ('stream_url','is_live')")
     rows = {r["key"]: r["value"] for r in cur.fetchall()}
     cur.close(); conn.close()
+    url = rows.get("stream_url") or DEFAULT_STREAM_URL
     return {
-        "url": rows.get("stream_url", ""),
-        "is_live": rows.get("is_live") == "1",
+        "url": url,
+        "is_live": rows.get("is_live", "1" if url else "0") == "1",
     }
 
 class StreamPublish(BaseModel):
