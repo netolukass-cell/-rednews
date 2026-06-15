@@ -87,6 +87,7 @@ def init_db():
     seed_news()
     seed_sponsors()
     seed_solevan_article()
+    seed_montgomery_helmet_article()
     seed_cleavon_article()
 
 DEFAULT_NEWS = [
@@ -238,6 +239,47 @@ def seed_cleavon_article():
          "Cleavon Mclister apagou no meio da via, virou espetáculo público e acabou liberado minutos depois.",
          CLEAVON_BODY, "https://i.imgur.com/INNWjyD.png",
          "Hoje, 15/06", "EXCLUSIVO", int(time.time()) + 60)
+    )
+    conn.commit(); cur.close(); conn.close()
+
+MONTGOMERY_HELMET_BODY = """
+<p><strong style="color:#cc0000">Montgomery acordou com uma pergunta atravessada na garganta:</strong> desde quando ficar parado ao lado de uma moto vira caso de multa por capacete?</p>
+<p>Um <strong style="color:#cc0000">homem ainda não identificado</strong> foi abordado por um sheriff durante uma patrulha noturna e acabou multado por falta de capacete. O detalhe que incendiou a conversa nas calçadas é simples: segundo quem viu a cena, ele <strong style="color:#cc0000">não estava pilotando</strong>. Estava parado.</p>
+<figure style="margin:28px 0">
+  <img src="assets/montgomery-capacete.jpg" alt="Homem abordado ao lado de uma moto em Montgomery" style="width:100%;border-radius:8px">
+  <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#777;line-height:1.5;margin-top:10px">Abordagem em Montgomery: moto parada, viatura na via e um sheriff conduzindo a conversa que terminou em multa.</figcaption>
+</figure>
+<h2><strong style="color:#cc0000">PARADO, MAS MULTADO</strong></h2>
+<p>A cena parece pequena, mas em Red County nada fica pequeno por muito tempo. A moto estava encostada, o homem conversava com o oficial e, minutos depois, veio a notícia que correu mais rápido que sirene: <strong style="color:#cc0000">multa por falta de capacete</strong>.</p>
+<p>É claro que a segurança no trânsito importa. Mas a pergunta que ficou martelando é outra: se o condutor estava parado, por que a caneta pesou tanto?</p>
+<blockquote>
+  <p>"O cara nem saiu com a moto. Parecia mais que estavam procurando motivo."</p>
+  <div class="bq-author">Testemunha que acompanhou a abordagem</div>
+</blockquote>
+<h2><strong style="color:#cc0000">RIGOR OU RECADO?</strong></h2>
+<p>Nos últimos dias, moradores de Montgomery vêm comentando um aumento nas abordagens. Carro parado, moto encostada, gente reunida na esquina: tudo parece motivo para pergunta, documento e aquela olhada demorada que ninguém sabe se é rotina ou recado.</p>
+<p>A versão oficial ainda não veio, mas a rua já montou a própria teoria: os sheriffs podem estar apertando o cerco atrás de algo maior. <strong style="color:#cc0000">Estão procurando alguém? Uma rota? Um padrão?</strong> Ou Montgomery virou laboratório de tolerância zero?</p>
+<h2><strong style="color:#cc0000">O QUE ELES ESTÃO PROCURANDO?</strong></h2>
+<p>É aí que a história cresce. Porque uma multa isolada por capacete pode até parecer burocracia. Mas quando acontece numa abordagem tão observada, com viatura parada, luz acesa e curiosos cochichando, a coisa ganha outro cheiro.</p>
+<p>Se era só trânsito, foi rigor demais. Se não era só trânsito, falta explicar o resto. A <strong style="color:#cc0000">Red News</strong> vai acompanhar de perto, porque Montgomery anda calma demais na superfície e barulhenta demais nos bastidores.</p>
+<div class="resumo">
+  <div class="resumo-ttl">O que se sabe</div>
+  <div class="resumo-item"><span class="rdot"></span><span>Um homem não identificado foi multado por falta de capacete.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>Testemunhas dizem que ele estava parado no momento da abordagem.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>Moradores relatam aumento do rigor dos sheriffs em Montgomery.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>A dúvida na cidade: fiscalização comum ou busca por algo maior?</span></div>
+</div>
+"""
+
+def seed_montgomery_helmet_article():
+    conn = get_db(); cur = conn.cursor()
+    db_execute(cur,
+        'INSERT INTO news (id,type,icon,cat,title,"desc",body,image_url,time_str,label,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO UPDATE SET type=EXCLUDED.type,icon=EXCLUDED.icon,cat=EXCLUDED.cat,title=EXCLUDED.title,"desc"=EXCLUDED."desc",body=EXCLUDED.body,image_url=EXCLUDED.image_url,time_str=EXCLUDED.time_str,label=EXCLUDED.label,created_at=EXCLUDED.created_at',
+        ("d3", "item", "🪖", "Policial",
+         "Parado, sem capacete e multado: o que os sheriffs procuram em Montgomery?",
+         "Abordagem noturna levanta suspeita de rigor seletivo e deixa moradores perguntando se há algo maior por trás das multas.",
+         MONTGOMERY_HELMET_BODY, "assets/montgomery-capacete.jpg",
+         "Hoje, 15/06", "EM MONTGOMERY", int(time.time()) + 30)
     )
     conn.commit(); cur.close(); conn.close()
 
