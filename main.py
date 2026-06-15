@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, Depends, Header, UploadFile, File
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
 import psycopg2, psycopg2.extras, hashlib, secrets, time, os, base64
+import sqlite3
 from typing import Optional
 import httpx
 
@@ -11,23 +12,34 @@ app = FastAPI(docs_url=None, redoc_url=None)
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "")
 TOKEN_TTL = 86400  # 24h
+SQLITE_PATH = os.environ.get("SQLITE_PATH", "rednews.local.db")
+ADMIN_ENABLED = os.environ.get("ADMIN_ENABLED", "").lower() in {"1", "true", "yes"}
+ADMIN_API_KEY = os.environ.get("ADMIN_API_KEY", "")
 
 # ── DB ────────────────────────────────────────────────────────────────────────
 
 def get_db():
-    conn = psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.extras.RealDictCursor)
+    if DATABASE_URL:
+        return psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.extras.RealDictCursor)
+    conn = sqlite3.connect(SQLITE_PATH)
+    conn.row_factory = sqlite3.Row
     return conn
+
+def db_execute(cur, query, params=()):
+    if not DATABASE_URL:
+        query = query.replace("%s", "?")
+    return cur.execute(query, params)
 
 def init_db():
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("""
+    db_execute(cur, """
         CREATE TABLE IF NOT EXISTS settings (
             key   TEXT PRIMARY KEY,
             value TEXT
         )
     """)
-    cur.execute("""
+    db_execute(cur, """
         CREATE TABLE IF NOT EXISTS news (
             id         TEXT PRIMARY KEY,
             type       TEXT DEFAULT 'item',
@@ -42,13 +54,13 @@ def init_db():
             created_at BIGINT
         )
     """)
-    cur.execute("""
+    db_execute(cur, """
         CREATE TABLE IF NOT EXISTS tokens (
             token      TEXT PRIMARY KEY,
             created_at BIGINT
         )
     """)
-    cur.execute("""
+    db_execute(cur, """
         CREATE TABLE IF NOT EXISTS comments (
             id         TEXT PRIMARY KEY,
             article_id TEXT NOT NULL,
@@ -58,7 +70,7 @@ def init_db():
             created_at BIGINT
         )
     """)
-    cur.execute("""
+    db_execute(cur, """
         CREATE TABLE IF NOT EXISTS sponsors (
             slot      TEXT PRIMARY KEY,
             name      TEXT,
@@ -100,11 +112,11 @@ DEFAULT_NEWS = [
 
 def seed_news():
     conn = get_db(); cur = conn.cursor()
-    cur.execute("SELECT COUNT(*) FROM news")
+    db_execute(cur, "SELECT COUNT(*) AS count FROM news")
     if cur.fetchone()["count"] == 0:
         t = int(time.time())
         for d in DEFAULT_NEWS:
-            cur.execute(
+            db_execute(cur,
                 'INSERT INTO news (id,type,icon,cat,title,"desc",time_str,label,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO NOTHING',
                 (*d, t)
             )
@@ -118,7 +130,7 @@ DEFAULT_SPONSORS = [
 def seed_sponsors():
     conn = get_db(); cur = conn.cursor()
     for s in DEFAULT_SPONSORS:
-        cur.execute(
+        db_execute(cur,
             "INSERT INTO sponsors (slot,name,tagline,cta_text,cta_url,image_url,theme) VALUES (%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (slot) DO NOTHING",
             s
         )
@@ -172,7 +184,7 @@ SOLEVAN_BODY = """
 
 def seed_solevan_article():
     conn = get_db(); cur = conn.cursor()
-    cur.execute(
+    db_execute(cur,
         'INSERT INTO news (id,type,icon,cat,title,"desc",body,image_url,time_str,label,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO NOTHING',
         ("solevan-2026-06-11", "featured", "🎱", "Esportes",
          "Solevan fatura US$ 10 mil e vira o novo rei da sinuca",
@@ -188,19 +200,29 @@ init_db()
 
 ENV_ADMIN_PWD = os.environ.get("ADMIN_PASSWORD", "")
 
-def verify_token(authorization: Optional[str] = Header(None)):
+def require_admin_enabled():
+    if not ADMIN_ENABLED:
+        raise HTTPException(404, "Admin desativado")
+
+def verify_token(
+    authorization: Optional[str] = Header(None),
+    x_admin_key: Optional[str] = Header(None, alias="X-Admin-Key"),
+):
+    if ADMIN_API_KEY and x_admin_key and secrets.compare_digest(x_admin_key, ADMIN_API_KEY):
+        return "admin-api-key"
+    require_admin_enabled()
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(401, "Não autorizado")
     token = authorization[7:]
     conn = get_db(); cur = conn.cursor()
-    cur.execute("SELECT created_at FROM tokens WHERE token=%s", (token,))
+    db_execute(cur, "SELECT created_at FROM tokens WHERE token=%s", (token,))
     row = cur.fetchone()
     cur.close(); conn.close()
     if not row:
         raise HTTPException(401, "Token inválido")
     if time.time() - row["created_at"] > TOKEN_TTL:
         conn = get_db(); cur = conn.cursor()
-        cur.execute("DELETE FROM tokens WHERE token=%s", (token,))
+        db_execute(cur, "DELETE FROM tokens WHERE token=%s", (token,))
         conn.commit(); cur.close(); conn.close()
         raise HTTPException(401, "Sessão expirada")
     return token
@@ -208,7 +230,7 @@ def verify_token(authorization: Optional[str] = Header(None)):
 def new_token():
     token = secrets.token_hex(32)
     conn = get_db(); cur = conn.cursor()
-    cur.execute("INSERT INTO tokens (token,created_at) VALUES (%s,%s)", (token, int(time.time())))
+    db_execute(cur, "INSERT INTO tokens (token,created_at) VALUES (%s,%s)", (token, int(time.time())))
     conn.commit(); cur.close(); conn.close()
     return token
 
@@ -217,7 +239,7 @@ def _check_password(plain: str) -> bool:
     if ENV_ADMIN_PWD:
         return plain == ENV_ADMIN_PWD
     conn = get_db(); cur = conn.cursor()
-    cur.execute("SELECT value FROM settings WHERE key='admin_hash'")
+    db_execute(cur, "SELECT value FROM settings WHERE key='admin_hash'")
     row = cur.fetchone()
     cur.close(); conn.close()
     return bool(row) and h == row["value"]
@@ -279,22 +301,25 @@ class SponsorUpdate(BaseModel):
 
 @app.get("/api/auth/status")
 def auth_status():
+    if not ADMIN_ENABLED:
+        return {"enabled": False, "has_password": False}
     if ENV_ADMIN_PWD:
-        return {"has_password": True}
+        return {"enabled": True, "has_password": True}
     conn = get_db(); cur = conn.cursor()
-    cur.execute("SELECT 1 FROM settings WHERE key='admin_hash'")
+    db_execute(cur, "SELECT 1 FROM settings WHERE key='admin_hash'")
     has = bool(cur.fetchone())
     cur.close(); conn.close()
-    return {"has_password": has}
+    return {"enabled": True, "has_password": has}
 
 @app.post("/api/auth/setup")
 def setup_password(req: SetupReq):
+    require_admin_enabled()
     if ENV_ADMIN_PWD:
         if not _check_password(req.password):
             raise HTTPException(401, "Senha incorreta")
         return {"token": new_token()}
     conn = get_db(); cur = conn.cursor()
-    cur.execute("SELECT 1 FROM settings WHERE key='admin_hash'")
+    db_execute(cur, "SELECT 1 FROM settings WHERE key='admin_hash'")
     if cur.fetchone():
         cur.close(); conn.close()
         raise HTTPException(400, "Senha já configurada")
@@ -302,12 +327,13 @@ def setup_password(req: SetupReq):
         cur.close(); conn.close()
         raise HTTPException(400, "Mínimo 6 caracteres")
     h = hashlib.sha256(req.password.encode()).hexdigest()
-    cur.execute("INSERT INTO settings (key,value) VALUES ('admin_hash',%s)", (h,))
+    db_execute(cur, "INSERT INTO settings (key,value) VALUES ('admin_hash',%s)", (h,))
     conn.commit(); cur.close(); conn.close()
     return {"token": new_token()}
 
 @app.post("/api/auth/login")
 def login(req: LoginReq):
+    require_admin_enabled()
     if not _check_password(req.password):
         raise HTTPException(401, "Senha incorreta")
     return {"token": new_token()}
@@ -315,7 +341,7 @@ def login(req: LoginReq):
 @app.post("/api/auth/logout")
 def logout(token: str = Depends(verify_token)):
     conn = get_db(); cur = conn.cursor()
-    cur.execute("DELETE FROM tokens WHERE token=%s", (token,))
+    db_execute(cur, "DELETE FROM tokens WHERE token=%s", (token,))
     conn.commit(); cur.close(); conn.close()
     return {"ok": True}
 
@@ -324,22 +350,22 @@ def change_password(req: ChangePwdReq, token: str = Depends(verify_token)):
     if len(req.new_password) < 6:
         raise HTTPException(400, "Mínimo 6 caracteres")
     conn = get_db(); cur = conn.cursor()
-    cur.execute("SELECT value FROM settings WHERE key='admin_hash'")
+    db_execute(cur, "SELECT value FROM settings WHERE key='admin_hash'")
     row = cur.fetchone()
     if not row or hashlib.sha256(req.current_password.encode()).hexdigest() != row["value"]:
         cur.close(); conn.close()
         raise HTTPException(401, "Senha atual incorreta")
     h = hashlib.sha256(req.new_password.encode()).hexdigest()
-    cur.execute("UPDATE settings SET value=%s WHERE key='admin_hash'", (h,))
+    db_execute(cur, "UPDATE settings SET value=%s WHERE key='admin_hash'", (h,))
     conn.commit(); cur.close(); conn.close()
     return {"ok": True}
 
 @app.post("/api/auth/reset")
 def factory_reset(token: str = Depends(verify_token)):
     conn = get_db(); cur = conn.cursor()
-    cur.execute("DELETE FROM settings")
-    cur.execute("DELETE FROM news")
-    cur.execute("DELETE FROM tokens")
+    db_execute(cur, "DELETE FROM settings")
+    db_execute(cur, "DELETE FROM news")
+    db_execute(cur, "DELETE FROM tokens")
     conn.commit(); cur.close(); conn.close()
     seed_news()
     return {"ok": True}
@@ -349,7 +375,7 @@ def factory_reset(token: str = Depends(verify_token)):
 @app.get("/api/news")
 def get_news():
     conn = get_db(); cur = conn.cursor()
-    cur.execute('SELECT id,type,icon,cat,title,"desc",body,image_url,time_str,label,created_at FROM news ORDER BY created_at DESC')
+    db_execute(cur, 'SELECT id,type,icon,cat,title,"desc",body,image_url,time_str,label,created_at FROM news ORDER BY created_at DESC')
     rows = cur.fetchall()
     cur.close(); conn.close()
     return [dict(r) for r in rows]
@@ -358,7 +384,7 @@ def get_news():
 def add_news(item: NewsItem, token: str = Depends(verify_token)):
     nid = secrets.token_hex(8)
     conn = get_db(); cur = conn.cursor()
-    cur.execute(
+    db_execute(cur,
         'INSERT INTO news (id,type,icon,cat,title,"desc",body,image_url,time_str,label,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
         (nid, item.type, item.icon, item.cat, item.title, item.desc, item.body, item.image_url, item.time, item.label, int(time.time()))
     )
@@ -372,21 +398,21 @@ def edit_news(news_id: str, data: NewsEdit, token: str = Depends(verify_token)):
         conn = get_db(); cur = conn.cursor()
         col_map = {"desc": '"desc"'}
         sets = ", ".join(f"{col_map.get(k,k)}=%s" for k in fields)
-        cur.execute(f"UPDATE news SET {sets} WHERE id=%s", (*fields.values(), news_id))
+        db_execute(cur, f"UPDATE news SET {sets} WHERE id=%s", (*fields.values(), news_id))
         conn.commit(); cur.close(); conn.close()
     return {"ok": True}
 
 @app.delete("/api/news/{news_id}")
 def delete_news(news_id: str, token: str = Depends(verify_token)):
     conn = get_db(); cur = conn.cursor()
-    cur.execute("DELETE FROM news WHERE id=%s", (news_id,))
+    db_execute(cur, "DELETE FROM news WHERE id=%s", (news_id,))
     conn.commit(); cur.close(); conn.close()
     return {"ok": True}
 
 @app.post("/api/news/reset")
 def reset_news(token: str = Depends(verify_token)):
     conn = get_db(); cur = conn.cursor()
-    cur.execute("DELETE FROM news")
+    db_execute(cur, "DELETE FROM news")
     conn.commit(); cur.close(); conn.close()
     seed_news()
     return {"ok": True}
@@ -396,7 +422,7 @@ def reset_news(token: str = Depends(verify_token)):
 @app.get("/api/stream")
 def get_stream():
     conn = get_db(); cur = conn.cursor()
-    cur.execute("SELECT key,value FROM settings WHERE key IN ('stream_url','is_live')")
+    db_execute(cur, "SELECT key,value FROM settings WHERE key IN ('stream_url','is_live')")
     rows = {r["key"]: r["value"] for r in cur.fetchall()}
     cur.close(); conn.close()
     return {
@@ -411,11 +437,12 @@ class StreamPublish(BaseModel):
 
 @app.post("/api/stream/publish")
 def publish_stream(data: StreamPublish):
+    require_admin_enabled()
     if not _check_password(data.password):
         raise HTTPException(401, "Senha incorreta")
     conn = get_db(); cur = conn.cursor()
-    cur.execute("INSERT INTO settings (key,value) VALUES ('stream_url',%s) ON CONFLICT (key) DO UPDATE SET value=EXCLUDED.value", (data.url,))
-    cur.execute("INSERT INTO settings (key,value) VALUES ('is_live',%s) ON CONFLICT (key) DO UPDATE SET value=EXCLUDED.value", ("1" if data.is_live else "0",))
+    db_execute(cur, "INSERT INTO settings (key,value) VALUES ('stream_url',%s) ON CONFLICT (key) DO UPDATE SET value=EXCLUDED.value", (data.url,))
+    db_execute(cur, "INSERT INTO settings (key,value) VALUES ('is_live',%s) ON CONFLICT (key) DO UPDATE SET value=EXCLUDED.value", ("1" if data.is_live else "0",))
     conn.commit(); cur.close(); conn.close()
     return {"ok": True, "url": data.url}
 
@@ -423,9 +450,9 @@ def publish_stream(data: StreamPublish):
 def update_stream(data: StreamUpdate, token: str = Depends(verify_token)):
     conn = get_db(); cur = conn.cursor()
     if data.url is not None:
-        cur.execute("INSERT INTO settings (key,value) VALUES ('stream_url',%s) ON CONFLICT (key) DO UPDATE SET value=EXCLUDED.value", (data.url,))
+        db_execute(cur, "INSERT INTO settings (key,value) VALUES ('stream_url',%s) ON CONFLICT (key) DO UPDATE SET value=EXCLUDED.value", (data.url,))
     if data.is_live is not None:
-        cur.execute("INSERT INTO settings (key,value) VALUES ('is_live',%s) ON CONFLICT (key) DO UPDATE SET value=EXCLUDED.value", ("1" if data.is_live else "0",))
+        db_execute(cur, "INSERT INTO settings (key,value) VALUES ('is_live',%s) ON CONFLICT (key) DO UPDATE SET value=EXCLUDED.value", ("1" if data.is_live else "0",))
     conn.commit(); cur.close(); conn.close()
     return {"ok": True}
 
@@ -511,7 +538,7 @@ async def get_rates():
 @app.get("/api/ticker")
 def get_ticker():
     conn = get_db(); cur = conn.cursor()
-    cur.execute("SELECT key,value FROM settings WHERE key IN ('ticker_text','ticker_custom')")
+    db_execute(cur, "SELECT key,value FROM settings WHERE key IN ('ticker_text','ticker_custom')")
     rows = {r["key"]: r["value"] for r in cur.fetchall()}
     cur.close(); conn.close()
     return {"text": rows.get("ticker_text",""), "use_custom": rows.get("ticker_custom") == "1"}
@@ -520,9 +547,9 @@ def get_ticker():
 def update_ticker(data: TickerUpdate, token: str = Depends(verify_token)):
     conn = get_db(); cur = conn.cursor()
     if data.text is not None:
-        cur.execute("INSERT INTO settings (key,value) VALUES ('ticker_text',%s) ON CONFLICT (key) DO UPDATE SET value=EXCLUDED.value", (data.text,))
+        db_execute(cur, "INSERT INTO settings (key,value) VALUES ('ticker_text',%s) ON CONFLICT (key) DO UPDATE SET value=EXCLUDED.value", (data.text,))
     if data.use_custom is not None:
-        cur.execute("INSERT INTO settings (key,value) VALUES ('ticker_custom',%s) ON CONFLICT (key) DO UPDATE SET value=EXCLUDED.value", ("1" if data.use_custom else "0",))
+        db_execute(cur, "INSERT INTO settings (key,value) VALUES ('ticker_custom',%s) ON CONFLICT (key) DO UPDATE SET value=EXCLUDED.value", ("1" if data.use_custom else "0",))
     conn.commit(); cur.close(); conn.close()
     return {"ok": True}
 
@@ -531,7 +558,7 @@ def update_ticker(data: TickerUpdate, token: str = Depends(verify_token)):
 @app.get("/api/comments/{article_id}")
 def get_comments(article_id: str):
     conn = get_db(); cur = conn.cursor()
-    cur.execute("SELECT * FROM comments WHERE article_id=%s ORDER BY created_at DESC", (article_id,))
+    db_execute(cur, "SELECT * FROM comments WHERE article_id=%s ORDER BY created_at DESC", (article_id,))
     rows = cur.fetchall()
     cur.close(); conn.close()
     return [dict(r) for r in rows]
@@ -542,7 +569,7 @@ def add_comment(article_id: str, item: CommentItem):
         raise HTTPException(400, "Nome e comentário obrigatórios")
     cid = secrets.token_hex(8)
     conn = get_db(); cur = conn.cursor()
-    cur.execute(
+    db_execute(cur,
         "INSERT INTO comments (id,article_id,author,body,likes,created_at) VALUES (%s,%s,%s,%s,0,%s)",
         (cid, article_id, item.author.strip()[:80], item.body.strip()[:2000], int(time.time()))
     )
@@ -552,7 +579,7 @@ def add_comment(article_id: str, item: CommentItem):
 @app.post("/api/comments/{article_id}/{comment_id}/like")
 def like_comment(article_id: str, comment_id: str):
     conn = get_db(); cur = conn.cursor()
-    cur.execute("UPDATE comments SET likes=likes+1 WHERE id=%s AND article_id=%s", (comment_id, article_id))
+    db_execute(cur, "UPDATE comments SET likes=likes+1 WHERE id=%s AND article_id=%s", (comment_id, article_id))
     conn.commit(); cur.close(); conn.close()
     return {"ok": True}
 
@@ -561,7 +588,7 @@ def like_comment(article_id: str, comment_id: str):
 @app.get("/api/sponsors")
 def get_sponsors():
     conn = get_db(); cur = conn.cursor()
-    cur.execute("SELECT * FROM sponsors")
+    db_execute(cur, "SELECT * FROM sponsors")
     rows = cur.fetchall()
     cur.close(); conn.close()
     return {r["slot"]: dict(r) for r in rows}
@@ -572,7 +599,7 @@ def update_sponsor(slot: str, data: SponsorUpdate, token: str = Depends(verify_t
     if fields:
         conn = get_db(); cur = conn.cursor()
         sets = ", ".join(f"{k}=%s" for k in fields)
-        cur.execute(f"UPDATE sponsors SET {sets} WHERE slot=%s", (*fields.values(), slot))
+        db_execute(cur, f"UPDATE sponsors SET {sets} WHERE slot=%s", (*fields.values(), slot))
         conn.commit(); cur.close(); conn.close()
     return {"ok": True}
 

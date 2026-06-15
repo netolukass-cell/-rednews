@@ -7,14 +7,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400;1,8..60,600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
-<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#08080a;color:#f2f2ee;font-family:'Source Serif 4',serif;min-height:100vh}
 a{text-decoration:none;color:inherit}
 button{cursor:pointer}
 input,textarea,select{font-family:inherit}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid #ff3a3a;outline-offset:3px}
 @keyframes rn-ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 @keyframes rn-pulse{0%,100%{opacity:1}50%{opacity:0.25}}
 @keyframes rn-ripple{0%{box-shadow:0 0 0 0 rgba(204,0,0,0.5)}70%{box-shadow:0 0 0 20px rgba(204,0,0,0)}100%{box-shadow:0 0 0 0 rgba(204,0,0,0)}}
@@ -397,6 +396,74 @@ input,textarea,select{font-family:inherit}
 #toast.show{transform:translateY(0);opacity:1}
 #toast.ok{border-color:#2ec27a;color:#2ec27a}
 #toast.err{border-color:#ff3a3a;color:#ff3a3a}
+
+@media (max-width: 1024px){
+  .util-strip{padding:8px 22px;gap:16px}
+  .util-strip .right{gap:12px;flex-wrap:wrap;justify-content:flex-end}
+  .masthead{padding:22px;align-items:flex-start;flex-direction:column;gap:18px}
+  .masthead-wm{left:auto;right:18px;top:18px;transform:none;align-items:flex-end;text-align:right;opacity:.75}
+  .masthead-wm div:first-child{font-size:15px;letter-spacing:7px}
+  .mast-search{width:100%;max-width:none}
+  .site-nav{padding:0 14px;overflow-x:auto}
+  .site-nav a{padding:13px 15px;white-space:nowrap}
+  .hero-grid,.news-body{grid-template-columns:1fr;padding-left:24px;padding-right:24px}
+  .side-col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mais-lidas{grid-column:1/-1}
+  .cards-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sidebar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .art-h1{font-size:40px}
+}
+
+@media (max-width: 720px){
+  .util-strip{display:none}
+  .masthead{min-height:auto;padding:18px 16px}
+  .masthead-wm{display:none}
+  .mast-badge{width:54px;height:54px}
+  .mast-title{font-size:32px}
+  .mast-sub{letter-spacing:3px}
+  .info-bar{display:grid;grid-template-columns:1fr 1fr;overflow:visible}
+  .info-tile{min-width:0;padding:12px 14px;border-bottom:1px solid #18181c}
+  .site-nav a svg,.compact-nav{display:none}
+  .ticker-lbl{padding-left:14px;padding-right:24px}
+  .hero-grid,.ultimas,.live-strip,.page-head,.filter-bar,.news-body,.art-head,.art-hero,.art-body,.cmts-wrap{padding-left:16px;padding-right:16px}
+  .lead-card{height:auto;min-height:360px}
+  .lead-card.lead-no-img{min-height:300px!important}
+  .lead-overlay h2{font-size:29px}
+  .side-col,.cards-grid,.sidebar{display:flex;flex-direction:column}
+  .sec-item{background:#0f0f11;border:1px solid #1d1d22;border-radius:8px;padding:12px}
+  .hcard,.row-item,.live-box,.comp-inner{flex-direction:column}
+  .hcard .hthumb,.row-thumb{width:100%;height:180px}
+  .hcard .hinfo{padding:18px}
+  .row-item{gap:12px}
+  .live-box{align-items:stretch}
+  .waveform{display:none}
+  .live-title-row{flex-wrap:wrap}
+  .site-footer,.compact-hdr{padding:18px 16px}
+  .compact-title{font-size:23px}
+  .art-h1{font-size:32px}
+  .art-dek{font-size:17px}
+  .art-hero img{height:280px}
+  .stat-tiles,.spon-grid,.w-tiles{grid-template-columns:1fr}
+  .admin-panel{margin:18px 10px}
+  .admin-row,.img-preview-row,.composer-footer{flex-direction:column}
+  .composer-footer .abtn,.composer-footer .ai{margin-left:0;max-width:none;width:100%}
+  #float-ad{bottom:12px;width:calc(100vw - 20px)}
+  .fad-dark{grid-template-columns:64px 1fr;gap:14px;padding:14px}
+  .fad-dark img{width:64px;height:64px}
+  .fad-cta{grid-column:1/-1;text-align:center}
+}
+
+@media (max-width: 420px){
+  .info-bar{grid-template-columns:1fr}
+  .lead-card{min-height:330px}
+  .lead-overlay{padding:28px 18px 18px}
+  .lead-overlay h2{font-size:25px}
+  .ncard .nthumb,.hcard .hthumb,.row-thumb{height:150px}
+}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
+}
 </style>
 </head>
 <body>
@@ -510,6 +577,7 @@ input,textarea,select{font-family:inherit}
 
 <script>
 const TK='rednews_token';
+const ADMIN_PANEL_ENABLED=false;
 let currentPage='home',currentArticle=null,weatherData=null,streamData={url:'',is_live:false},newsData=[],audio=null,isPlaying=false;
 const $=id=>document.getElementById(id);
 async function api(m,p,b,auth){
@@ -526,6 +594,17 @@ function timeAgo(ts){const d=Math.floor(Date.now()/1000-ts);if(d<60)return'agora
 function initials(n){return n.trim().split(/\s+/).slice(0,2).map(w=>w[0].toUpperCase()).join('');}
 function avatarBg(n){const c=['linear-gradient(150deg,#cc0000,#7a0000)','linear-gradient(150deg,#4b5563,#262b33)','linear-gradient(150deg,#a16207,#5a3a06)','linear-gradient(150deg,#1e3a5f,#0a1a2e)','linear-gradient(150deg,#2e5c2e,#0f2a0f)'];let h=0;for(let x of n)h=(h*31+x.charCodeAt(0))&0xffff;return c[h%c.length];}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function sanitizeHtml(html){
+  const doc=new DOMParser().parseFromString(`<div>${html||''}</div>`,'text/html');
+  doc.querySelectorAll('script,iframe,object,embed,form,input,button,textarea,select,link,meta').forEach(el=>el.remove());
+  doc.querySelectorAll('*').forEach(el=>{
+    [...el.attributes].forEach(a=>{
+      const n=a.name.toLowerCase(),v=(a.value||'').trim().toLowerCase();
+      if(n.startsWith('on')||v.startsWith('javascript:')||v.startsWith('data:text/html'))el.removeAttribute(a.name);
+    });
+  });
+  return doc.body.firstElementChild.innerHTML;
+}
 
 const I={
   cal:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#cc0000" stroke-width="2" stroke-linecap="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>`,
@@ -563,7 +642,7 @@ function buildUtil(){
 }
 
 function buildMasthead(){
-  return `<div class="masthead"><div class="masthead-map"><img src="assets/red-county-map.png" alt="Mapa"><div class="g1"></div><div class="g2"></div><span class="map-dot" style="left:53.2%;top:15%"><span class="map-dot-inner" style="width:10px;height:10px;background:#ff4a4a;box-shadow:0 0 14px 5px rgba(255,45,45,.9)"></span><span class="map-dot-ring"></span></span><span class="map-dot" style="left:85.7%;top:59.5%"><span class="map-dot-inner" style="width:9px;height:9px;background:#ff3a3a;box-shadow:0 0 11px 4px rgba(255,45,45,.8)"></span><span class="map-dot-ring" style="animation-delay:.8s"></span></span><span class="map-dot" style="left:18.7%;top:83%"><span class="map-dot-inner" style="width:9px;height:9px;background:#ff3a3a;box-shadow:0 0 11px 4px rgba(255,45,45,.8)"></span><span class="map-dot-ring" style="animation-delay:1.4s"></span></span></div><div class="masthead-wm"><div style="font-family:'Oswald',sans-serif;font-weight:600;font-size:19px;letter-spacing:11px;color:rgba(235,75,75,.4);text-transform:uppercase;text-shadow:0 0 20px rgba(0,0,0,.85)">Red County</div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:rgba(190,140,140,.6);margin-top:7px;text-shadow:0 0 12px rgba(0,0,0,.9)">35°22'N · 119°01'W · San Andreas</div></div><div class="masthead-logo"><div class="mast-badge"><img src="assets/rn-badge.png" alt="Red News"></div><div><div class="mast-title"><span style="color:#ff1f1f">RED</span> <span style="color:#fff">NEWS</span></div><div class="mast-sub">Rádio · Jornal · Red County</div></div></div><div class="mast-search"><input type="text" id="search-input" placeholder="Buscar notícias, eventos, áudios…"><button onclick="doSearch()">${I.arr}</button></div></div>`;
+  return `<div class="masthead"><div class="masthead-map"><img src="assets/red-county-map.png" alt="Mapa"><div class="g1"></div><div class="g2"></div><span class="map-dot" style="left:53.2%;top:15%"><span class="map-dot-inner" style="width:10px;height:10px;background:#ff4a4a;box-shadow:0 0 14px 5px rgba(255,45,45,.9)"></span><span class="map-dot-ring"></span></span><span class="map-dot" style="left:85.7%;top:59.5%"><span class="map-dot-inner" style="width:9px;height:9px;background:#ff3a3a;box-shadow:0 0 11px 4px rgba(255,45,45,.8)"></span><span class="map-dot-ring" style="animation-delay:.8s"></span></span><span class="map-dot" style="left:18.7%;top:83%"><span class="map-dot-inner" style="width:9px;height:9px;background:#ff3a3a;box-shadow:0 0 11px 4px rgba(255,45,45,.8)"></span><span class="map-dot-ring" style="animation-delay:1.4s"></span></span></div><div class="masthead-wm"><div style="font-family:'Oswald',sans-serif;font-weight:600;font-size:19px;letter-spacing:11px;color:rgba(235,75,75,.4);text-transform:uppercase;text-shadow:0 0 20px rgba(0,0,0,.85)">Red County</div><div style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:rgba(190,140,140,.6);margin-top:7px;text-shadow:0 0 12px rgba(0,0,0,.9)">35°22'N · 119°01'W · San Andreas</div></div><div class="masthead-logo"><div class="mast-badge"><img src="assets/rn-badge.png" alt="Red News"></div><div><div class="mast-title"><span style="color:#ff1f1f">RED</span> <span style="color:#fff">NEWS</span></div><div class="mast-sub">Rádio · Jornal · Red County</div></div></div><div class="mast-search"><input type="search" id="search-input" placeholder="Buscar notícias, eventos, áudios…" onkeydown="if(event.key==='Enter')doSearch()"><button onclick="doSearch()" aria-label="Buscar">${I.arr}</button></div></div>`;
 }
 
 function buildInfoBar(){
@@ -667,9 +746,9 @@ function renderHome(sponsors){
     <div class="lead-overlay"><h2>${esc(lead.title)}</h2>${lead.desc?`<div class="lead-dek">${esc(lead.desc)}</div>`:''}<div class="lead-meta"><span>${I.clk}${esc(lead.time_str)}</span></div></div>
   </div>`:`<div class="lead-card lead-no-img" style="display:flex;align-items:center;justify-content:center;color:#4a1c1c">${I.img}</div>`;
 
-  const secsHtml=secs.map(n=>`<div class="sec-item" onclick="openArticle('${n.id}')"><div class="sec-thumb">${I.ims}</div><div><div class="sec-cat">${esc(n.cat)}</div><div class="sec-ttl">${esc(n.title)}</div><div class="sec-time">${esc(n.time_str)}</div></div></div>`).join('');
+  const secsHtml=secs.map(n=>`<div class="sec-item" onclick="openArticle('${n.id}')"><div class="sec-thumb">${n.image_url?`<img src="${esc(n.image_url)}" alt="${esc(n.title)}">`:I.ims}</div><div><div class="sec-cat">${esc(n.cat)}</div><div class="sec-ttl">${esc(n.title)}</div><div class="sec-time">${esc(n.time_str)}</div></div></div>`).join('');
   const mlHtml=newsData.slice(0,5).map((n,i)=>`<div class="ml-item"><span class="num">${i+1}</span><span class="txt">${esc(n.title)}</span></div>`).join('');
-  const ulHtml=ultimas.map(n=>`<div class="ncard" onclick="openArticle('${n.id}')"><div class="nthumb">${I.img}<span class="ntag">${esc(n.cat)}</span></div><div class="nbody"><h3>${esc(n.title)}</h3>${n.desc?`<p>${esc(n.desc)}</p>`:''}<div class="nmeta">${esc(n.time_str)}</div></div></div>`).join('');
+  const ulHtml=ultimas.map(n=>`<div class="ncard" onclick="openArticle('${n.id}')"><div class="nthumb">${n.image_url?`<img src="${esc(n.image_url)}" alt="${esc(n.title)}">`:I.img}<span class="ntag">${esc(n.cat)}</span></div><div class="nbody"><h3>${esc(n.title)}</h3>${n.desc?`<p>${esc(n.desc)}</p>`:''}<div class="nmeta">${esc(n.time_str)}</div></div></div>`).join('');
 
   $('page-home').innerHTML=`${buildUtil()}${buildMasthead()}${buildInfoBar()}${buildNav('home')}${buildTicker()}
   <div class="hero-grid">
@@ -682,21 +761,24 @@ function renderHome(sponsors){
 }
 
 // ── RENDER NOTÍCIAS ──────────────────────────────────────────────────────────
-let currentFilter=null;
+let currentFilter=null,currentSearch='';
 function renderNoticias(filter,sponsors){
-  const filtered=filter&&filter!=='Tudo'?newsData.filter(n=>n.cat===filter):newsData;
+  const q=(currentSearch||'').trim().toLowerCase();
+  const base=filter&&filter!=='Tudo'?newsData.filter(n=>n.cat===filter):newsData;
+  const filtered=q?base.filter(n=>[n.title,n.desc,n.cat,n.body].some(v=>(v||'').toLowerCase().includes(q))):base;
   const cats=['Tudo',...new Set(newsData.map(n=>n.cat))];
   const chips=cats.map(c=>`<span class="chip ${(filter||'Tudo')===c?'chip-active':'chip-inactive'}" onclick="filterNews('${esc(c)}')">${esc(c)}</span>`).join('');
   const [feat,...rest]=filtered;
-  const featHtml=feat?`<div class="hcard" onclick="openArticle('${feat.id}')"><div class="hthumb">${I.iml}<span class="htag">${esc(feat.cat)}</span></div><div class="hinfo"><div class="hcat">${esc(feat.cat)}</div><h3>${esc(feat.title)}</h3>${feat.desc?`<p>${esc(feat.desc)}</p>`:''}<div class="hmeta">${esc(feat.time_str)}</div></div></div>`:'';
-  const rowsHtml=rest.map(n=>`<div class="row-item" onclick="openArticle('${n.id}')"><div class="row-thumb">${I.ims}</div><div><div class="row-cat">${esc(n.cat)}</div><div class="row-ttl">${esc(n.title)}</div>${n.desc?`<div class="row-desc">${esc(n.desc)}</div>`:''}<div class="row-meta">${esc(n.time_str)}</div></div></div>`).join('');
+  const searchNote=q?`<div style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;color:#7a7a82;text-transform:uppercase;margin-bottom:12px">Busca: ${esc(currentSearch)} · ${filtered.length} resultado(s)</div>`:'';
+  const featHtml=feat?`<div class="hcard" onclick="openArticle('${feat.id}')"><div class="hthumb">${feat.image_url?`<img src="${esc(feat.image_url)}" alt="${esc(feat.title)}">`:I.iml}<span class="htag">${esc(feat.cat)}</span></div><div class="hinfo"><div class="hcat">${esc(feat.cat)}</div><h3>${esc(feat.title)}</h3>${feat.desc?`<p>${esc(feat.desc)}</p>`:''}<div class="hmeta">${esc(feat.time_str)}</div></div></div>`:'';
+  const rowsHtml=rest.map(n=>`<div class="row-item" onclick="openArticle('${n.id}')"><div class="row-thumb">${n.image_url?`<img src="${esc(n.image_url)}" alt="${esc(n.title)}">`:I.ims}</div><div><div class="row-cat">${esc(n.cat)}</div><div class="row-ttl">${esc(n.title)}</div>${n.desc?`<div class="row-desc">${esc(n.desc)}</div>`:''}<div class="row-meta">${esc(n.time_str)}</div></div></div>`).join('');
   const hs=sponsors||{};
 
   $('page-noticias').innerHTML=`${buildCompact('noticias')}
   <div class="page-head"><div class="breadcrumb">Início / Notícias</div><div class="page-title">Notícias</div><div class="page-desc">Tudo o que acontece em Red County, atualizado em tempo real.</div></div>
   <div class="filter-bar">${chips}</div>
   <div class="news-body">
-    <div class="news-list">${featHtml}${rowsHtml||'<div style="color:#5e5e64;font-family:Share Tech Mono,monospace;font-size:12px;padding:20px 0">Nenhuma notícia encontrada</div>'}</div>
+    <div class="news-list">${searchNote}${featHtml}${rowsHtml||'<div style="color:#5e5e64;font-family:Share Tech Mono,monospace;font-size:12px;padding:20px 0">Nenhuma notícia encontrada</div>'}</div>
     <div class="sidebar">${buildMaisLidas(newsData)}${buildWeather()}${buildSchedule()}${buildAdLight(hs.sidebar)}</div>
   </div>${buildFooter()}`;
 }
@@ -710,7 +792,7 @@ function filterNews(cat){
 // ── RENDER CRÔNICAS ──────────────────────────────────────────────────────────
 function renderCronicas(sponsors){
   const hs=sponsors||{};
-  const cards=newsData.filter(n=>n.cat==='Crônica'||n.type==='featured').map(n=>`<div class="ncard" onclick="openArticle('${n.id}')"><div class="nthumb">${I.img}<span class="ntag">${esc(n.cat)}</span></div><div class="nbody"><h3>${esc(n.title)}</h3>${n.desc?`<p>${esc(n.desc)}</p>`:''}<div class="nmeta">${esc(n.time_str)}</div></div></div>`).join('');
+  const cards=newsData.filter(n=>n.cat==='Crônica'||n.type==='featured').map(n=>`<div class="ncard" onclick="openArticle('${n.id}')"><div class="nthumb">${n.image_url?`<img src="${esc(n.image_url)}" alt="${esc(n.title)}">`:I.img}<span class="ntag">${esc(n.cat)}</span></div><div class="nbody"><h3>${esc(n.title)}</h3>${n.desc?`<p>${esc(n.desc)}</p>`:''}<div class="nmeta">${esc(n.time_str)}</div></div></div>`).join('');
 
   $('page-cronicas').innerHTML=`${buildCompact('cronicas')}
   <div class="page-head"><div class="breadcrumb">Início / Crônicas</div><div class="page-title">Crônicas</div><div class="page-desc">Histórias e coberturas especiais de Red County.</div></div>
@@ -734,7 +816,7 @@ async function renderArticle(id){
   try{comments=await api('GET',`/api/comments/${id}`);}catch(e){}
   const heroImg=news.image_url?`<div class="art-hero"><img src="${esc(news.image_url)}" alt="${esc(news.title)}"></div>`:'';
   const artBody=news.body&&news.body.trim()
-    ?`<div class="art-body">${news.body}</div>`
+    ?`<div class="art-body">${sanitizeHtml(news.body)}</div>`
     :`<div class="art-body"><p class="drop-cap">Red County — ${esc(news.title)}.</p>${news.desc?`<p>${esc(news.desc)}</p>`:''}<p>Acompanhe o desenvolvimento desta notícia através dos canais oficiais da Red News 98.9 FM.</p></div>`;
   $('page-article').innerHTML=`${buildCompact(currentPage)}
   <div class="art-head"><div class="breadcrumb">Início / Notícias</div><div class="art-kicker"><span class="tag">${esc(news.cat)}</span>${news.label?`<span class="sub">${esc(news.label)}</span>`:''}</div><h1 class="art-h1">${esc(news.title)}</h1>${news.desc?`<p class="art-dek">${esc(news.desc)}</p>`:''}<div class="art-byline"><div class="art-avatar">RN</div><div><div class="art-author">Redação Red News</div><div class="art-meta">Red News · ${esc(news.time_str)}</div></div></div></div>
@@ -807,7 +889,7 @@ async function navigate(hash){
   else if(hash==='#noticias'){const s=await api('GET','/api/sponsors').catch(()=>({}));renderNoticias(currentFilter,s);showPage('noticias');}
   else if(hash==='#cronicas'){const s=await api('GET','/api/sponsors').catch(()=>({}));renderCronicas(s);showPage('cronicas');}
   else if(hash.startsWith('#article-')){const id=hash.replace('#article-','');showPage('article');renderArticle(id);}
-  else if(hash==='#admin'){openAdmin();}
+  else if(hash==='#admin'){history.replaceState(null,'','#home');showPage('home');toast('Painel admin desativado por segurança',false);}
   else{showPage('home');}
 }
 
@@ -817,7 +899,13 @@ document.addEventListener('click',e=>{
   const h=a.getAttribute('href');if(!h)return;
   e.preventDefault();history.pushState(null,'',h);navigate(h);
 });
-function doSearch(){navigate('#noticias');}
+function doSearch(){
+  const input=$('search-input');
+  currentSearch=input?input.value.trim():'';
+  currentFilter=null;
+  history.pushState(null,'','#noticias');
+  navigate('#noticias');
+}
 
 // ── AUDIO ─────────────────────────────────────────────────────────────────────
 function togglePlay(){
@@ -840,6 +928,7 @@ function togglePlay(){
 let quill=null,editingNewsId=null;
 function initQuill(){
   if(quill)return;
+  if(typeof Quill==='undefined'){toast('Editor admin indisponível',false);return;}
   quill=new Quill('#quill-editor',{
     theme:'snow',
     placeholder:'Escreva o corpo completo da notícia… use negrito, títulos, imagens embutidas.',
@@ -904,7 +993,7 @@ async function editNews(id){
   $('n-image').value=item.image_url||'';
   previewImg(item.image_url||'');
   if(quill){
-    if(item.body&&item.body.trim().startsWith('<')){quill.root.innerHTML=item.body;}
+    if(item.body&&item.body.trim().startsWith('<')){quill.root.innerHTML=sanitizeHtml(item.body);}
     else{quill.setText(item.body||'');}
   }
   $('edit-badge').classList.add('show');
@@ -916,6 +1005,7 @@ async function editNews(id){
 
 // ── ADMIN ─────────────────────────────────────────────────────────────────────
 async function openAdmin(){
+  if(!ADMIN_PANEL_ENABLED){toast('Painel admin desativado por segurança',false);return;}
   $('admin-overlay').classList.add('open');
   const status=await api('GET','/api/auth/status').catch(()=>({has_password:false}));
   if(!status.has_password){$('setup-form').style.display='block';$('login-form').style.display='none';}

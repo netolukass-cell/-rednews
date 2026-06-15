@@ -1,4 +1,5 @@
 rednews.db
+rednews.local.db
 __pycache__/
 *.pyc
 .env
