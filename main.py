@@ -236,7 +236,7 @@ def seed_cleavon_article():
          "Dormiu no volante no meio da rua — e saiu andando",
          "Cleavon Mclister apagou no meio da via, virou espetáculo público e acabou liberado minutos depois.",
          CLEAVON_BODY, "https://i.imgur.com/INNWjyD.png",
-         "Hoje, 15/06", "EXCLUSIVO", int(time.time()))
+         "Hoje, 15/06", "EXCLUSIVO", int(time.time()) + 60)
     )
     conn.commit(); cur.close(); conn.close()
 
