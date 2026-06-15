@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
@@ -189,6 +189,14 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .waveform span{width:3px;border-radius:2px;background:#cc0000}
 .live-btn{background:#cc0000;border:none;color:#fff;font-family:'Oswald',sans-serif;font-weight:600;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;padding:11px 22px;border-radius:6px;flex-shrink:0;transition:background .15s}
 .live-btn:hover{background:#ff2a2a}
+.global-live-shell{position:sticky;top:0;z-index:7000;background:rgba(8,8,10,.96);border-bottom:1px solid #2a0a0a;box-shadow:0 10px 28px rgba(0,0,0,.42);backdrop-filter:blur(8px)}
+.global-live-shell .live-strip{padding:10px 40px;max-width:1280px}
+.global-live-shell .live-box{padding:11px 16px;border-radius:8px}
+.global-live-shell .live-play{width:38px;height:38px;border-radius:7px}
+.global-live-shell .live-name{font-size:13px}
+.global-live-shell .live-sub{font-size:10.5px}
+.global-live-shell .waveform{height:24px}
+.global-live-shell .live-btn{padding:9px 18px;font-size:12px}
 
 .site-footer{background:#0b0b0d;border-top:2px solid #8b0000;padding:30px 40px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
 .footer-logo{font-family:'Oswald',sans-serif;font-weight:700;font-size:22px;font-style:italic;letter-spacing:1px}
@@ -436,6 +444,10 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   .hcard .hinfo{padding:18px}
   .row-item{gap:12px}
   .live-box{align-items:stretch}
+  .global-live-shell .live-strip{padding:8px 12px}
+  .global-live-shell .live-box{gap:12px;padding:10px 12px}
+  .global-live-shell .live-play{width:36px;height:36px}
+  .global-live-shell .live-btn{width:100%}
   .waveform{display:none}
   .live-title-row{flex-wrap:wrap}
   .site-footer,.compact-hdr{padding:18px 16px}
@@ -468,6 +480,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 </head>
 <body>
 
+<div id="global-live" class="global-live-shell"></div>
 <div id="page-home"></div>
 <div id="page-noticias" style="display:none"></div>
 <div id="page-cronicas" style="display:none"></div>
@@ -669,7 +682,18 @@ function buildTicker(){
 }
 
 function buildLive(){
-  return `<div class="live-strip"><div class="live-box"><button class="live-play" id="play-btn" onclick="togglePlay()">${I.play}</button><div class="live-info"><div class="live-title-row"><span class="live-name">Red News 98.9</span><span class="live-badge" id="live-badge" style="${streamData.is_live?'':'display:none'}"><span class="dot"></span>AO VIVO</span></div><div class="live-sub" id="live-sub">${streamData.url?'Clique para ouvir ao vivo':'Transmissão offline no momento'}</div></div><div class="waveform"><span style="height:40%"></span><span style="height:80%"></span><span style="height:55%;background:#8b0000"></span><span style="height:100%;background:#ff2a2a"></span><span style="height:65%"></span><span style="height:35%;background:#8b0000"></span><span style="height:75%"></span><span style="height:50%;background:#8b0000"></span></div><button class="live-btn" onclick="togglePlay()" id="live-cta">Ouvir</button></div></div>`;
+  return `<div class="live-strip"><div class="live-box"><button class="live-play" id="play-btn" onclick="togglePlay()">${I.play}</button><div class="live-info"><div class="live-title-row"><span class="live-name">Red News 98.9</span><span class="live-badge" id="live-badge" style="${streamData.is_live?'':'display:none'}"><span class="dot"></span>AO VIVO</span></div><div class="live-sub" id="live-sub">${streamData.url?(streamData.is_live?'Estamos ao vivo agora':'Clique para ouvir ao vivo'):'Transmissão offline no momento'}</div></div><div class="waveform"><span style="height:40%"></span><span style="height:80%"></span><span style="height:55%;background:#8b0000"></span><span style="height:100%;background:#ff2a2a"></span><span style="height:65%"></span><span style="height:35%;background:#8b0000"></span><span style="height:75%"></span><span style="height:50%;background:#8b0000"></span></div><button class="live-btn" onclick="togglePlay()" id="live-cta">Ouvir</button></div></div>`;
+}
+
+function renderGlobalLive(){
+  const el=$('global-live');if(!el)return;
+  el.innerHTML=buildLive();
+  const pb=$('play-btn'),lb=$('live-cta'),ls=$('live-sub');
+  if(isPlaying){
+    if(pb){pb.innerHTML=I.pause;pb.classList.add('playing');}
+    if(lb)lb.textContent='Pausar';
+    if(ls)ls.textContent='Reproduzindo agoraâ€¦';
+  }
 }
 
 function buildFooter(){
@@ -756,7 +780,7 @@ function renderHome(sponsors){
     <div class="side-col">${secsHtml}<div class="mais-lidas"><div class="ml-title">${I.bars}Mais lidas</div>${mlHtml}</div></div>
   </div>
   <div class="ultimas"><div class="sec-hdr"><span class="sec-ttl-bar">Últimas de Red County</span><span class="sec-line"></span><a href="#noticias" class="sec-link">Ver tudo ${I.arr}</a></div><div class="cards-grid">${ulHtml||'<div style="color:#5e5e64;font-family:Share Tech Mono,monospace;font-size:12px">Nenhuma notícia publicada</div>'}</div></div>
-  ${buildLive()}${buildFooter()}`;
+  ${buildFooter()}`;
   if(!adDismissed)setTimeout(()=>showFloatAd(hs.hero),2200);
 }
 
@@ -1048,8 +1072,8 @@ async function addNews(){
 async function deleteNews(id){try{await api('DELETE',`/api/news/${id}`,null,true);newsData=await api('GET','/api/news');loadAdminNews();const s=await api('GET','/api/sponsors').catch(()=>({}));renderHome(s);toast('Notícia removida');}catch(e){toast(e.message,false);}}
 async function resetNews(){if(!confirm('Restaurar notícias padrão?'))return;try{await api('POST','/api/news/reset',null,true);newsData=await api('GET','/api/news');loadAdminNews();renderHome({});toast('Feed restaurado');}catch(e){toast(e.message,false);}}
 async function loadAdminStream(){try{streamData=await api('GET','/api/stream');if($('radio-url'))$('radio-url').value=streamData.url||'';if($('live-toggle'))$('live-toggle').checked=streamData.is_live;}catch(e){}}
-async function saveRadio(){const url=$('radio-url').value.trim();try{await api('PUT','/api/stream',{url},true);streamData.url=url;toast('URL salvo!');}catch(e){toast(e.message,false);}}
-async function toggleLive(){const v=$('live-toggle').checked;try{await api('PUT','/api/stream',{is_live:v},true);streamData.is_live=v;toast(v?'Transmissão ativa':'Transmissão pausada');}catch(e){toast(e.message,false);}}
+async function saveRadio(){const url=$('radio-url').value.trim();try{await api('PUT','/api/stream',{url},true);streamData.url=url;renderGlobalLive();toast('URL salvo!');}catch(e){toast(e.message,false);}}
+async function toggleLive(){const v=$('live-toggle').checked;try{await api('PUT','/api/stream',{is_live:v},true);streamData.is_live=v;renderGlobalLive();toast(v?'Transmissão ativa':'Transmissão pausada');}catch(e){toast(e.message,false);}}
 function copyBoombox(){const url=$('radio-url').value.trim()||streamData.url;if(!url){toast('Nenhuma URL configurada',false);return;}navigator.clipboard.writeText(url).then(()=>toast('Link copiado!')).catch(()=>toast('Copie: '+url,false));}
 
 async function loadAdminSponsors(){
@@ -1065,6 +1089,7 @@ async function init(){
   try{newsData=await api('GET','/api/news');}catch(e){newsData=[];}
   try{weatherData=await api('GET','/api/weather');}catch(e){}
   try{streamData=await api('GET','/api/stream');}catch(e){}
+  renderGlobalLive();
   let sponsors={};try{sponsors=await api('GET','/api/sponsors');}catch(e){}
 
   renderHome(sponsors);
