@@ -86,6 +86,7 @@ def init_db():
     seed_news()
     seed_sponsors()
     seed_solevan_article()
+    seed_cleavon_article()
 
 DEFAULT_NEWS = [
     ("d1","featured","🚔","Segurança Pública",
@@ -191,6 +192,51 @@ def seed_solevan_article():
          "Final apertada no Bar do Joe coroa Jack Solevan diante de casa lotada em Montgomery",
          SOLEVAN_BODY, "https://i.imgur.com/mc4iVWI.png",
          "Hoje, 11/06", "EXCLUSIVO", int(time.time()))
+    )
+    conn.commit(); cur.close(); conn.close()
+
+CLEAVON_BODY = """
+<p><strong style="color:#cc0000">Era para ser uma noite comum em Red County. Não foi.</strong> Um carro parado no meio da via, farol aceso, motor ligado — e, ao volante, um homem completamente apagado. A cena travou o trânsito, juntou curiosos e terminou com uma pergunta que a cidade inteira repete até agora: como é que <strong style="color:#cc0000">esse</strong> motorista foi parar em casa por conta própria?</p>
+<p>O nome dele é <strong style="color:#cc0000">Cleavon Mclister</strong>. Guarde, porque essa coluna vai repetir algumas vezes.</p>
+<figure style="margin:28px 0">
+  <img src="https://i.imgur.com/INNWjyD.png" alt="Cleavon Mclister durante abordagem" style="width:100%;border-radius:8px">
+  <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#777;line-height:1.5;margin-top:10px">Mclister sentado na porta do veículo durante a abordagem. Sobre o porta-malas, copos e petiscos largados — detalhe que ninguém deixou passar.</figcaption>
+</figure>
+<h2><strong style="color:#cc0000">O FLAGRA</strong></h2>
+<p>Segundo testemunhas, o veículo estava <strong style="color:#cc0000">atravessado na pista</strong>, obstruindo a passagem, enquanto o condutor seguia tranquilo no mundo dos sonhos. Houve buzina. Houve gente batendo no vidro. Houve até quem sacasse o celular para registrar. E o motorista? Nada. Só acordou quando a cena já tinha virado espetáculo público.</p>
+<p>Quando a viatura chegou, o roteiro era de manual: carro mal posicionado, motorista desorientado e, sobre o porta-malas, <strong style="color:#cc0000">copos e restos de comida</strong> que, convenhamos, não combinam muito com a versão de "só um cochilo".</p>
+<h2><strong style="color:#cc0000">A SUSPEITA QUE NÃO SAIU DO AR</strong></h2>
+<p>A palavra "embriaguez" pairou sobre a abordagem do início ao fim. E faz sentido: quem dorme no meio do trânsito, com o carro ligado e a noite ainda jovem, raramente está apenas "indisposto". Dormiu de cansaço, ou <strong style="color:#cc0000">passou do ponto na bebida</strong>?</p>
+<blockquote>
+  <p>"Eu só tinha cochilado. Tava cansado, juro. Não bebi nada demais."</p>
+  <div class="bq-author">Cleavon Mclister, ao ser abordado</div>
+</blockquote>
+<p>"Nada demais." Anote essa também. Porque entre o "nada demais" dele e o carro plantado no meio da via, sobra um buraco enorme nessa história.</p>
+<figure style="margin:28px 0">
+  <img src="https://i.imgur.com/Z11FovM.png" alt="Operação policial no cruzamento da Inside Track" style="width:100%;border-radius:8px">
+  <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#777;line-height:1.5;margin-top:10px">Operação montada no cruzamento da Inside Track: cones, viatura da SFPD e reforço policial para conter a movimentação.</figcaption>
+</figure>
+<h2><strong style="color:#cc0000">A LIBERAÇÃO QUE NINGUÉM ENTENDEU</strong></h2>
+<p>Aqui a coluna ergue a sobrancelha. Depois de toda a novela — carro parado, motorista apagado, suspeita escancarada e operação montada com cones e viatura —, o desfecho foi um só: <strong style="color:#cc0000">Mclister foi liberado</strong>. E saiu andando, como quem tinha apenas parado para amarrar o sapato.</p>
+<p>Faltou bafômetro? Faltou rigor? Ou alguém tem amigo nos lugares certos? A <strong style="color:#cc0000">Red News</strong> não vai deixar essa passar batido — e promete voltar ao assunto.</p>
+<div class="resumo">
+  <div class="resumo-ttl">Entenda o caso</div>
+  <div class="resumo-item"><span class="rdot"></span><span>Cleavon Mclister apagou ao volante no meio da via.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>A suspeita de embriaguez acompanhou toda a abordagem.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>Uma operação foi montada no local, com cones e viaturas.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>Mesmo assim, ele foi liberado minutos depois.</span></div>
+</div>
+"""
+
+def seed_cleavon_article():
+    conn = get_db(); cur = conn.cursor()
+    db_execute(cur,
+        'INSERT INTO news (id,type,icon,cat,title,"desc",body,image_url,time_str,label,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO UPDATE SET type=EXCLUDED.type,icon=EXCLUDED.icon,cat=EXCLUDED.cat,title=EXCLUDED.title,"desc"=EXCLUDED."desc",body=EXCLUDED.body,image_url=EXCLUDED.image_url,time_str=EXCLUDED.time_str,label=EXCLUDED.label,created_at=EXCLUDED.created_at',
+        ("cleavon-mclister-2026-06-15", "featured", "🚨", "Policial",
+         "Dormiu no volante no meio da rua — e saiu andando",
+         "Cleavon Mclister apagou no meio da via, virou espetáculo público e acabou liberado minutos depois.",
+         CLEAVON_BODY, "https://i.imgur.com/INNWjyD.png",
+         "Hoje, 15/06", "EXCLUSIVO", int(time.time()))
     )
     conn.commit(); cur.close(); conn.close()
 
