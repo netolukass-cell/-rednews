@@ -932,9 +932,16 @@ function doSearch(){
 }
 
 // ── AUDIO ─────────────────────────────────────────────────────────────────────
+function getAudioUrl(){
+  if(!streamData.url)return'';
+  if(location.protocol==='https:'&&streamData.url.startsWith('http://'))return'/api/stream/audio';
+  return streamData.url;
+}
+
 function togglePlay(){
   if(!streamData.url){toast('Nenhum stream configurado',false);return;}
-  if(!audio)audio=new Audio(streamData.url);
+  const src=getAudioUrl();
+  if(!audio||audio.src!==new URL(src,location.href).href)audio=new Audio(src);
   if(isPlaying){
     audio.pause();isPlaying=false;
     const pb=$('play-btn');if(pb){pb.innerHTML=I.play;pb.classList.remove('playing');}

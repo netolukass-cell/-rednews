@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, Depends, Header, UploadFile, File
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from pydantic import BaseModel
 import psycopg2, psycopg2.extras, hashlib, secrets, time, os, base64
 import sqlite3
@@ -519,6 +519,30 @@ def get_stream():
         "url": url,
         "is_live": rows.get("is_live", "1" if url else "0") == "1",
     }
+
+@app.get("/api/stream/audio")
+async def stream_audio_proxy():
+    stream = get_stream()
+    url = stream.get("url")
+    if not url:
+        raise HTTPException(404, "Stream offline")
+
+    async def audio_chunks():
+        async with httpx.AsyncClient(timeout=None, follow_redirects=True) as client:
+            async with client.stream(
+                "GET",
+                url,
+                headers={"User-Agent": "RedNews/1.0", "Icy-MetaData": "0"},
+            ) as response:
+                response.raise_for_status()
+                async for chunk in response.aiter_bytes():
+                    yield chunk
+
+    return StreamingResponse(
+        audio_chunks(),
+        media_type="audio/mpeg",
+        headers={"Cache-Control": "no-store"},
+    )
 
 class StreamPublish(BaseModel):
     password: str
