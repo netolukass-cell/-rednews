@@ -16,6 +16,7 @@ SQLITE_PATH = os.environ.get("SQLITE_PATH", "rednews.local.db")
 ADMIN_ENABLED = os.environ.get("ADMIN_ENABLED", "").lower() in {"1", "true", "yes"}
 ADMIN_API_KEY = os.environ.get("ADMIN_API_KEY", "")
 DEFAULT_STREAM_URL = os.environ.get("DEFAULT_STREAM_URL", "http://207.58.172.237:8000/rednews.mp3")
+PERSISTENT_COMMENTS_URL = os.environ.get("PERSISTENT_COMMENTS_URL", "https://rednews-1.onrender.com").rstrip("/")
 
 # ── DB ────────────────────────────────────────────────────────────────────────
 
@@ -28,6 +29,18 @@ def get_db():
 
 def db_backend():
     return "postgres" if DATABASE_URL else "sqlite"
+
+def should_proxy_comments():
+    return not DATABASE_URL and bool(os.environ.get("RENDER")) and bool(PERSISTENT_COMMENTS_URL)
+
+def proxy_comment_request(method: str, path: str, payload=None):
+    try:
+        with httpx.Client(timeout=15, follow_redirects=True) as client:
+            response = client.request(method, f"{PERSISTENT_COMMENTS_URL}{path}", json=payload)
+            response.raise_for_status()
+            return response.json()
+    except httpx.HTTPError as exc:
+        raise HTTPException(502, f"Falha ao acessar comentarios persistentes: {exc}") from exc
 
 def db_execute(cur, query, params=()):
     if not DATABASE_URL:
@@ -738,6 +751,8 @@ def update_ticker(data: TickerUpdate, token: str = Depends(verify_token)):
 
 @app.get("/api/comments/{article_id}")
 def get_comments(article_id: str):
+    if should_proxy_comments():
+        return proxy_comment_request("GET", f"/api/comments/{article_id}")
     conn = get_db(); cur = conn.cursor()
     ids = comment_article_ids(article_id)
     placeholders = ",".join(["%s"] * len(ids))
@@ -750,6 +765,8 @@ def get_comments(article_id: str):
 def add_comment(article_id: str, item: CommentItem):
     if not item.author.strip() or not item.body.strip():
         raise HTTPException(400, "Nome e comentário obrigatórios")
+    if should_proxy_comments():
+        return proxy_comment_request("POST", f"/api/comments/{article_id}", item.model_dump())
     cid = secrets.token_hex(8)
     article_id = canonical_article_id(article_id)
     conn = get_db(); cur = conn.cursor()
@@ -762,6 +779,8 @@ def add_comment(article_id: str, item: CommentItem):
 
 @app.post("/api/comments/{article_id}/{comment_id}/like")
 def like_comment(article_id: str, comment_id: str):
+    if should_proxy_comments():
+        return proxy_comment_request("POST", f"/api/comments/{article_id}/{comment_id}/like")
     conn = get_db(); cur = conn.cursor()
     ids = comment_article_ids(article_id)
     placeholders = ",".join(["%s"] * len(ids))
