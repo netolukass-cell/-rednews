@@ -836,8 +836,7 @@ function renderCronicas(sponsors){
   <div class="page-head"><div class="breadcrumb">Início / Crônicas</div><div class="page-title">Crônicas</div><div class="page-desc">Histórias e coberturas especiais de Red County.</div></div>
   <div class="news-body">
     <div class="news-list">
-      <div class="hcard" onclick="openArticle('solevan-2026-06-11')"><div class="hthumb" style="background:linear-gradient(150deg,#2a0707,#0c0202)"><img src="assets/sinuca-photo.png" alt="Sinuca" style="width:100%;height:100%;object-fit:cover"><span class="htag">Esporte</span></div><div class="hinfo"><div class="hcat">Esporte · Red County</div><h3>Solevan fatura US$ 10 mil e vira o novo rei da sinuca</h3><p>Final apertada no Bar do Joe coroa Jack Solevan diante de casa lotada em Montgomery.</p><div class="hmeta">11 Jun · 22h40 · Por Beau Hollister</div></div></div>
-      ${cards?`<div class="cards-grid" style="margin-top:8px">${cards}</div>`:''}
+      ${cards?`<div class="cards-grid" style="margin-top:8px">${cards}</div>`:'<div style="color:#5e5e64;font-family:Share Tech Mono,monospace;font-size:12px;padding:20px 0">Nenhuma crônica publicada</div>'}
     </div>
     <div class="sidebar">${buildMaisLidas(newsData)}${buildWeather()}${buildAdLight(hs.sidebar)}</div>
   </div>${buildFooter()}`;

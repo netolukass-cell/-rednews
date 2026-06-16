@@ -216,8 +216,8 @@ SOLEVAN_BODY = """
 def seed_solevan_article():
     conn = get_db(); cur = conn.cursor()
     db_execute(cur,
-        'INSERT INTO news (id,type,icon,cat,title,"desc",body,image_url,time_str,label,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO NOTHING',
-        ("solevan-2026-06-11", "featured", "🎱", "Esportes",
+        'INSERT INTO news (id,type,icon,cat,title,"desc",body,image_url,time_str,label,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO UPDATE SET type=EXCLUDED.type,icon=EXCLUDED.icon,cat=EXCLUDED.cat,title=EXCLUDED.title,"desc"=EXCLUDED."desc",body=EXCLUDED.body,image_url=EXCLUDED.image_url,time_str=EXCLUDED.time_str,label=EXCLUDED.label',
+        ("solevan-2026-06-11", "item", "🎱", "Esportes",
          "Solevan fatura US$ 10 mil e vira o novo rei da sinuca",
          "Final apertada no Bar do Joe coroa Jack Solevan diante de casa lotada em Montgomery",
          SOLEVAN_BODY, "https://i.imgur.com/mc4iVWI.png",
