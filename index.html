@@ -316,6 +316,18 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .cmt-actions{display:flex;align-items:center;gap:20px;margin-top:10px;font-family:'Share Tech Mono',monospace;font-size:11px;color:#6a6a70;letter-spacing:.5px}
 .like-btn{display:flex;align-items:center;gap:6px;background:none;border:none;color:#6a6a70;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.5px;cursor:pointer;transition:color .15s}
 .like-btn:hover{color:#ff3a3a}
+.reply-btn{background:none;border:none;color:#6a6a70;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.5px;cursor:pointer;padding:0;transition:color .15s}
+.reply-btn:hover{color:#ff3a3a}
+.reply-box{margin-top:12px;background:#0b0b0d;border:1px solid #24242a;border-left:3px solid #cc0000;border-radius:0 8px 8px 0;padding:12px}
+.reply-row{display:grid;grid-template-columns:minmax(110px,170px) 1fr auto;gap:8px;align-items:start}
+.reply-row input,.reply-row textarea{background:#08080a;border:1px solid #2a2a30;border-radius:6px;color:#f2f2ee;outline:none}
+.reply-row input{padding:9px 11px;font-family:'Oswald',sans-serif;font-size:13px}
+.reply-row textarea{padding:9px 11px;font-family:'Source Serif 4',serif;font-size:14px;min-height:38px;resize:vertical}
+.reply-row input:focus,.reply-row textarea:focus{border-color:#cc0000}
+.reply-row button{background:#cc0000;border:none;border-radius:6px;color:#fff;font-family:'Oswald',sans-serif;font-weight:600;font-size:11px;letter-spacing:1.2px;text-transform:uppercase;padding:10px 14px;cursor:pointer}
+.cmt-replies{margin-top:12px;margin-left:26px;padding-left:16px;border-left:1px solid #2a0a0a}
+.cmt-replies .cmt-item{padding:14px 0;border-top:1px solid #151518}
+.cmt-replies .cmt-av{width:34px;height:34px;font-size:12px}
 
 .admin-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9000;overflow-y:auto}
 .admin-overlay.open{display:block}
@@ -450,6 +462,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   .global-live-shell .live-btn{width:100%}
   .waveform{display:none}
   .live-title-row{flex-wrap:wrap}
+  .reply-row{grid-template-columns:1fr}
+  .cmt-replies{margin-left:8px;padding-left:12px}
   .site-footer,.compact-hdr{padding:18px 16px}
   .compact-title{font-size:23px}
   .art-h1{font-size:32px}
@@ -873,24 +887,47 @@ function renderSinuca(sponsors){
 }
 
 function buildComments(aid,comments){
-  const ch=comments.map(c=>{
-    const ini=initials(c.author),bg=avatarBg(c.author);
-    return `<div class="cmt-item"><div class="cmt-av" style="background:${bg}">${ini}</div><div style="flex:1;min-width:0"><div><span class="cmt-author">${esc(c.author)}</span><span class="cmt-time">· ${timeAgo(c.created_at)}</span></div><p class="cmt-body">${esc(c.body)}</p><div class="cmt-actions"><button class="like-btn" onclick="likeComment('${aid}','${c.id}',this)">${I.hrt}${c.likes}</button><span>Responder</span></div></div></div>`;
-  }).join('');
-  return `<div class="cmts-wrap"><div class="cmts-sep"></div><div class="cmts-hdr"><div class="cmts-title-row"><h3>Comentários</h3><span class="cmts-count">${comments.length}</span></div></div><div class="composer"><div class="comp-inner"><div class="comp-av">${I.usr}</div><div class="comp-form"><input class="comp-name" id="cn-${aid}" placeholder="Seu nome ou personagem"><textarea class="comp-text" id="cb-${aid}" placeholder="Comente como seu personagem…" rows="3"></textarea><div class="comp-footer"><button class="comp-submit" onclick="postComment('${aid}')">Publicar</button></div></div></div></div><div id="cl-${aid}">${ch}</div></div>`;
+  return `<div class="cmts-wrap"><div class="cmts-sep"></div><div class="cmts-hdr"><div class="cmts-title-row"><h3>Comentários</h3><span class="cmts-count">${comments.length}</span></div></div><div class="composer"><div class="comp-inner"><div class="comp-av">${I.usr}</div><div class="comp-form"><input class="comp-name" id="cn-${aid}" placeholder="Seu nome ou personagem"><textarea class="comp-text" id="cb-${aid}" placeholder="Comente como seu personagem…" rows="3"></textarea><div class="comp-footer"><button class="comp-submit" onclick="postComment('${aid}')">Publicar</button></div></div></div></div><div id="cl-${aid}">${renderCommentList(aid,comments)}</div></div>`;
 }
 
-async function postComment(aid){
-  const author=$(`cn-${aid}`)?.value?.trim(),body=$(`cb-${aid}`)?.value?.trim();
+function renderCommentList(aid,comments){
+  const replies={};
+  comments.forEach(c=>{
+    if(c.parent_id)(replies[c.parent_id]||(replies[c.parent_id]=[])).push(c);
+  });
+  Object.values(replies).forEach(list=>list.sort((a,b)=>(a.created_at||0)-(b.created_at||0)));
+  return comments.filter(c=>!c.parent_id).sort((a,b)=>(b.created_at||0)-(a.created_at||0)).map(c=>renderComment(aid,c,replies)).join('');
+}
+
+function renderComment(aid,c,replies){
+  const ini=initials(c.author),bg=avatarBg(c.author);
+  const kids=replies[c.id]||[];
+  const rh=kids.length?`<div class="cmt-replies">${kids.map(r=>renderComment(aid,r,replies)).join('')}</div>`:'';
+  return `<div class="cmt-item" id="cmt-${c.id}"><div class="cmt-av" style="background:${bg}">${ini}</div><div style="flex:1;min-width:0"><div><span class="cmt-author">${esc(c.author)}</span><span class="cmt-time">· ${timeAgo(c.created_at)}</span></div><p class="cmt-body">${esc(c.body)}</p><div class="cmt-actions"><button class="like-btn" onclick="likeComment('${aid}','${c.id}',this)">${I.hrt}${c.likes}</button><button class="reply-btn" onclick="toggleReply('${aid}','${c.id}')">Responder</button></div><div id="rb-${c.id}"></div>${rh}</div></div>`;
+}
+
+function toggleReply(aid,cid){
+  const box=$(`rb-${cid}`);if(!box)return;
+  if(box.innerHTML){box.innerHTML='';return;}
+  box.innerHTML=`<div class="reply-box"><div class="reply-row"><input id="rn-${cid}" placeholder="Seu nome"><textarea id="rt-${cid}" placeholder="Escreva sua resposta..."></textarea><button onclick="postComment('${aid}','${cid}')">Responder</button></div></div>`;
+  $(`rt-${cid}`)?.focus();
+}
+
+async function postComment(aid,parentId=null){
+  const author=(parentId?$(`rn-${parentId}`):$(`cn-${aid}`))?.value?.trim();
+  const body=(parentId?$(`rt-${parentId}`):$(`cb-${aid}`))?.value?.trim();
   if(!author||!body){toast('Preencha nome e comentário',false);return;}
   try{
-    await api('POST',`/api/comments/${aid}`,{author,body});
-    $(`cn-${aid}`).value='';$(`cb-${aid}`).value='';
+    await api('POST',`/api/comments/${aid}`,{author,body,parent_id:parentId});
+    if(parentId){
+      const box=$(`rb-${parentId}`);if(box)box.innerHTML='';
+    }else{
+      $(`cn-${aid}`).value='';$(`cb-${aid}`).value='';
+    }
     const cs=await api('GET',`/api/comments/${aid}`);
-    const ch=cs.map(c=>{const ini=initials(c.author),bg=avatarBg(c.author);return`<div class="cmt-item"><div class="cmt-av" style="background:${bg}">${ini}</div><div style="flex:1;min-width:0"><div><span class="cmt-author">${esc(c.author)}</span><span class="cmt-time">· ${timeAgo(c.created_at)}</span></div><p class="cmt-body">${esc(c.body)}</p><div class="cmt-actions"><button class="like-btn" onclick="likeComment('${aid}','${c.id}',this)">${I.hrt}${c.likes}</button><span>Responder</span></div></div></div>`;}).join('');
-    const cl=$(`cl-${aid}`);if(cl)cl.innerHTML=ch;
+    const cl=$(`cl-${aid}`);if(cl)cl.innerHTML=renderCommentList(aid,cs);
     const cnt=document.querySelector('.cmts-count');if(cnt)cnt.textContent=cs.length;
-    toast('Comentário publicado!');
+    toast(parentId?'Resposta publicada!':'Comentário publicado!');
   }catch(e){toast(e.message,false);}
 }
 

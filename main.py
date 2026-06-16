@@ -30,6 +30,15 @@ def get_db():
 def db_backend():
     return "postgres" if DATABASE_URL else "sqlite"
 
+def ensure_comment_parent_id(cur):
+    if DATABASE_URL:
+        db_execute(cur, "ALTER TABLE comments ADD COLUMN IF NOT EXISTS parent_id TEXT")
+        return
+    db_execute(cur, "PRAGMA table_info(comments)")
+    cols = {r["name"] for r in cur.fetchall()}
+    if "parent_id" not in cols:
+        db_execute(cur, "ALTER TABLE comments ADD COLUMN parent_id TEXT")
+
 def should_proxy_comments():
     return not DATABASE_URL and bool(os.environ.get("RENDER")) and bool(PERSISTENT_COMMENTS_URL)
 
@@ -81,12 +90,14 @@ def init_db():
         CREATE TABLE IF NOT EXISTS comments (
             id         TEXT PRIMARY KEY,
             article_id TEXT NOT NULL,
+            parent_id  TEXT,
             author     TEXT NOT NULL,
             body       TEXT NOT NULL,
             likes      INTEGER DEFAULT 0,
             created_at BIGINT
         )
     """)
+    ensure_comment_parent_id(cur)
     db_execute(cur, """
         CREATE TABLE IF NOT EXISTS sponsors (
             slot      TEXT PRIMARY KEY,
@@ -435,6 +446,7 @@ class TickerUpdate(BaseModel):
 class CommentItem(BaseModel):
     author: str
     body: str
+    parent_id: Optional[str] = None
 
 class SponsorUpdate(BaseModel):
     name: Optional[str] = None
@@ -771,10 +783,11 @@ def add_comment(article_id: str, item: CommentItem):
         return proxy_comment_request("POST", f"/api/comments/{article_id}", item.model_dump())
     cid = secrets.token_hex(8)
     article_id = canonical_article_id(article_id)
+    parent_id = item.parent_id.strip()[:80] if item.parent_id and item.parent_id.strip() else None
     conn = get_db(); cur = conn.cursor()
     db_execute(cur,
-        "INSERT INTO comments (id,article_id,author,body,likes,created_at) VALUES (%s,%s,%s,%s,0,%s)",
-        (cid, article_id, item.author.strip()[:80], item.body.strip()[:2000], int(time.time()))
+        "INSERT INTO comments (id,article_id,parent_id,author,body,likes,created_at) VALUES (%s,%s,%s,%s,%s,0,%s)",
+        (cid, article_id, parent_id, item.author.strip()[:80], item.body.strip()[:2000], int(time.time()))
     )
     conn.commit(); cur.close(); conn.close()
     return {"id": cid}
