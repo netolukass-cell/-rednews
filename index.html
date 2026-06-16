@@ -328,6 +328,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .cmt-replies{margin-top:12px;margin-left:26px;padding-left:16px;border-left:1px solid #2a0a0a}
 .cmt-replies .cmt-item{padding:14px 0;border-top:1px solid #151518}
 .cmt-replies .cmt-av{width:34px;height:34px;font-size:12px}
+.cmt-loading{border-top:1px solid #1a1a1e;padding:18px 0;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;color:#777;text-transform:uppercase}
 
 .admin-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9000;overflow-y:auto}
 .admin-overlay.open{display:block}
@@ -849,7 +850,7 @@ async function renderArticle(id){
   if(id==='s1'){renderSinuca(sponsors);return;}
   const news=newsData.find(n=>n.id===id);
   if(!news){showPage('home');return;}
-  let comments=[];
+  let comments=null;
   try{comments=await fetchComments(id);}catch(e){toast('Comentários carregando devagar. Atualize em instantes.',false);}
   const heroImg=news.image_url?`<div class="art-hero"><img src="${esc(news.image_url)}" alt="${esc(news.title)}"></div>`:'';
   const artBody=news.body&&news.body.trim()
@@ -859,6 +860,7 @@ async function renderArticle(id){
   <div class="art-head"><div class="breadcrumb">Início / Notícias</div><div class="art-kicker"><span class="tag">${esc(news.cat)}</span>${news.label?`<span class="sub">${esc(news.label)}</span>`:''}</div><h1 class="art-h1">${esc(news.title)}</h1>${news.desc?`<p class="art-dek">${esc(news.desc)}</p>`:''}<div class="art-byline"><div class="art-avatar">RN</div><div><div class="art-author">Redação Red News</div><div class="art-meta">Red News · ${esc(news.time_str)}</div></div></div></div>
   ${heroImg}${artBody}
   ${buildComments(id,comments)}${buildFooter()}`;
+  if(comments===null)setTimeout(()=>refreshComments(id),2500);
 }
 
 function renderSinuca(sponsors){
@@ -881,21 +883,35 @@ function renderSinuca(sponsors){
     </div>
     ${buildComments('solevan-2026-06-11',comments)}${buildFooter()}`;
   }).catch(()=>{
-    $('page-article').innerHTML+=buildComments('solevan-2026-06-11',[])+buildFooter();
+    $('page-article').innerHTML+=buildComments('solevan-2026-06-11',null)+buildFooter();
+    setTimeout(()=>refreshComments('solevan-2026-06-11'),2500);
   });
 }
 
 function buildComments(aid,comments){
-  return `<div class="cmts-wrap"><div class="cmts-sep"></div><div class="cmts-hdr"><div class="cmts-title-row"><h3>Comentários</h3><span class="cmts-count">${comments.length}</span></div></div><div class="composer"><div class="comp-inner"><div class="comp-av">${I.usr}</div><div class="comp-form"><input class="comp-name" id="cn-${aid}" placeholder="Seu nome ou personagem"><textarea class="comp-text" id="cb-${aid}" placeholder="Comente como seu personagem…" rows="3"></textarea><div class="comp-footer"><button class="comp-submit" onclick="postComment('${aid}')">Publicar</button></div></div></div></div><div id="cl-${aid}">${renderCommentList(aid,comments)}</div></div>`;
+  const loading=!Array.isArray(comments);
+  const count=loading?'...':comments.length;
+  const list=loading?'<div class="cmt-loading">Acordando comentários...</div>':renderCommentList(aid,comments);
+  return `<div class="cmts-wrap"><div class="cmts-sep"></div><div class="cmts-hdr"><div class="cmts-title-row"><h3>Comentários</h3><span class="cmts-count">${count}</span></div></div><div class="composer"><div class="comp-inner"><div class="comp-av">${I.usr}</div><div class="comp-form"><input class="comp-name" id="cn-${aid}" placeholder="Seu nome ou personagem"><textarea class="comp-text" id="cb-${aid}" placeholder="Comente como seu personagem…" rows="3"></textarea><div class="comp-footer"><button class="comp-submit" onclick="postComment('${aid}')">Publicar</button></div></div></div></div><div id="cl-${aid}">${list}</div></div>`;
 }
 
 async function fetchComments(aid){
   let lastErr=null;
-  for(let i=0;i<3;i++){
+  for(let i=0;i<8;i++){
     try{return await api('GET',`/api/comments/${aid}`);}
-    catch(e){lastErr=e;await new Promise(r=>setTimeout(r,1200*(i+1)));}
+    catch(e){lastErr=e;await new Promise(r=>setTimeout(r,2000*(i+1)));}
   }
   throw lastErr||new Error('Comentários indisponíveis');
+}
+
+async function refreshComments(aid){
+  try{
+    const cs=await fetchComments(aid);
+    const cl=$(`cl-${aid}`);if(cl)cl.innerHTML=renderCommentList(aid,cs);
+    const cnt=document.querySelector('.cmts-count');if(cnt)cnt.textContent=cs.length;
+  }catch(e){
+    const cl=$(`cl-${aid}`);if(cl)cl.innerHTML='<div class="cmt-loading">Comentários demoraram para acordar. Atualize a página em instantes.</div>';
+  }
 }
 
 function renderCommentList(aid,comments){
