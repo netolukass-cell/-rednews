@@ -116,6 +116,7 @@ def init_db():
     seed_solevan_article()
     seed_montgomery_helmet_article()
     seed_cleavon_article()
+    seed_silencio_distintivo_cronica()
 
 DEFAULT_NEWS = [
     ("d1","featured","🚔","Segurança Pública",
@@ -349,6 +350,40 @@ def seed_montgomery_helmet_article():
          "Relatos em Montgomery dizem que o novo sheriff vem perseguindo moradores. Desta vez, uma confusao por fila terminou com taser e revolta.",
          MONTGOMERY_TASER_BODY, "assets/montgomery-sheriff-taser-4.png",
          "Hoje, 15/06", "EXCLUSIVO", int(time.time()) + 90)
+    )
+    conn.commit(); cur.close(); conn.close()
+
+SILENCIO_DISTINTIVO_BODY = """
+<div style="text-align:center;margin:0 0 28px">
+  <div style="font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:2px;color:#b30000;text-transform:uppercase;margin-bottom:14px">Red News • Red County • Crônica de Opinião</div>
+  <h2 style="border:none;padding:0;margin:0 0 14px;font-size:34px;color:#f3f3ef">O silêncio também usa distintivo</h2>
+  <p style="font-family:'Source Serif 4',serif;font-size:18px;line-height:1.55;color:#d2d2cc;margin:0 auto;max-width:680px"><strong style="color:#b30000">Um taser, uma fila de pizza e um morador no chão.</strong> O departamento não explica, e em Red County já se aprendeu que silêncio de quem anda armado raramente é inocente.</p>
+  <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#777;margin-top:16px">Por <strong style="color:#ddd">Beau Hollister</strong> • Red News • Red County</div>
+</div>
+<hr>
+<p>Começo com uma confissão de método: não acuso ninguém. Apenas reparo. E reparar, em Red County, anda virando esporte de risco. Desde que o novo xerife assumiu Montgomery, a cidade aprendeu a abaixar a voz quando a viatura passa. Chamam isso de ordem. Eu, que sou de jornal pequeno, prefiro chamar pelo nome técnico mais tarde, quando o departamento já tiver ido dormir.</p>
+<p>O caso é quase didático de tão pequeno. Uma fila. A fila da Stacked Pizza. Aquele atrito bobo que, em qualquer cidade do mundo, termina com um reclamando alto e outro fingindo que não ouviu. Em Montgomery, terminou com <strong style="color:#b30000">taser, viatura em destaque e um morador no chão</strong>. Não havia assaltante. Não havia fuga. Havia gente com fome esperando pizza. E, ainda assim, alguém decidiu que o caso pedia choque elétrico.</p>
+<p>Quem estava lá contou uma coisa que me persegue desde ontem. Quando o homem caiu, a rua não comemorou. Ficou quieta. Não foi alívio, foi medo. E eu pergunto, com toda a delicadeza de quem só repara: <strong style="color:#b30000">a quem interessa uma Montgomery com medo?</strong> Porque medo é péssimo para quem só queria atravessar a calçada, e curiosamente ótimo para quem precisa que ninguém pergunte nada.</p>
+<p>Reparei também numa coincidência dessas que o departamento vai jurar que é acaso. A mão do novo xerife é rápida com o morador de bolso vazio na esquina errada. Para o sujeito de fila, de boné, de carro velho, o relógio anda. Eu não estou dizendo que a farda escolhe endereço. Estou dizendo que, se escolhesse, a cena seria exatamente essa que Montgomery viu. E quando a hipótese coincide com o fato com tanta perfeição, fica difícil continuar chamando de coincidência.</p>
+<p>O distintivo é uma concessão da população, não um título de nobreza. Mas tem gente vestindo a farda como quem veste poder pessoal, tratando a cidade como propriedade de fim de semana. Quando esse tipo de autoridade age e depois se cala, não chamo de descuido. Descuido se corrige. <strong style="color:#b30000">Isso parece método.</strong> Quem trabalha limpo não tem medo de pergunta. Quem foge da pergunta, em geral, está cuidando para que ela não chegue perto demais.</p>
+<p>Dirão que é cedo para cobrar. Engraçado como o relógio do departamento é seletivo. Para abordar, para revistar, para encostar o taser, nunca é cedo. Mas para prestar contas ao povo que paga essa farda, de repente todos descobrem a lentidão dos procedimentos e a poesia burocrática do "estamos apurando". Apurando o quê, exatamente? A própria conta?</p>
+<p>Que não me entendam mal, e os defensores de plantão vão fazer questão de não entender. Eu defendo polícia. Defendo a que protege a velhinha, prende o bandido de verdade e aparece quando a gente precisa, não quando a gente reclama da fila. O que não dá para defender é <strong style="color:#b30000">farda confundida com coroa</strong> e cidadão tratado como suspeito por crime de impaciência. Existe diferença entre segurança pública e capitania hereditária, e o novo xerife parece ter pulado esse capítulo.</p>
+<p>E não foi a primeira abordagem pesada da semana, segundo moradores que falam baixo porque amanhã a viatura pode parar na porta de casa. Aí mora a pergunta velha e incômoda: quem fiscaliza o xerife? Em Montgomery, ao que tudo indica, ninguém. E onde ninguém fiscaliza, o abuso deixa de ser exceção e vira paisagem. "É assim mesmo", já começam a dizer. Não, não é. É assim porque alguém decidiu que fosse, e está achando confortável.</p>
+<p>Deixo então as perguntas que o departamento não vai responder, mas que a cidade já respondeu sozinha: <strong style="color:#b30000">o que justifica um taser numa discussão de fila?</strong> Quem autorizou? Houve perigo real, ou só um ego de farda nova precisando de plateia? E por que, com a foto do morador no chão rodando Montgomery inteira, o silêncio oficial continua mais firme do que aperto de mão de político em ano de eleição?</p>
+<p>Repito que não acuso. Só reparo. Reparo que a Stacked queria vender pizza e acabou vendendo um retrato de Red County: o cidadão no chão, a farda em pé e o poder público de costas. Os novos xerifes vieram proteger a cidade ou ensinar a cidade a ter medo? A resposta, como sempre, não está no volume da sirene. Está no silêncio que vem depois dela. E <strong style="color:#b30000">silêncio de quem tem arma, distintivo e nada a explicar</strong> nunca foi, em lugar nenhum, sinal de inocência.</p>
+<hr>
+<p style="text-align:center;font-size:15px;color:#aaa;font-style:italic">Esta crônica não condena antes dos fatos. Apenas lembra que, numa cidade livre, quem dispara um taser numa fila de pizza deve à população algo mais do que silêncio: deve uma explicação que caiba na luz do dia.</p>
+"""
+
+def seed_silencio_distintivo_cronica():
+    conn = get_db(); cur = conn.cursor()
+    db_execute(cur,
+        'INSERT INTO news (id,type,icon,cat,title,"desc",body,image_url,time_str,label,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO UPDATE SET type=EXCLUDED.type,icon=EXCLUDED.icon,cat=EXCLUDED.cat,title=EXCLUDED.title,"desc"=EXCLUDED."desc",body=EXCLUDED.body,image_url=EXCLUDED.image_url,time_str=EXCLUDED.time_str,label=EXCLUDED.label,created_at=EXCLUDED.created_at',
+        ("silencio-distintivo-2026-06-16", "item", "✒", "Crônica",
+         "O silêncio também usa distintivo",
+         "Um taser, uma fila de pizza e um morador no chão. O departamento não explica, e em Red County silêncio de quem anda armado raramente é inocente.",
+         SILENCIO_DISTINTIVO_BODY, "assets/montgomery-sheriff-taser-4.png",
+         "Hoje, 16/06", "OPINIÃO", int(time.time()) + 80)
     )
     conn.commit(); cur.close(); conn.close()
 

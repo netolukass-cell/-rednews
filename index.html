@@ -830,7 +830,7 @@ function filterNews(cat){
 // ── RENDER CRÔNICAS ──────────────────────────────────────────────────────────
 function renderCronicas(sponsors){
   const hs=sponsors||{};
-  const cards=newsData.filter(n=>n.cat==='Crônica'||n.type==='featured').map(n=>`<div class="ncard" onclick="openArticle('${n.id}')"><div class="nthumb">${n.image_url?`<img src="${esc(n.image_url)}" alt="${esc(n.title)}">`:I.img}<span class="ntag">${esc(n.cat)}</span></div><div class="nbody"><h3>${esc(n.title)}</h3>${n.desc?`<p>${esc(n.desc)}</p>`:''}<div class="nmeta">${esc(n.time_str)}</div></div></div>`).join('');
+  const cards=newsData.filter(n=>n.cat==='Crônica').map(n=>`<div class="ncard" onclick="openArticle('${n.id}')"><div class="nthumb">${n.image_url?`<img src="${esc(n.image_url)}" alt="${esc(n.title)}">`:I.img}<span class="ntag">${esc(n.cat)}</span></div><div class="nbody"><h3>${esc(n.title)}</h3>${n.desc?`<p>${esc(n.desc)}</p>`:''}<div class="nmeta">${esc(n.time_str)}</div></div></div>`).join('');
 
   $('page-cronicas').innerHTML=`${buildCompact('cronicas')}
   <div class="page-head"><div class="breadcrumb">Início / Crônicas</div><div class="page-title">Crônicas</div><div class="page-desc">Histórias e coberturas especiais de Red County.</div></div>
