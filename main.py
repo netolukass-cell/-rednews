@@ -17,6 +17,7 @@ ADMIN_ENABLED = os.environ.get("ADMIN_ENABLED", "").lower() in {"1", "true", "ye
 ADMIN_API_KEY = os.environ.get("ADMIN_API_KEY", "")
 DEFAULT_STREAM_URL = os.environ.get("DEFAULT_STREAM_URL", "http://207.58.172.237:8000/rednews.mp3")
 PERSISTENT_COMMENTS_URL = os.environ.get("PERSISTENT_COMMENTS_URL", "https://rednews-1.onrender.com").rstrip("/")
+PERSISTENT_COMMENTS_TIMEOUT = float(os.environ.get("PERSISTENT_COMMENTS_TIMEOUT", "75"))
 
 # ── DB ────────────────────────────────────────────────────────────────────────
 
@@ -44,7 +45,8 @@ def should_proxy_comments():
 
 def proxy_comment_request(method: str, path: str, payload=None):
     try:
-        with httpx.Client(timeout=15, follow_redirects=True) as client:
+        timeout = httpx.Timeout(PERSISTENT_COMMENTS_TIMEOUT, connect=20)
+        with httpx.Client(timeout=timeout, follow_redirects=True) as client:
             response = client.request(method, f"{PERSISTENT_COMMENTS_URL}{path}", json=payload)
             response.raise_for_status()
             return response.json()

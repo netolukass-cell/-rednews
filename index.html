@@ -850,7 +850,7 @@ async function renderArticle(id){
   const news=newsData.find(n=>n.id===id);
   if(!news){showPage('home');return;}
   let comments=[];
-  try{comments=await api('GET',`/api/comments/${id}`);}catch(e){}
+  try{comments=await fetchComments(id);}catch(e){toast('Comentários carregando devagar. Atualize em instantes.',false);}
   const heroImg=news.image_url?`<div class="art-hero"><img src="${esc(news.image_url)}" alt="${esc(news.title)}"></div>`:'';
   const artBody=news.body&&news.body.trim()
     ?`<div class="art-body">${sanitizeHtml(news.body)}</div>`
@@ -862,7 +862,7 @@ async function renderArticle(id){
 }
 
 function renderSinuca(sponsors){
-  api('GET','/api/comments/solevan-2026-06-11').then(comments=>{
+  fetchComments('solevan-2026-06-11').then(comments=>{
     $('page-article').innerHTML=`${buildCompact('cronicas')}
     <div class="art-head"><div class="breadcrumb">Início / Crônicas / Esporte</div><div class="art-kicker"><span class="tag">Esporte</span><span class="sub">Red County · Cobertura ao vivo</span></div><h1 class="art-h1">Solevan fatura US$ 10 mil e vira o novo rei da sinuca</h1><p class="art-dek">Final apertada no Bar do Joe coroa Jack Solevan diante de casa lotada em Montgomery.</p><div class="art-byline"><div class="art-avatar">BH</div><div><div class="art-author">Por Beau Hollister</div><div class="art-meta">Red News · Montgomery, Red County · 11/06 · 22h40</div></div></div></div>
     <div class="art-hero"><img src="assets/sinuca-photo.png" alt="Jack Solevan campeão"><div class="art-caption">Jack Solevan ergue o cheque de US$ 10.000 momentos após cravar a bola 8 que decidiu o título. · Foto / Red News</div></div>
@@ -887,6 +887,15 @@ function renderSinuca(sponsors){
 
 function buildComments(aid,comments){
   return `<div class="cmts-wrap"><div class="cmts-sep"></div><div class="cmts-hdr"><div class="cmts-title-row"><h3>Comentários</h3><span class="cmts-count">${comments.length}</span></div></div><div class="composer"><div class="comp-inner"><div class="comp-av">${I.usr}</div><div class="comp-form"><input class="comp-name" id="cn-${aid}" placeholder="Seu nome ou personagem"><textarea class="comp-text" id="cb-${aid}" placeholder="Comente como seu personagem…" rows="3"></textarea><div class="comp-footer"><button class="comp-submit" onclick="postComment('${aid}')">Publicar</button></div></div></div></div><div id="cl-${aid}">${renderCommentList(aid,comments)}</div></div>`;
+}
+
+async function fetchComments(aid){
+  let lastErr=null;
+  for(let i=0;i<3;i++){
+    try{return await api('GET',`/api/comments/${aid}`);}
+    catch(e){lastErr=e;await new Promise(r=>setTimeout(r,1200*(i+1)));}
+  }
+  throw lastErr||new Error('Comentários indisponíveis');
 }
 
 function renderCommentList(aid,comments){
@@ -923,7 +932,7 @@ async function postComment(aid,parentId=null){
     }else{
       $(`cn-${aid}`).value='';$(`cb-${aid}`).value='';
     }
-    const cs=await api('GET',`/api/comments/${aid}`);
+    const cs=await fetchComments(aid);
     const cl=$(`cl-${aid}`);if(cl)cl.innerHTML=renderCommentList(aid,cs);
     const cnt=document.querySelector('.cmts-count');if(cnt)cnt.textContent=cs.length;
     toast(parentId?'Resposta publicada!':'Comentário publicado!');
