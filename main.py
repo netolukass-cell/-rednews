@@ -386,6 +386,19 @@ class SponsorUpdate(BaseModel):
     image_url: Optional[str] = None
     theme: Optional[str] = None
 
+COMMENT_ALIASES = {
+    "s1": "solevan-2026-06-11",
+}
+
+def canonical_article_id(article_id: str) -> str:
+    return COMMENT_ALIASES.get(article_id, article_id)
+
+def comment_article_ids(article_id: str):
+    canonical = canonical_article_id(article_id)
+    aliases = [canonical]
+    aliases.extend(k for k, v in COMMENT_ALIASES.items() if v == canonical)
+    return aliases
+
 # ── Auth endpoints ────────────────────────────────────────────────────────────
 
 @app.get("/api/auth/status")
@@ -672,7 +685,9 @@ def update_ticker(data: TickerUpdate, token: str = Depends(verify_token)):
 @app.get("/api/comments/{article_id}")
 def get_comments(article_id: str):
     conn = get_db(); cur = conn.cursor()
-    db_execute(cur, "SELECT * FROM comments WHERE article_id=%s ORDER BY created_at DESC", (article_id,))
+    ids = comment_article_ids(article_id)
+    placeholders = ",".join(["%s"] * len(ids))
+    db_execute(cur, f"SELECT * FROM comments WHERE article_id IN ({placeholders}) ORDER BY created_at DESC", tuple(ids))
     rows = cur.fetchall()
     cur.close(); conn.close()
     return [dict(r) for r in rows]
@@ -682,6 +697,7 @@ def add_comment(article_id: str, item: CommentItem):
     if not item.author.strip() or not item.body.strip():
         raise HTTPException(400, "Nome e comentário obrigatórios")
     cid = secrets.token_hex(8)
+    article_id = canonical_article_id(article_id)
     conn = get_db(); cur = conn.cursor()
     db_execute(cur,
         "INSERT INTO comments (id,article_id,author,body,likes,created_at) VALUES (%s,%s,%s,%s,0,%s)",
@@ -693,7 +709,9 @@ def add_comment(article_id: str, item: CommentItem):
 @app.post("/api/comments/{article_id}/{comment_id}/like")
 def like_comment(article_id: str, comment_id: str):
     conn = get_db(); cur = conn.cursor()
-    db_execute(cur, "UPDATE comments SET likes=likes+1 WHERE id=%s AND article_id=%s", (comment_id, article_id))
+    ids = comment_article_ids(article_id)
+    placeholders = ",".join(["%s"] * len(ids))
+    db_execute(cur, f"UPDATE comments SET likes=likes+1 WHERE id=%s AND article_id IN ({placeholders})", (comment_id, *ids))
     conn.commit(); cur.close(); conn.close()
     return {"ok": True}
 

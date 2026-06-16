@@ -822,7 +822,7 @@ function renderCronicas(sponsors){
   <div class="page-head"><div class="breadcrumb">Início / Crônicas</div><div class="page-title">Crônicas</div><div class="page-desc">Histórias e coberturas especiais de Red County.</div></div>
   <div class="news-body">
     <div class="news-list">
-      <div class="hcard" onclick="openArticle('s1')"><div class="hthumb" style="background:linear-gradient(150deg,#2a0707,#0c0202)"><img src="assets/sinuca-photo.png" alt="Sinuca" style="width:100%;height:100%;object-fit:cover"><span class="htag">Esporte</span></div><div class="hinfo"><div class="hcat">Esporte · Red County</div><h3>Solevan fatura US$ 10 mil e vira o novo rei da sinuca</h3><p>Final apertada no Bar do Joe coroa Jack Solevan diante de casa lotada em Montgomery.</p><div class="hmeta">11 Jun · 22h40 · Por Beau Hollister</div></div></div>
+      <div class="hcard" onclick="openArticle('solevan-2026-06-11')"><div class="hthumb" style="background:linear-gradient(150deg,#2a0707,#0c0202)"><img src="assets/sinuca-photo.png" alt="Sinuca" style="width:100%;height:100%;object-fit:cover"><span class="htag">Esporte</span></div><div class="hinfo"><div class="hcat">Esporte · Red County</div><h3>Solevan fatura US$ 10 mil e vira o novo rei da sinuca</h3><p>Final apertada no Bar do Joe coroa Jack Solevan diante de casa lotada em Montgomery.</p><div class="hmeta">11 Jun · 22h40 · Por Beau Hollister</div></div></div>
       ${cards?`<div class="cards-grid" style="margin-top:8px">${cards}</div>`:''}
     </div>
     <div class="sidebar">${buildMaisLidas(newsData)}${buildWeather()}${buildAdLight(hs.sidebar)}</div>
@@ -849,7 +849,7 @@ async function renderArticle(id){
 }
 
 function renderSinuca(sponsors){
-  api('GET','/api/comments/s1').then(comments=>{
+  api('GET','/api/comments/solevan-2026-06-11').then(comments=>{
     $('page-article').innerHTML=`${buildCompact('cronicas')}
     <div class="art-head"><div class="breadcrumb">Início / Crônicas / Esporte</div><div class="art-kicker"><span class="tag">Esporte</span><span class="sub">Red County · Cobertura ao vivo</span></div><h1 class="art-h1">Solevan fatura US$ 10 mil e vira o novo rei da sinuca</h1><p class="art-dek">Final apertada no Bar do Joe coroa Jack Solevan diante de casa lotada em Montgomery.</p><div class="art-byline"><div class="art-avatar">BH</div><div><div class="art-author">Por Beau Hollister</div><div class="art-meta">Red News · Montgomery, Red County · 11/06 · 22h40</div></div></div></div>
     <div class="art-hero"><img src="assets/sinuca-photo.png" alt="Jack Solevan campeão"><div class="art-caption">Jack Solevan ergue o cheque de US$ 10.000 momentos após cravar a bola 8 que decidiu o título. · Foto / Red News</div></div>
@@ -866,9 +866,9 @@ function renderSinuca(sponsors){
       <p>Mais uma vez o Bar do Joe provou que, quando chama, a cidade aparece. Mesa cheia, cerveja liberada e aquela mistura de quem joga pra valer com quem só veio comentar tacada alheia.</p>
       <div class="resumo"><div class="resumo-ttl">Resumo da Red News</div><div class="resumo-item"><span class="rdot"></span><span>Jack Solevan venceu e levou US$ 10.000.</span></div><div class="resumo-item"><span class="rdot"></span><span>Klaus Vogel parou na final.</span></div><div class="resumo-item"><span class="rdot"></span><span>O Bar do Joe lotou.</span></div><div class="resumo-item"><span class="rdot"></span><span>Montgomery já espera a próxima edição.</span></div></div>
     </div>
-    ${buildComments('s1',comments)}${buildFooter()}`;
+    ${buildComments('solevan-2026-06-11',comments)}${buildFooter()}`;
   }).catch(()=>{
-    $('page-article').innerHTML+=buildComments('s1',[])+buildFooter();
+    $('page-article').innerHTML+=buildComments('solevan-2026-06-11',[])+buildFooter();
   });
 }
 
