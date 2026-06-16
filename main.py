@@ -618,10 +618,12 @@ async def stream_audio_proxy():
 @app.get("/api/status")
 def api_status():
     backend = db_backend()
+    comments_proxy = should_proxy_comments()
     return {
         "ok": True,
         "database": backend,
-        "persistent_comments": backend == "postgres",
+        "comments_backend": "proxy" if comments_proxy else backend,
+        "persistent_comments": backend == "postgres" or comments_proxy,
     }
 
 class StreamPublish(BaseModel):
