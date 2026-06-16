@@ -237,11 +237,11 @@ def seed_cleavon_article():
     conn = get_db(); cur = conn.cursor()
     db_execute(cur,
         'INSERT INTO news (id,type,icon,cat,title,"desc",body,image_url,time_str,label,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO UPDATE SET type=EXCLUDED.type,icon=EXCLUDED.icon,cat=EXCLUDED.cat,title=EXCLUDED.title,"desc"=EXCLUDED."desc",body=EXCLUDED.body,image_url=EXCLUDED.image_url,time_str=EXCLUDED.time_str,label=EXCLUDED.label,created_at=EXCLUDED.created_at',
-        ("cleavon-mclister-2026-06-15", "featured", "🚨", "Policial",
+        ("cleavon-mclister-2026-06-15", "item", "🚨", "Policial",
          "Dormiu no volante no meio da rua — e saiu andando",
          "Cleavon Mclister apagou no meio da via, virou espetáculo público e acabou liberado minutos depois.",
          CLEAVON_BODY, "https://i.imgur.com/INNWjyD.png",
-         "Hoje, 15/06", "EXCLUSIVO", int(time.time()) + 60)
+         "Hoje, 15/06", "EXCLUSIVO", int(time.time()) + 10)
     )
     conn.commit(); cur.close(); conn.close()
 
@@ -320,11 +320,11 @@ def seed_montgomery_helmet_article():
     conn = get_db(); cur = conn.cursor()
     db_execute(cur,
         'INSERT INTO news (id,type,icon,cat,title,"desc",body,image_url,time_str,label,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO UPDATE SET type=EXCLUDED.type,icon=EXCLUDED.icon,cat=EXCLUDED.cat,title=EXCLUDED.title,"desc"=EXCLUDED."desc",body=EXCLUDED.body,image_url=EXCLUDED.image_url,time_str=EXCLUDED.time_str,label=EXCLUDED.label,created_at=EXCLUDED.created_at',
-        ("d3", "item", "⚡", "Policial",
+        ("d3", "featured", "⚡", "Policial",
          "Taser na fila da Stacked: novo sheriff compra briga com morador",
          "Relatos em Montgomery dizem que o novo sheriff vem perseguindo moradores. Desta vez, uma confusao por fila terminou com taser e revolta.",
          MONTGOMERY_TASER_BODY, "assets/montgomery-sheriff-taser-4.png",
-         "Hoje, 15/06", "EXCLUSIVO", int(time.time()) + 30)
+         "Hoje, 15/06", "EXCLUSIVO", int(time.time()) + 90)
     )
     conn.commit(); cur.close(); conn.close()
 
