@@ -274,15 +274,57 @@ MONTGOMERY_HELMET_BODY = """
 </div>
 """
 
+MONTGOMERY_TASER_BODY = """
+<p><strong style="color:#cc0000">Era para ser so mais uma noite na fila da Stacked Pizza.</strong> Virou caso de taser, viatura parada e uma pergunta atravessando Montgomery de ponta a ponta: o novo sheriff chegou para proteger a cidade ou para medir forca com morador?</p>
+<p>Segundo relatos enviados a <strong style="color:#cc0000">Red News</strong>, a confusao comecou na entrada da Stacked, onde moradores aguardavam atendimento e discutiam a ordem da fila. O clima subiu, o sheriff se aproximou e, em poucos minutos, o que era boca a boca virou cena de abordagem.</p>
+<figure style="margin:28px 0">
+  <img src="assets/montgomery-sheriff-taser-1.png" alt="Sheriff encara morador em Montgomery" style="width:100%;border-radius:8px">
+  <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#777;line-height:1.5;margin-top:10px">O novo sheriff frente a frente com o morador antes da confusao ganhar proporcao.</figcaption>
+</figure>
+<h2><strong style="color:#cc0000">A FILA QUE VIROU CASO DE POLICIA</strong></h2>
+<p>Quem estava por perto diz que a discussao era de fila. Sim, fila. Aquele tipo de atrito besta que normalmente termina com alguem reclamando alto e outro fingindo que nao ouviu. Mas em Montgomery, ultimamente, nada parece terminar no normal.</p>
+<p>Testemunhas afirmam que o morador questionou a movimentacao na entrada e apontou para a fila. Foi o suficiente para o sheriff endurecer a postura. A conversa azedou, a viatura ficou em destaque e a rua entendeu o recado: <strong style="color:#cc0000">a paciencia do departamento parece mais curta do que nunca</strong>.</p>
+<figure style="margin:28px 0">
+  <img src="assets/montgomery-sheriff-taser-2.png" alt="Morador aponta durante discussao na Stacked Pizza" style="width:100%;border-radius:8px">
+  <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#777;line-height:1.5;margin-top:10px">Morador aponta em direcao a fila da Stacked enquanto o sheriff observa a cena.</figcaption>
+</figure>
+<blockquote>
+  <p>"Foi coisa de fila. Do nada, parecia que o cara tinha virado ameaca publica."</p>
+  <div class="bq-author">Morador que acompanhou a confusao</div>
+</blockquote>
+<h2><strong style="color:#cc0000">TASER NO MORADOR</strong></h2>
+<p>A parte que incendiou Montgomery veio depois: relatos indicam que o sheriff usou <strong style="color:#cc0000">disparo de taser</strong> contra o morador apos a discussao. Nao estamos falando de perseguidor armado, assalto em andamento ou fuga cinematografica. Estamos falando de uma confusao na entrada de uma pizzaria.</p>
+<p>Nas imagens, o morador aparece proximo ao veiculo policial e depois no chao, enquanto o oficial se aproxima. A versao do departamento ainda nao veio, mas a cidade ja escolheu o tema do dia: <strong style="color:#cc0000">rigor ou abuso de autoridade?</strong></p>
+<figure style="margin:28px 0">
+  <img src="assets/montgomery-sheriff-taser-4.png" alt="Morador no chao apos abordagem com taser" style="width:100%;border-radius:8px">
+  <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#777;line-height:1.5;margin-top:10px">Momento em que o morador aparece no chao durante a abordagem ao lado da viatura.</figcaption>
+</figure>
+<h2><strong style="color:#cc0000">MONTGOMERY NA MIRA DOS SD?</strong></h2>
+<p>A Red News vem recebendo relatos de moradores dizendo que o novo sheriff estaria <strong style="color:#cc0000">marcando presenca demais</strong> na cidade. Abordagens, olhares longos, perguntas em excesso e aquela sensacao de que qualquer detalhe pode virar ocorrencia.</p>
+<p>Claro, sheriff vai dizer que e rotina. Sempre e. Mas a rua nao engole tudo. Para muita gente, Montgomery virou palco de uma operacao silenciosa: ninguem sabe exatamente o que os SD procuram, mas todo mundo sente que eles procuram alguma coisa.</p>
+<figure style="margin:28px 0">
+  <img src="assets/montgomery-sheriff-taser-3.png" alt="Sheriff conversa com morador ao lado de viatura" style="width:100%;border-radius:8px">
+  <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#777;line-height:1.5;margin-top:10px">Abordagem registrada ao lado da viatura: moradores falam em clima de pressao na cidade.</figcaption>
+</figure>
+<p>Se o objetivo era organizar a entrada da Stacked, o resultado foi outro: <strong style="color:#cc0000">um morador no chao, a cidade comentando e o departamento de sheriff no centro da suspeita</strong>. A Red News vai seguir de olho, porque quando a fila da pizza vira caso de taser, alguma coisa saiu muito do lugar.</p>
+<div class="resumo">
+  <div class="resumo-ttl">Entenda o caso</div>
+  <div class="resumo-item"><span class="rdot"></span><span>Novo sheriff entrou em atrito com morador em Montgomery.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>A confusao teria comecado por causa da fila da Stacked Pizza.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>Relatos apontam uso de taser contra o morador apos a discussao.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>Moradores dizem que os SD estao aumentando a pressao na cidade.</span></div>
+</div>
+"""
+
 def seed_montgomery_helmet_article():
     conn = get_db(); cur = conn.cursor()
     db_execute(cur,
         'INSERT INTO news (id,type,icon,cat,title,"desc",body,image_url,time_str,label,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO UPDATE SET type=EXCLUDED.type,icon=EXCLUDED.icon,cat=EXCLUDED.cat,title=EXCLUDED.title,"desc"=EXCLUDED."desc",body=EXCLUDED.body,image_url=EXCLUDED.image_url,time_str=EXCLUDED.time_str,label=EXCLUDED.label,created_at=EXCLUDED.created_at',
-        ("d3", "item", "🪖", "Policial",
-         "Parado, sem capacete e multado: o que os sheriffs procuram em Montgomery?",
-         "Abordagem noturna levanta suspeita de rigor seletivo e deixa moradores perguntando se há algo maior por trás das multas.",
-         MONTGOMERY_HELMET_BODY, "assets/montgomery-capacete.jpg",
-         "Hoje, 15/06", "EM MONTGOMERY", int(time.time()) + 30)
+        ("d3", "item", "⚡", "Policial",
+         "Taser na fila da Stacked: novo sheriff compra briga com morador",
+         "Relatos em Montgomery dizem que o novo sheriff vem perseguindo moradores. Desta vez, uma confusao por fila terminou com taser e revolta.",
+         MONTGOMERY_TASER_BODY, "assets/montgomery-sheriff-taser-4.png",
+         "Hoje, 15/06", "EXCLUSIVO", int(time.time()) + 30)
     )
     conn.commit(); cur.close(); conn.close()
 
