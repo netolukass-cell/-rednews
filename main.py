@@ -26,6 +26,9 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
+def db_backend():
+    return "postgres" if DATABASE_URL else "sqlite"
+
 def db_execute(cur, query, params=()):
     if not DATABASE_URL:
         query = query.replace("%s", "?")
@@ -556,6 +559,15 @@ async def stream_audio_proxy():
         media_type="audio/mpeg",
         headers={"Cache-Control": "no-store"},
     )
+
+@app.get("/api/status")
+def api_status():
+    backend = db_backend()
+    return {
+        "ok": True,
+        "database": backend,
+        "persistent_comments": backend == "postgres",
+    }
 
 class StreamPublish(BaseModel):
     password: str

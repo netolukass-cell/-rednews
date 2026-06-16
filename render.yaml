@@ -6,3 +6,12 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /api/stream
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: rednews-db
+          property: connectionString
+
+databases:
+  - name: rednews-db
+    plan: free
