@@ -382,7 +382,7 @@ def seed_silencio_distintivo_cronica():
         ("silencio-distintivo-2026-06-16", "item", "✒", "Crônica",
          "O silêncio também usa distintivo",
          "Um taser, uma fila de pizza e um morador no chão. O departamento não explica, e em Red County silêncio de quem anda armado raramente é inocente.",
-         SILENCIO_DISTINTIVO_BODY, "assets/montgomery-sheriff-taser-4.png",
+         SILENCIO_DISTINTIVO_BODY, "assets/beau-hollister-lupa.png",
          "Hoje, 16/06", "OPINIÃO", int(time.time()) + 80)
     )
     conn.commit(); cur.close(); conn.close()
