@@ -404,7 +404,7 @@ BAR_DO_JOE_ATTACK_BODY = """
   <img src="assets/bar-do-joe-ataque-3.jpg?v=3cf802b" alt="Sheriffs no interior do bar após o isolamento" style="width:100%;border-radius:8px">
   <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#777;line-height:1.5;margin-top:10px">Sheriffs no interior do bar após o isolamento. Testemunhas foram mantidas longe da área do balcão.</figcaption>
 </figure>
-<h2><strong style="color:#cc0000">O INVASOR NÃO SAIU VIVO</strong></h2>
+<h2><strong style="color:#cc0000">O MORADOR NÃO SAIU VIVO</strong></h2>
 <p>O homem caiu no meio da confusão e não resistiu. O corpo permaneceu no local até a chegada da polícia, que cercou tudo com a fita amarela de praxe: <strong style="color:#cc0000">SHERIFF'S LINE — DO NOT CROSS</strong>. O Bar do Joe segue interditado enquanto a investigação corre.</p>
 <p>Até o fechamento desta matéria, os sheriffs não haviam divulgado a identidade do morador de rua nem confirmado oficialmente a motivação do ataque.</p>
 <figure style="margin:28px 0">

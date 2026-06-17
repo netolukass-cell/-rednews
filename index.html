@@ -851,7 +851,6 @@ async function renderArticle(id){
   const news=newsData.find(n=>n.id===id);
   if(!news){showPage('home');return;}
   let comments=null;
-  try{comments=await fetchComments(id);}catch(e){toast('Comentários carregando devagar. Atualize em instantes.',false);}
   const heroImg=news.image_url?`<div class="art-hero"><img src="${esc(news.image_url)}" alt="${esc(news.title)}"></div>`:'';
   const artBody=news.body&&news.body.trim()
     ?`<div class="art-body">${sanitizeHtml(news.body)}</div>`
@@ -860,12 +859,11 @@ async function renderArticle(id){
   <div class="art-head"><div class="breadcrumb">Início / Notícias</div><div class="art-kicker"><span class="tag">${esc(news.cat)}</span>${news.label?`<span class="sub">${esc(news.label)}</span>`:''}</div><h1 class="art-h1">${esc(news.title)}</h1>${news.desc?`<p class="art-dek">${esc(news.desc)}</p>`:''}<div class="art-byline"><div class="art-avatar">RN</div><div><div class="art-author">Redação Red News</div><div class="art-meta">Red News · ${esc(news.time_str)}</div></div></div></div>
   ${heroImg}${artBody}
   ${buildComments(id,comments)}${buildFooter()}`;
-  if(comments===null)setTimeout(()=>refreshComments(id),2500);
+  setTimeout(()=>refreshComments(id),500);
 }
 
 function renderSinuca(sponsors){
-  fetchComments('solevan-2026-06-11').then(comments=>{
-    $('page-article').innerHTML=`${buildCompact('cronicas')}
+  $('page-article').innerHTML=`${buildCompact('cronicas')}
     <div class="art-head"><div class="breadcrumb">Início / Crônicas / Esporte</div><div class="art-kicker"><span class="tag">Esporte</span><span class="sub">Red County · Cobertura ao vivo</span></div><h1 class="art-h1">Solevan fatura US$ 10 mil e vira o novo rei da sinuca</h1><p class="art-dek">Final apertada no Bar do Joe coroa Jack Solevan diante de casa lotada em Montgomery.</p><div class="art-byline"><div class="art-avatar">BH</div><div><div class="art-author">Por Beau Hollister</div><div class="art-meta">Red News · Montgomery, Red County · 11/06 · 22h40</div></div></div></div>
     <div class="art-hero"><img src="assets/sinuca-photo.png" alt="Jack Solevan campeão"><div class="art-caption">Jack Solevan ergue o cheque de US$ 10.000 momentos após cravar a bola 8 que decidiu o título. · Foto / Red News</div></div>
     <div class="art-body">
@@ -881,11 +879,8 @@ function renderSinuca(sponsors){
       <p>Mais uma vez o Bar do Joe provou que, quando chama, a cidade aparece. Mesa cheia, cerveja liberada e aquela mistura de quem joga pra valer com quem só veio comentar tacada alheia.</p>
       <div class="resumo"><div class="resumo-ttl">Resumo da Red News</div><div class="resumo-item"><span class="rdot"></span><span>Jack Solevan venceu e levou US$ 10.000.</span></div><div class="resumo-item"><span class="rdot"></span><span>Klaus Vogel parou na final.</span></div><div class="resumo-item"><span class="rdot"></span><span>O Bar do Joe lotou.</span></div><div class="resumo-item"><span class="rdot"></span><span>Montgomery já espera a próxima edição.</span></div></div>
     </div>
-    ${buildComments('solevan-2026-06-11',comments)}${buildFooter()}`;
-  }).catch(()=>{
-    $('page-article').innerHTML+=buildComments('solevan-2026-06-11',null)+buildFooter();
-    setTimeout(()=>refreshComments('solevan-2026-06-11'),2500);
-  });
+    ${buildComments('solevan-2026-06-11',null)}${buildFooter()}`;
+  setTimeout(()=>refreshComments('solevan-2026-06-11'),500);
 }
 
 function buildComments(aid,comments){
