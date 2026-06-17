@@ -394,21 +394,21 @@ BAR_DO_JOE_ATTACK_BODY = """
 <p><strong style="color:#cc0000">Por volta das 23h40 de ontem</strong>, com a cidade quase toda dormindo, o Bar do Joe, em Montgomery, virou cena de crime. Um homem entrou no estabelecimento, partiu para cima do garçom e, minutos depois, estava morto no chão de madeira atrás do balcão.</p>
 <p>A <strong style="color:#cc0000">Red News</strong> esteve no local depois do isolamento. Segundo relatos de quem estava presente, o invasor não chegou procurando confusão de bar. Chegou procurando <strong style="color:#cc0000">Klaus</strong>, o garçom que trabalha naquele balcão há anos.</p>
 <figure style="margin:28px 0">
-  <img src="assets/bar-do-joe-ataque-7.jpg" alt="Fita de isolamento cruzando o balcão do Bar do Joe" style="width:100%;border-radius:8px">
+  <img src="assets/bar-do-joe-ataque-7.jpg?v=3cf802b" alt="Fita de isolamento cruzando o balcão do Bar do Joe" style="width:100%;border-radius:8px">
   <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#777;line-height:1.5;margin-top:10px">Fita de isolamento cruzando o balcão do Bar do Joe após a tentativa de homicídio.</figcaption>
 </figure>
 <h2><strong style="color:#cc0000">ELE NÃO VEIO BEBER</strong></h2>
 <p>A frase é de uma testemunha que pediu para não ser identificada. O homem teria desferido uma tacada contra Klaus e tentado matá-lo ali mesmo, na frente dos outros clientes.</p>
 <p>Não contava com a reação. Outro homem que estava no balcão sacou uma faca e revidou. Em segundos, a tentativa de assassinato virou <strong style="color:#cc0000">um corpo no chão</strong>.</p>
 <figure style="margin:28px 0">
-  <img src="assets/bar-do-joe-ataque-3.jpg" alt="Sheriffs no interior do bar após o isolamento" style="width:100%;border-radius:8px">
+  <img src="assets/bar-do-joe-ataque-3.jpg?v=3cf802b" alt="Sheriffs no interior do bar após o isolamento" style="width:100%;border-radius:8px">
   <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#777;line-height:1.5;margin-top:10px">Sheriffs no interior do bar após o isolamento. Testemunhas foram mantidas longe da área do balcão.</figcaption>
 </figure>
 <h2><strong style="color:#cc0000">O INVASOR NÃO SAIU VIVO</strong></h2>
 <p>O agressor caiu no meio da confusão e não resistiu. O corpo permaneceu no local até a chegada da polícia, que cercou tudo com a fita amarela de praxe: <strong style="color:#cc0000">SHERIFF'S LINE — DO NOT CROSS</strong>. O Bar do Joe segue interditado enquanto a investigação corre.</p>
 <p>Até o fechamento desta matéria, os sheriffs não haviam divulgado a identidade do invasor nem confirmado a motivação do ataque.</p>
 <figure style="margin:28px 0">
-  <img src="assets/bar-do-joe-ataque-1.jpg" alt="Corpo atrás do balcão do Bar do Joe" style="width:100%;border-radius:8px">
+  <img src="assets/bar-do-joe-ataque-1.jpg?v=3cf802b" alt="Corpo atrás do balcão do Bar do Joe" style="width:100%;border-radius:8px">
   <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#777;line-height:1.5;margin-top:10px">O corpo ficou estendido atrás do balcão até o isolamento da área.</figcaption>
 </figure>
 <blockquote>
@@ -419,7 +419,7 @@ BAR_DO_JOE_ATTACK_BODY = """
 <p>E aqui vai o recado, porque alguém precisa dar. Cansei de ver gente entrando armada nos nossos estabelecimentos como se a lei aqui fosse decoração. Não é. Ontem um sujeito aprendeu isso do jeito mais caro que existe.</p>
 <p><strong style="color:#cc0000">Melhor a mãe desse tipo chorando do que a de um trabalhador honesto.</strong> A Red News vai acompanhar a investigação até o fim. Se você viu alguma coisa, sabe onde achar Beau Hollister.</p>
 <figure style="margin:28px 0">
-  <img src="assets/bar-do-joe-ataque-6.jpg" alt="Cena isolada no Bar do Joe" style="width:100%;border-radius:8px">
+  <img src="assets/bar-do-joe-ataque-6.jpg?v=3cf802b" alt="Cena isolada no Bar do Joe" style="width:100%;border-radius:8px">
   <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#777;line-height:1.5;margin-top:10px">A área do balcão foi isolada enquanto os sheriffs avaliavam a cena.</figcaption>
 </figure>
 <p><strong style="color:#cc0000">Klaus segue vivo. O outro, não.</strong></p>
@@ -440,7 +440,7 @@ def seed_bar_do_joe_attack_article():
         ("bar-do-joe-noite-sangue-2026-06-17", "featured", "🩸", "Policial",
          "Noite de sangue no Bar do Joe: invasor tenta matar garçom e morre esfaqueado no balcão",
          "Klaus sobreviveu. O invasor, não. O estabelecimento foi interditado pelos sheriffs após a tentativa de homicídio e a reação fatal.",
-         BAR_DO_JOE_ATTACK_BODY, "assets/bar-do-joe-ataque-7.jpg",
+         BAR_DO_JOE_ATTACK_BODY, "assets/bar-do-joe-ataque-7.jpg?v=3cf802b",
          "Hoje, 17/06", "EDIÇÃO DE EMERGÊNCIA", int(time.time()) + 160)
     )
     conn.commit(); cur.close(); conn.close()
