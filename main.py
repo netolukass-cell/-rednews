@@ -512,7 +512,7 @@ def seed_montgore_article():
         ("montgore-noite-de-sangue-2026-06-17", "featured", "🚨", "Policial",
          "Montgore: três mortos e dois feridos colocam Montgomery acima de Idlewood",
          "Festa de sinuca termina em praça tomada por tiros, socorrista baleada por xerife e segundo atirador surgindo do meio dos curiosos.",
-         MONTGORE_BODY, "assets/montgore-cover.jpg",
+         MONTGORE_BODY, "assets/montgore-cover.jpg?v=gallery103",
          "Hoje, 17/06", "EDIÇÃO DE EMERGÊNCIA", int(time.time()) + 420)
     )
     conn.commit(); cur.close(); conn.close()
