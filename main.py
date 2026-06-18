@@ -120,6 +120,8 @@ def init_db():
     seed_cleavon_article()
     seed_silencio_distintivo_cronica()
     seed_bar_do_joe_attack_article()
+    seed_montgore_article()
+    seed_montgore_comments()
 
 DEFAULT_NEWS = [
     ("d1","featured","🚔","Segurança Pública",
@@ -443,6 +445,99 @@ def seed_bar_do_joe_attack_article():
          BAR_DO_JOE_ATTACK_BODY, "assets/bar-do-joe-ataque-7.jpg?v=3cf802b",
          "Hoje, 17/06", "EDIÇÃO DE EMERGÊNCIA", int(time.time()) + 160)
     )
+    conn.commit(); cur.close(); conn.close()
+
+MONTGORE_BODY = """
+<p><strong style="color:#cc0000">E aqui vai, porque alguém precisa dizer.</strong></p>
+<p>Bem-vindo a <strong style="color:#cc0000">Montgore</strong>. A cidade que ainda insiste em se chamar Montgomery transformou uma festa de sinuca em frente ao Bar do Joe no pior banho de sangue do ano. Três corpos no chão, dois feridos, e uma segurança pública que, mais uma vez, só apareceu para contar os mortos.</p>
+<p>Segundo testemunhas, tudo começou com um homem identificado como <strong style="color:#cc0000">Nikita</strong>. Ele se meteu numa briga no meio da festa e, no calor da discussão, sacou e baleou um idoso, até agora não identificado, que não tinha nada a ver com aquilo. O senhor caiu ali mesmo, na frente de todo mundo que tinha ido só beber e jogar.</p>
+<figure style="margin:28px 0">
+  <img src="https://i.imgur.com/0EHaavx.png" alt="Idoso baleado caído na via" style="width:100%;border-radius:8px">
+  <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#777;line-height:1.5;margin-top:10px">Idoso baleado caído na via enquanto os xerifes assumem a cena. Montgomery, 17/06.</figcaption>
+</figure>
+<h2><strong style="color:#cc0000">NIKITA SUMIU, VOLTOU E TRANSFORMOU A PRAÇA EM GUERRA</strong></h2>
+<p>Nikita fugiu. E aqui mora a primeira pergunta que o Departamento do Xerife vai querer enterrar: como um homem atira numa praça lotada e simplesmente some por alguns minutos? Porque sumiu. O SD saiu em perseguição e só voltou a ter Nikita no radar quando ele reapareceu, em alta, e colidiu o carro bem no meio da praça.</p>
+<p>Não se entregou. Desceu do veículo atirando contra os policiais. A essa altura, a festa já tinha virado zona de guerra.</p>
+<figure style="margin:28px 0">
+  <img src="https://i.imgur.com/nJVPNJ1.png" alt="Praça tomada por viaturas e ambulância" style="width:100%;border-radius:8px">
+  <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#777;line-height:1.5;margin-top:10px">A praça tomada por viaturas, ambulância e o caos depois da colisão.</figcaption>
+</figure>
+<h2><strong style="color:#cc0000">A SOCORRISTA QUE LEVOU TIRO DE QUEM DEVIA PROTEGER</strong></h2>
+<p>E é no meio dessa troca de tiros que Montgomery sai do caos e entra na vergonha pura. Enquanto Nikita disparava, a equipe da <strong style="color:#cc0000">FIRE</strong> estava ajoelhada no chão tentando salvar o idoso baleado no início de tudo. Fazendo o trabalho mais honesto daquela praça inteira.</p>
+<p>Foi quando a socorrista <strong style="color:#cc0000">Amanda Foster</strong> levou um tiro. Não do bandido. De um <strong style="color:#cc0000">xerife</strong> que tentava acertar Nikita e acertou quem estava salvando uma vida.</p>
+<blockquote>
+  <p>Em Montgore, até a bala que devia proteger você acha primeiro quem foi te socorrer.</p>
+  <div class="bq-author">Klaus Vogel, Red News</div>
+</blockquote>
+<figure style="margin:28px 0">
+  <img src="https://i.imgur.com/w6oBRZg.png" alt="Equipe da FIRE em atendimento no asfalto" style="width:100%;border-radius:8px">
+  <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#777;line-height:1.5;margin-top:10px">Equipe da FIRE em atendimento no asfalto, instantes antes do disparo que feriu a socorrista.</figcaption>
+</figure>
+<h2><strong style="color:#cc0000">O SEGUNDO ATIRADOR ESTAVA NO MEIO DOS CURIOSOS</strong></h2>
+<p>E não acabou ali. Com a cena ainda fervendo, nossa equipe flagrou o detalhe que escancara o tamanho do descontrole: um <strong style="color:#cc0000">homem de capuz cinza</strong>, que estava misturado entre os curiosos, saiu do meio da multidão e começou a disparar contra os xerifes. Estava ali o tempo todo. Ninguém viu. Ninguém isolou. Ninguém fez o perímetro.</p>
+<figure style="margin:28px 0">
+  <img src="https://i.imgur.com/MWFGOGc.png" alt="Segundo atirador encapuzado entre curiosos" style="width:100%;border-radius:8px">
+  <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#777;line-height:1.5;margin-top:10px">Flagrante: o segundo atirador encapuzado se desloca por trás dos curiosos momentos antes de abrir fogo.</figcaption>
+</figure>
+<p>O encapuzado também foi neutralizado e morreu no local. Mas antes disso, conseguiu o que um homem sozinho jamais deveria conseguir contra uma corporação inteira: feriu um deles. O xerife <strong style="color:#cc0000">Edward McClanahan</strong> saiu baleado da própria operação que devia estar sob controle.</p>
+<figure style="margin:28px 0">
+  <img src="https://i.imgur.com/lLpUFb4.png" alt="Xerife Edward McClanahan ferido" style="width:100%;border-radius:8px">
+  <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#777;line-height:1.5;margin-top:10px">O xerife Edward McClanahan ferido, ao lado de Jose Escuella, após o segundo ataque.</figcaption>
+</figure>
+<h2><strong style="color:#cc0000">TRÊS MORTOS, DOIS FERIDOS E UMA CIDADE REFÉM DO IMPROVISO</strong></h2>
+<p>No fim, o saldo de Montgore: <strong style="color:#cc0000">três mortos</strong>, entre eles o idoso que a FIRE não conseguiu salvar porque atiraram em quem o salvava, e <strong style="color:#cc0000">dois feridos</strong>, a socorrista Amanda Foster e o xerife Edward McClanahan.</p>
+<p>Chamam isso de resposta rápida. Eu chamo de colheita tardia. Porque quando o atirador foge, some, volta de carro, bate na praça, desce atirando, e ainda sobra brecha para um segundo homem sair do meio da multidão disparando, o problema deixou de ser o bandido. O problema é uma segurança pública que trata toda tragédia como se fosse a primeira, toda santa vez.</p>
+<p>O pequeno paga primeiro. Sempre. Paga quem foi jogar sinuca. Paga quem foi socorrer e levou bala de quem jurou protegê-la. Paga a cidade que finge não ter virado o que virou.</p>
+<div class="resumo">
+  <div class="resumo-ttl">O que se sabe até agora</div>
+  <div class="resumo-item"><span class="rdot"></span><span>A festa de sinuca em frente ao Bar do Joe reunia moradores quando começou o primeiro ataque.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span><strong>Nikita</strong> se envolveu numa briga e baleou um idoso não identificado.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>Nikita fugiu, foi perseguido pelo SD e colidiu o carro na praça.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>Ao descer do veículo, abriu fogo contra os xerifes e foi neutralizado.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>A socorrista da FIRE <strong>Amanda Foster</strong> foi atingida por disparo de um xerife que mirava Nikita.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>Um segundo atirador de capuz cinza feriu <strong>Edward McClanahan</strong> antes de morrer no local.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>Saldo final: <strong>três mortos e dois feridos</strong>.</span></div>
+</div>
+<h2><strong style="color:#cc0000">MONTGOMERY JÁ É MAIS LETAL QUE IDLEWOOD</strong></h2>
+<p>E para quem ainda acha exagero chamar de Montgore, os números não deixam mentir. Levantamento da Red News aponta que, no primeiro semestre de <strong style="color:#cc0000">2026</strong>, Montgomery registrou <strong style="color:#cc0000">17,4 homicídios por mil habitantes</strong>. Idlewood, o endereço mais temido de Los Santos, fechou o mesmo período com <strong style="color:#cc0000">11,2</strong>.</p>
+<p>Leu certo. A nossa pacata cidade do interior é hoje <strong style="color:#cc0000">55% mais letal</strong> que a favela que o resto do estado usa como sinônimo de perigo. Uma morte violenta a cada 26 horas, e subindo.</p>
+<p>Montgomery não precisa de mais nota ensaiada nem de coletiva dizendo que está tudo sob controle. Precisa de uma segurança pública que não dependa do terceiro tiro para acordar. A Red News vai acompanhar essa história até o fim. E toda vez que tentarem empurrar a culpa para o acaso, eu vou lembrar que bala até se perde, mas incompetência sempre acha endereço.</p>
+<p style="text-align:right"><strong style="color:#cc0000">Klaus Vogel</strong><br><span style="color:#777;font-style:italic">Red News • Rádio • Jornal • Red County</span></p>
+"""
+
+def seed_montgore_article():
+    conn = get_db(); cur = conn.cursor()
+    db_execute(cur,
+        'INSERT INTO news (id,type,icon,cat,title,"desc",body,image_url,time_str,label,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO UPDATE SET type=EXCLUDED.type,icon=EXCLUDED.icon,cat=EXCLUDED.cat,title=EXCLUDED.title,"desc"=EXCLUDED."desc",body=EXCLUDED.body,image_url=EXCLUDED.image_url,time_str=EXCLUDED.time_str,label=EXCLUDED.label,created_at=EXCLUDED.created_at',
+        ("montgore-noite-de-sangue-2026-06-17", "featured", "🚨", "Policial",
+         "Montgore: três mortos e dois feridos colocam Montgomery acima de Idlewood",
+         "Festa de sinuca termina em praça tomada por tiros, socorrista baleada por xerife e segundo atirador surgindo do meio dos curiosos.",
+         MONTGORE_BODY, "assets/montgore-cover.jpg",
+         "Hoje, 17/06", "EDIÇÃO DE EMERGÊNCIA", int(time.time()) + 420)
+    )
+    conn.commit(); cur.close(); conn.close()
+
+def seed_montgore_comments():
+    article_id = "montgore-noite-de-sangue-2026-06-17"
+    base = int(time.time()) - (10 * 3600)
+    comments = [
+        ("montgore-c1", None, "Raimundo Torres", "Montgore foi o nome mais certo que a Red News já inventou. Três mortos numa noite e ainda tem gente dizendo que está tudo normal.", 9, base + 180),
+        ("montgore-c2", None, "Selma K.", "O que mais me revolta é a Amanda levando tiro enquanto tentava salvar o idoso. Isso não é azar, é despreparo.", 13, base + 3900),
+        ("montgore-c3", "montgore-c2", "Duque", "Exatamente. Quem atira com FIRE ajoelhada no chão precisa responder, simples assim.", 5, base + 4560),
+        ("montgore-c4", None, "Tremaine Hill", "Eu estava perto do bar e ninguém isolou nada direito. Tinha curioso passando como se fosse desfile.", 7, base + 7500),
+        ("montgore-c5", "montgore-c4", "Marta de Blueberry", "Aí depois dizem que a culpa é do povo olhando. Se não tem perímetro, o povo vai ficar onde?", 4, base + 8160),
+        ("montgore-c6", None, "Josefina M.", "Nikita era problema anunciado. Todo mundo já tinha visto esse homem procurando confusão antes.", 6, base + 11100),
+        ("montgore-c7", None, "Calvin Price", "Não passo mais em Montgomery à noite. Idlewood pelo menos assume o que é. Aqui fingem que é cidade tranquila.", 10, base + 14640),
+        ("montgore-c8", "montgore-c7", "Beto do Guincho", "Falaram que era exagero da Red News. Agora tem número: 17,4 por mil. Quero ver chamar de fofoca.", 8, base + 15300),
+        ("montgore-c9", None, "Lena Foster", "Sou parente de socorrista e digo: FIRE entra para salvar, não para virar alvo de erro dos outros.", 12, base + 18840),
+        ("montgore-c10", "montgore-c9", "Arlindo", "Força pra Amanda. E investigação de verdade, não nota bonitinha de departamento.", 6, base + 22500),
+    ]
+    conn = get_db(); cur = conn.cursor()
+    for c in comments:
+        db_execute(cur,
+            "INSERT INTO comments (id,article_id,parent_id,author,body,likes,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO NOTHING",
+            (c[0], article_id, c[1], c[2], c[3], c[4], c[5])
+        )
     conn.commit(); cur.close(); conn.close()
 
 init_db()
