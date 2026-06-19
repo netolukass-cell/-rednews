@@ -944,11 +944,16 @@ async function postComment(aid,parentId=null){
     }else{
       $(`cn-${aid}`).value='';$(`cb-${aid}`).value='';
     }
-    const cs=await fetchComments(aid);
-    const cl=$(`cl-${aid}`);if(cl)cl.innerHTML=renderCommentList(aid,cs);
-    const cnt=document.querySelector('.cmts-count');if(cnt)cnt.textContent=cs.length;
     toast(parentId?'Resposta publicada!':'Comentário publicado!');
-  }catch(e){toast(e.message,false);}
+    try{
+      const cs=await fetchComments(aid);
+      const cl=$(`cl-${aid}`);if(cl)cl.innerHTML=renderCommentList(aid,cs);
+      const cnt=document.querySelector('.cmts-count');if(cnt)cnt.textContent=cs.length;
+    }catch(e){
+      const cl=$(`cl-${aid}`);if(cl)cl.innerHTML='<div class="cmt-loading">Comentário salvo. Render acordando a lista...</div>';
+      setTimeout(()=>refreshComments(aid),3000);
+    }
+  }catch(e){toast('Não consegui salvar agora. Tente novamente em alguns segundos.',false);}
 }
 
 async function likeComment(aid,cid,btn){

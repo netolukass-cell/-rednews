@@ -122,6 +122,8 @@ def init_db():
     seed_bar_do_joe_attack_article()
     seed_montgore_article()
     seed_montgore_comments()
+    seed_dead_creek_fight_article()
+    seed_dead_creek_fight_comments()
 
 DEFAULT_NEWS = [
     ("d1","featured","🚔","Segurança Pública",
@@ -531,6 +533,96 @@ def seed_montgore_comments():
         ("montgore-c8", "montgore-c7", "Beto do Guincho", "Falaram que era exagero da Red News. Agora tem número: 17,4 por mil. Quero ver chamar de fofoca.", 8, base + 15300),
         ("montgore-c9", None, "Lena Foster", "Sou parente de socorrista e digo: FIRE entra para salvar, não para virar alvo de erro dos outros.", 12, base + 18840),
         ("montgore-c10", "montgore-c9", "Arlindo", "Força pra Amanda. E investigação de verdade, não nota bonitinha de departamento.", 6, base + 22500),
+    ]
+    conn = get_db(); cur = conn.cursor()
+    for c in comments:
+        db_execute(cur,
+            "INSERT INTO comments (id,article_id,parent_id,author,body,likes,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO NOTHING",
+            (c[0], article_id, c[1], c[2], c[3], c[4], c[5])
+        )
+    conn.commit(); cur.close(); conn.close()
+
+DEAD_CREEK_FIGHT_BODY = """
+<p><strong style="color:#cc0000">Tinha bandeirinha balançando no vento, holofote rasgando o breu e arquibancada cheia até em cima.</strong> Red County não via uma noite assim faz tempo. O ringue montado a céu aberto virou o centro do mundo por algumas horas, e quando a poeira baixou, quem mandava na festa era gente de Dead Creek — dos dois lados da corda.</p>
+<p>Mais do que porrada, foi evento cultural. Foi o tipo de noite que junta o velho de chapéu na primeira fileira, o pessoal da Taverna e a molecada pendurada no alambrado, todo mundo gritando o mesmo nome ao mesmo tempo. Quem armou isso tudo foi <strong style="color:#cc0000">Jhonny Garcia</strong>, que pegou uma ideia simples e transformou numa das maiores festas que essa região já viu.</p>
+<figure style="margin:28px 0">
+  <img src="assets/dead-creek-fight-01-crowd.jpg" alt="Público reunido em torno do ringue de Dead Creek" style="width:100%;border-radius:8px">
+  <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#777;line-height:1.5;margin-top:10px">Arquibancada, ringue aberto e público cercando a noite que colocou Dead Creek no mapa esportivo de Red County.</figcaption>
+</figure>
+<p>E não foi sozinho. O evento entrou no calendário oficial com a chancela do gabinete do prefeito, que abraçou a causa e bancou Dead Creek como destino cultural de Red County. Era o que faltava: alguém lá em cima enxergar que aqui o povo sabe fazer festa grande, organizada, e que enche a região de gente de fora pra gastar, beber e voltar contando história.</p>
+<h2><strong style="color:#cc0000">QUEM PAGOU A CONTA DA FESTA</strong></h2>
+<p>Espetáculo desse tamanho não se faz no sopro. A <strong style="color:#cc0000">Red News</strong> assinou como apoiadora oficial e madrinha da noite, porque a gente acredita no que essa terra produz. Junto vieram a Sprunk, que matou a sede da arquibancada inteira, a Cluckin' Bell, que não deixou ninguém de barriga vazia, a Borracharia & Auto Peças Dead Creek, e a sempre fiel Taverna do Garcia, quartel-general da torcida entre uma luta e outra.</p>
+<p><strong style="color:#cc0000">Patrocinador que aposta em Dead Creek não perde dinheiro. Perde quem fica de fora.</strong></p>
+<figure style="margin:28px 0">
+  <img src="assets/dead-creek-fight-02-ring.jpg" alt="Ringue lotado de espectadores ao redor" style="width:100%;border-radius:8px">
+  <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#777;line-height:1.5;margin-top:10px">O ringue montado a céu aberto recebeu moradores, curiosos e torcida de todos os cantos de Red County.</figcaption>
+</figure>
+<h2><strong style="color:#cc0000">A GRANDE FINAL — O PIRATA X JOHNNY FIORE</strong></h2>
+<p>E aí veio o prato principal, o motivo de todo mundo estar ali. A decisão da noite colocou frente a frente <strong style="color:#cc0000">O Pirata</strong> e <strong style="color:#cc0000">Johnny Fiore</strong> — e segura essa: os dois moram em Dead Creek.</p>
+<p>Isso mesmo. A final do maior torneio de Red County foi roça contra roça. Dois filhos da mesma terra subindo no ringue pra decidir quem levava o cinturão, enquanto o resto da cidade assistia da arquibancada sem ter ninguém pra chamar de seu. Pode torcer o nariz pro interior o quanto quiser. Quando o sino bateu, era gente daqui dos dois cantos.</p>
+<figure style="margin:28px 0">
+  <img src="assets/dead-creek-fight-03-finalists.jpg" alt="Finalistas de Dead Creek antes da decisão" style="width:100%;border-radius:8px">
+  <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#777;line-height:1.5;margin-top:10px">Os finalistas no centro da festa: Dead Creek contra Dead Creek, com Red County inteiro assistindo.</figcaption>
+</figure>
+<p>Johnny Fiore não chegou na final de paraquedas. Pra estar ali, passou por cima do "Demônio" — apelido que prometia fogo e terminou a noite só na fumaça. Fiore controlou o combate, não deu brecha, e carimbou a vaga pra decisão com autoridade de quem veio buscar coisa grande.</p>
+<p>Do outro lado, o homem do tapa-olho e do chapéu. O Pirata subiu naquele ringue como quem já sabia o caminho de volta pra casa com o título. Aguentou o tranco, leu o adversário e, na hora que precisou virar a chave, virou.</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:26px 0">
+  <figure style="margin:0"><img src="assets/dead-creek-fight-04-pirata.jpg" alt="O Pirata antes da luta" style="width:100%;height:100%;object-fit:cover;border-radius:8px"><figcaption style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#777;margin-top:8px">O Pirata: tapa-olho, chapéu e cara de quem já tinha combinado com a vitória.</figcaption></figure>
+  <figure style="margin:0"><img src="assets/dead-creek-fight-05-punch.jpg" alt="Golpe durante a luta" style="width:100%;height:100%;object-fit:cover;border-radius:8px"><figcaption style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#777;margin-top:8px">O golpe que levantou a arquibancada e mudou o ritmo da final.</figcaption></figure>
+</div>
+<blockquote>
+  <p>O Pirata é o campeão. E o campeão mora em Dead Creek.</p>
+  <div class="bq-author">Beau Hollister, Red News</div>
+</blockquote>
+<p>Fiore saiu de cabeça erguida — perdeu pro melhor, perdeu pra um vizinho, perdeu numa noite que pertenceu por inteiro à terra dos dois. Não tem vergonha nenhuma nisso. Tem orgulho.</p>
+<h2><strong style="color:#cc0000">O QUE FICA</strong></h2>
+<p>Enquanto a cidade grande gasta com luva importada e academia de vidro, o povo de Dead Creek treina no braço, no sol, e desce do morro pra calar boca de quem nunca pôs o pé por aqui. A roça soca. A roça organiza. A roça enche o ginásio e ainda leva o cinturão pra casa.</p>
+<p>Garcia já avisou nos bastidores que isso foi só o começo. Se depender de Dead Creek, ano que vem tem mais — maior, mais cheio, e com o mesmo final: a festa, e o troféu, ficando onde pertencem.</p>
+<div class="resumo">
+  <div class="resumo-ttl">Ficha da noite</div>
+  <div class="resumo-item"><span class="rdot"></span><span>Realização: <strong>Jhonny Garcia</strong>, com a Prefeitura de Red County.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>Apoio oficial: Red News, Sprunk, Cluckin' Bell, Borracharia & Auto Peças Dead Creek e Taverna do Garcia.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>Final: <strong>O Pirata x Johnny Fiore</strong>, dois moradores de Dead Creek.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>Campeão: <strong>O Pirata</strong>.</span></div>
+</div>
+<h2><strong style="color:#cc0000">ÁLBUM DA RED NEWS</strong></h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:20px 0 8px">
+  <img src="assets/dead-creek-fight-06-down.jpg" alt="Atendimento depois de queda no ringue" style="width:100%;height:180px;object-fit:cover;border-radius:8px">
+  <img src="assets/dead-creek-fight-07-aftermath.jpg" alt="Visão ampla do pós-luta" style="width:100%;height:180px;object-fit:cover;border-radius:8px">
+  <img src="assets/dead-creek-fight-08-riley.jpg" alt="Riley Vance no evento" style="width:100%;height:180px;object-fit:cover;border-radius:8px">
+  <img src="assets/dead-creek-fight-09-victory.jpg" alt="Comemoração no ringue" style="width:100%;height:180px;object-fit:cover;border-radius:8px">
+  <img src="assets/dead-creek-fight-10-conversation.jpg" alt="Conversa depois da luta" style="width:100%;height:180px;object-fit:cover;border-radius:8px">
+</div>
+<p style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#777">Fotos: Red News / Beau Hollister. Tratamento e cortes para publicação: Red News.</p>
+<p style="text-align:right"><strong style="color:#cc0000">Beau Hollister</strong><br><span style="color:#777;font-style:italic">Red News • Esporte & Cultura • Red County</span></p>
+"""
+
+def seed_dead_creek_fight_article():
+    conn = get_db(); cur = conn.cursor()
+    db_execute(cur,
+        'INSERT INTO news (id,type,icon,cat,title,"desc",body,image_url,time_str,label,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO UPDATE SET type=EXCLUDED.type,icon=EXCLUDED.icon,cat=EXCLUDED.cat,title=EXCLUDED.title,"desc"=EXCLUDED."desc",body=EXCLUDED.body,image_url=EXCLUDED.image_url,time_str=EXCLUDED.time_str,label=EXCLUDED.label,created_at=EXCLUDED.created_at',
+        ("dead-creek-luta-2026-06-19", "featured", "🥊", "Esporte",
+         "A noite em que Dead Creek tomou conta de Red County",
+         "O maior evento de luta da temporada terminou com a roça nos dois cantos do ringue — e o cinturão ficou em casa.",
+         DEAD_CREEK_FIGHT_BODY, "assets/dead-creek-fight-cover.jpg?v=20260619",
+         "Hoje, 19/06", "COBERTURA AO VIVO", int(time.time()) + 620)
+    )
+    conn.commit(); cur.close(); conn.close()
+
+def seed_dead_creek_fight_comments():
+    article_id = "dead-creek-luta-2026-06-19"
+    base = int(time.time()) - (7 * 3600)
+    comments = [
+        ("dead-creek-fight-c1", None, "Marta V.", "Dead Creek deu aula. Quem falava que era evento de fundo de quintal ficou caladinho quando viu a arquibancada cheia.", 11, base + 240),
+        ("dead-creek-fight-c2", None, "Tião da Borracharia", "Patrocinar isso foi dinheiro bem colocado. Passou gente na loja perguntando peça até depois da luta.", 7, base + 1620),
+        ("dead-creek-fight-c3", "dead-creek-fight-c2", "Nando", "Aí sim, comércio local girando. Isso que a prefeitura tem que apoiar mais.", 4, base + 2340),
+        ("dead-creek-fight-c4", None, "Clara Bell", "O Pirata entrou com cara de campeão mesmo. O tapa-olho virou marca registrada, não tem jeito.", 9, base + 4020),
+        ("dead-creek-fight-c5", None, "Ronaldo James", "Fiore perdeu, mas perdeu de pé. O cara passou pelo Demônio antes, tem que respeitar.", 6, base + 6900),
+        ("dead-creek-fight-c6", "dead-creek-fight-c5", "Breno", "Concordo. Final de dois caras de Dead Creek já era vitória da cidade.", 5, base + 7620),
+        ("dead-creek-fight-c7", None, "Jana da Taverna", "A Taverna nunca vendeu tanta bebida numa noite só. Garcia criou foi um feriado novo.", 12, base + 10440),
+        ("dead-creek-fight-c8", None, "Wayne Vance", "Ano que vem tem que botar mais arquibancada. Tinha gente vendo em pé do alambrado.", 8, base + 13740),
+        ("dead-creek-fight-c9", "dead-creek-fight-c8", "Julie Evans", "E mais segurança na entrada também. Evento grande merece estrutura grande.", 5, base + 14520),
+        ("dead-creek-fight-c10", None, "Beau Hollister", "Anotado: mais arquibancada, mais luz e mais barulho. Dead Creek descobriu que gosta de lotar evento.", 10, base + 18540),
     ]
     conn = get_db(); cur = conn.cursor()
     for c in comments:
