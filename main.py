@@ -639,10 +639,6 @@ MONTGOMERY_COMMERCE_BODY = """
 <p><strong>Por Klaus Vogel — direto de Montgomery</strong></p>
 <p>Cheguei em Montgomery esperando a mesma poeira de sempre. Saí de lá com a impressão de que a cidade resolveu, enfim, parar de ser só atalho entre uma rodovia e outra.</p>
 <p>O motivo está bem no centro: o <strong style="color:#cc0000">primeiro polo comercial da cidade</strong> abriu as portas ao público, e eu acompanhei tudo de perto. Antes mesmo do horário marcado já dava pra sentir o clima diferente: canteiros de flores vermelhas recém-plantados enquadravam a praça, o piso ainda cheirava a obra nova, e moradores chegavam aos poucos, meio desconfiados, meio curiosos, do jeito que é em cidade pequena quando algo grande acontece.</p>
-<figure style="margin:22px 0">
-  <video controls preload="metadata" poster="assets/video-post/montgomery-commerce-cover.jpg?v=20260621" src="assets/video-post/san-news-report.mp4" style="width:100%;border-radius:8px;background:#000;border:1px solid rgba(255,255,255,.12)"></video>
-  <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#888;margin-top:8px">VÍDEO: Red News acompanha a movimentação na abertura do novo polo comercial de Montgomery.</figcaption>
-</figure>
 <p>Postado ali no meio do movimento, anotei o que via: gente entrando e saindo só pra conferir, comerciante explicando preço na porta, vizinho cumprimentando vizinho. Ninguém queria ser o último a conhecer o lugar.</p>
 <blockquote>"A gente sempre teve que pegar estrada pra resolver as coisas. Ver isso aqui agora, na nossa cidade, é outra história", me disse um morador, parado bem em frente à entrada, sem tirar os olhos da fachada.</blockquote>
 <p>Não vou fingir neutralidade sobre uma coisa: o contraste é gritante. Montgomery nunca foi terra de vitrine, e ver um polo comercial de pé, com público circulando, é o tipo de cena que muda como a região se enxerga. Se isso significa progresso de verdade ou só fôlego curto de inauguração, é cedo pra cravar — e é exatamente por isso que vou voltar.</p>
