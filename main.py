@@ -124,6 +124,7 @@ def init_db():
     seed_montgore_comments()
     seed_dead_creek_fight_article()
     seed_dead_creek_fight_comments()
+    seed_montgomery_commerce_video_article()
 
 DEFAULT_NEWS = [
     ("d1","featured","🚔","Segurança Pública",
@@ -630,6 +631,43 @@ def seed_dead_creek_fight_comments():
             "INSERT INTO comments (id,article_id,parent_id,author,body,likes,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO NOTHING",
             (c[0], article_id, c[1], c[2], c[3], c[4], c[5])
         )
+    conn.commit(); cur.close(); conn.close()
+
+MONTGOMERY_COMMERCE_BODY = """
+<p><strong style="color:#cc0000">RED NEWS — REPORTAGEM DE CAMPO</strong></p>
+<h2>De cidade de passagem a ponto de encontro: estive na abertura do primeiro polo comercial de Montgomery</h2>
+<p><strong>Por Klaus Vogel — direto de Montgomery</strong></p>
+<p>Cheguei em Montgomery esperando a mesma poeira de sempre. Saí de lá com a impressão de que a cidade resolveu, enfim, parar de ser só atalho entre uma rodovia e outra.</p>
+<p>O motivo está bem no centro: o <strong style="color:#cc0000">primeiro polo comercial da cidade</strong> abriu as portas ao público, e eu acompanhei tudo de perto. Antes mesmo do horário marcado já dava pra sentir o clima diferente: canteiros de flores vermelhas recém-plantados enquadravam a praça, o piso ainda cheirava a obra nova, e moradores chegavam aos poucos, meio desconfiados, meio curiosos, do jeito que é em cidade pequena quando algo grande acontece.</p>
+<figure style="margin:22px 0">
+  <video controls preload="metadata" poster="assets/video-post/montgomery-commerce-cover.jpg?v=20260621" src="assets/video-post/san-news-report.mp4" style="width:100%;border-radius:8px;background:#000;border:1px solid rgba(255,255,255,.12)"></video>
+  <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#888;margin-top:8px">VÍDEO: Red News acompanha a movimentação na abertura do novo polo comercial de Montgomery.</figcaption>
+</figure>
+<p>Postado ali no meio do movimento, anotei o que via: gente entrando e saindo só pra conferir, comerciante explicando preço na porta, vizinho cumprimentando vizinho. Ninguém queria ser o último a conhecer o lugar.</p>
+<blockquote>"A gente sempre teve que pegar estrada pra resolver as coisas. Ver isso aqui agora, na nossa cidade, é outra história", me disse um morador, parado bem em frente à entrada, sem tirar os olhos da fachada.</blockquote>
+<p>Não vou fingir neutralidade sobre uma coisa: o contraste é gritante. Montgomery nunca foi terra de vitrine, e ver um polo comercial de pé, com público circulando, é o tipo de cena que muda como a região se enxerga. Se isso significa progresso de verdade ou só fôlego curto de inauguração, é cedo pra cravar — e é exatamente por isso que vou voltar.</p>
+<div class="resumo">
+  <div class="resumo-ttl">O que muda em Montgomery</div>
+  <div class="resumo-item"><span class="rdot"></span><span>A cidade ganha seu <strong>primeiro polo comercial</strong> aberto ao público.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>Moradores passam a ter serviços e lojas sem depender tanto da estrada.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>A abertura colocou Montgomery em clima de ponto de encontro, não só rota de passagem.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>A Red News vai acompanhar se o movimento vira rotina ou fica só na inauguração.</span></div>
+</div>
+<p>Por enquanto, registro o que testemunhei: <strong style="color:#cc0000">uma cidade pequena com cara de quem descobriu que cabe mais gente do que imaginava</strong>.</p>
+<p>Aqui é Klaus Vogel, pra Red News, direto de Montgomery. Esteve por lá? Desce nos comentários e conta o que achou.</p>
+<p style="text-align:right"><strong style="color:#cc0000">Klaus Vogel</strong><br><span style="color:#777;font-style:italic">Red News • Reportagem de Campo • Montgomery</span></p>
+"""
+
+def seed_montgomery_commerce_video_article():
+    conn = get_db(); cur = conn.cursor()
+    db_execute(cur,
+        'INSERT INTO news (id,type,icon,cat,title,"desc",body,image_url,time_str,label,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO UPDATE SET type=EXCLUDED.type,icon=EXCLUDED.icon,cat=EXCLUDED.cat,title=EXCLUDED.title,"desc"=EXCLUDED."desc",body=EXCLUDED.body,image_url=EXCLUDED.image_url,time_str=EXCLUDED.time_str,label=EXCLUDED.label,created_at=EXCLUDED.created_at',
+        ("montgomery-polo-comercial-2026-06-21", "featured", "RN", "Cidades",
+         "De cidade de passagem a destino: Montgomery ganha seu primeiro polo comercial",
+         "Klaus Vogel esteve na abertura do primeiro polo comercial da cidade e encontrou moradores curiosos, comércio novo e uma Montgomery tentando deixar de ser só atalho.",
+         MONTGOMERY_COMMERCE_BODY, "assets/video-post/montgomery-commerce-cover.jpg?v=20260621",
+         "Hoje, 21/06", "VÍDEO", int(time.time()) + 760)
+    )
     conn.commit(); cur.close(); conn.close()
 
 init_db()
