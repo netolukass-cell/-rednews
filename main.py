@@ -125,6 +125,7 @@ def init_db():
     seed_dead_creek_fight_article()
     seed_dead_creek_fight_comments()
     seed_montgomery_commerce_video_article()
+    seed_montgomery_sheriff_protest_article()
 
 DEFAULT_NEWS = [
     ("d1","featured","🚔","Segurança Pública",
@@ -663,6 +664,60 @@ def seed_montgomery_commerce_video_article():
          "Klaus Vogel esteve na abertura do primeiro polo comercial da cidade e encontrou moradores curiosos, comércio novo e uma Montgomery tentando deixar de ser só atalho.",
          MONTGOMERY_COMMERCE_BODY, "assets/video-post/montgomery-commerce-cover.jpg?v=20260621",
          "Hoje, 21/06", "VÍDEO", int(time.time()) + 760)
+    )
+    conn.commit(); cur.close(); conn.close()
+
+MONTGOMERY_PROTEST_BODY = """
+<p><strong style="color:#cc0000">RED NEWS — COBERTURA DE CAMPO</strong></p>
+<h2>Protesto em frente ao Departamento de Xerifes termina com homem detido em Montgomery</h2>
+<p><strong>Por Beau Hollister — Red News</strong></p>
+<p><strong style="color:#cc0000">MONTGOMERY, RED COUNTY</strong> — Uma manifestação contra o Departamento de Xerifes terminou em confronto e na detenção de um homem na noite desta segunda-feira, 22/06, em frente à sede do órgão. Agentes recorreram a munição de menor potencial ofensivo — balas de borracha e taser — para conter o manifestante.</p>
+<figure style="margin:22px 0">
+  <img src="assets/sheriff-protest/montgomery-protest-04-impact.jpg?v=20260622" alt="Troy Boone é atingido durante confronto em frente ao Departamento de Xerifes" style="width:100%;border-radius:8px">
+  <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#888;margin-top:8px">O momento em que a linha policial avança sobre Troy Boone, pouco antes da imobilização.</figcaption>
+</figure>
+<p>Segundo registros da própria reportagem e de pessoas que filmavam no local, a tensão escalou quando um dos manifestantes, identificado como <strong style="color:#cc0000">Troy Boone</strong>, avançou em direção à linha policial. A partir daí, as versões divergem.</p>
+<p>Do lado da corporação, os agentes presentes — entre eles <strong>Edward McClanahan</strong>, <strong>Jose Escuella</strong>, <strong>Eyshila Grayson</strong> e <strong>Samuel Brooks</strong> — afirmaram que Boone se recusou a recuar, resistiu fisicamente à abordagem e só foi imobilizado após sucessivos disparos de balas de borracha e, por fim, um disparo de taser.</p>
+<blockquote>"Algema esse homem", determinou McClanahan durante a ação.</blockquote>
+<p>Boone foi algemado e levado para dentro do cordão policial.</p>
+<figure style="margin:22px 0">
+  <img src="assets/sheriff-protest/montgomery-protest-05-down.jpg?v=20260622" alt="Troy Boone no chão após disparo de arma menos letal" style="width:100%;border-radius:8px">
+  <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#888;margin-top:8px">Registro indica Boone atingido por munição de menor potencial ofensivo durante a ocorrência.</figcaption>
+</figure>
+<p>Do lado dos manifestantes, a leitura foi outra. Boone gritou pedindo apoio popular e acusou os agentes de agressão; outros presentes chamaram a operação de <strong style="color:#cc0000">"corrupta"</strong> e exigiram sua soltura. A queixa central é de que o uso da força teria sido desproporcional à conduta do manifestante.</p>
+<p>O que é incontroverso, com base no que foi observado no local: houve disparos de armas de menor letalidade contra Boone, ele resistiu à detenção e acabou contido pelos agentes. O homem permanecia sob custódia ao fim da ocorrência.</p>
+<div class="resumo">
+  <div class="resumo-ttl">O que se sabe até agora</div>
+  <div class="resumo-item"><span class="rdot"></span><span>O protesto aconteceu em frente ao Departamento de Xerifes, em Montgomery.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>Troy Boone avançou em direção à linha policial, segundo agentes no local.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>Foram usados disparos de munição menos letal e um taser para conter o manifestante.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>Manifestantes acusam a ação de excesso de força; a corporação fala em resistência à abordagem.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>A Red News aguarda posicionamento oficial sobre protocolo e estado de saúde do detido.</span></div>
+</div>
+<figure style="margin:22px 0">
+  <img src="assets/sheriff-protest/montgomery-protest-06-detained.jpg?v=20260622" alt="Troy Boone cercado por agentes após detenção" style="width:100%;border-radius:8px">
+  <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#888;margin-top:8px">Após a contenção, Boone foi levado para dentro do cordão policial.</figcaption>
+</figure>
+<p>A <strong style="color:#cc0000">Red News</strong> procurou o Departamento de Xerifes para um posicionamento oficial sobre o protocolo de uso da força empregado e sobre o estado de saúde do detido. Até o fechamento desta matéria, não havia resposta.</p>
+<h2><strong style="color:#cc0000">ÁLBUM DA OCORRÊNCIA</strong></h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:20px 0 8px">
+  <img src="assets/sheriff-protest/montgomery-protest-01-lineup.jpg?v=20260622" alt="Agentes perfilados no Departamento de Xerifes" style="width:100%;height:160px;object-fit:cover;border-radius:8px">
+  <img src="assets/sheriff-protest/montgomery-protest-02-approach.jpg?v=20260622" alt="Linha policial e Troy Boone antes do confronto" style="width:100%;height:160px;object-fit:cover;border-radius:8px">
+  <img src="assets/sheriff-protest/montgomery-protest-03-confrontation.jpg?v=20260622" alt="Agentes se aproximam de Troy Boone" style="width:100%;height:160px;object-fit:cover;border-radius:8px">
+  <img src="assets/sheriff-protest/montgomery-protest-07-taser.jpg?v=20260622" alt="Agente próximo de Troy Boone no chão" style="width:100%;height:160px;object-fit:cover;border-radius:8px">
+</div>
+<p style="text-align:right"><strong style="color:#cc0000">Beau Hollister</strong><br><span style="color:#777;font-style:italic">Red News • Montgomery • Red County</span></p>
+"""
+
+def seed_montgomery_sheriff_protest_article():
+    conn = get_db(); cur = conn.cursor()
+    db_execute(cur,
+        'INSERT INTO news (id,type,icon,cat,title,"desc",body,image_url,time_str,label,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO UPDATE SET type=EXCLUDED.type,icon=EXCLUDED.icon,cat=EXCLUDED.cat,title=EXCLUDED.title,"desc"=EXCLUDED."desc",body=EXCLUDED.body,image_url=EXCLUDED.image_url,time_str=EXCLUDED.time_str,label=EXCLUDED.label,created_at=EXCLUDED.created_at',
+        ("protesto-sheriffs-montgomery-2026-06-22", "featured", "RN", "Policial",
+         "Protesto em frente ao Departamento de Xerifes termina com homem detido em Montgomery",
+         "Manifestação contra o Departamento de Xerifes terminou em confronto, uso de munição menos letal, taser e detenção de Troy Boone.",
+         MONTGOMERY_PROTEST_BODY, "assets/sheriff-protest/montgomery-protest-04-impact.jpg?v=20260622",
+         "Hoje, 22/06", "URGENTE", int(time.time()) + 880)
     )
     conn.commit(); cur.close(); conn.close()
 
