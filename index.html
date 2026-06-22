@@ -107,6 +107,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .ml-item{display:flex;align-items:baseline;gap:12px;padding:9px 0;border-top:1px solid #1c1c20}
 .ml-item .num{font-family:'Oswald',sans-serif;font-weight:700;font-size:20px;color:#3a3a40;width:20px;flex-shrink:0}
 .ml-item .txt{font-family:'Source Serif 4',serif;font-size:13.5px;line-height:1.35;color:#cececa}
+.ml-item .txt small,.sw-ml .txt small{display:block;margin-top:3px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;color:#666;text-transform:uppercase}
 
 /* ── FLOATING AD BANNER ────────────────────────────────────────────── */
 @keyframes ad-slidein{from{transform:translateY(120%);opacity:0}to{transform:translateY(0);opacity:1}}
@@ -605,7 +606,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 <div id="toast"></div>
 
 <script>
-const RN_FRONTEND_BUILD='2026-06-21-video-hero-autoplay';
+const RN_FRONTEND_BUILD='2026-06-22-real-most-read';
 const TK='rednews_token';
 const ADMIN_PANEL_ENABLED=false;
 let currentPage='home',currentArticle=null,weatherData=null,streamData={url:'',is_live:false},newsData=[],audio=null,isPlaying=false;
@@ -627,6 +628,13 @@ function timeAgo(ts){const d=Math.floor(Date.now()/1000-ts);if(d<60)return'agora
 function initials(n){return n.trim().split(/\s+/).slice(0,2).map(w=>w[0].toUpperCase()).join('');}
 function avatarBg(n){const c=['linear-gradient(150deg,#cc0000,#7a0000)','linear-gradient(150deg,#4b5563,#262b33)','linear-gradient(150deg,#a16207,#5a3a06)','linear-gradient(150deg,#1e3a5f,#0a1a2e)','linear-gradient(150deg,#2e5c2e,#0f2a0f)'];let h=0;for(let x of n)h=(h*31+x.charCodeAt(0))&0xffff;return c[h%c.length];}
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function mostRead(list){
+  return [...(list||[])].sort((a,b)=>((b.views||0)-(a.views||0))||((b.created_at||0)-(a.created_at||0)));
+}
+function viewsLabel(n){
+  const v=Number(n?.views||0);
+  return v>0?`<small>${v} leitura${v===1?'':'s'}</small>`:'';
+}
 function sanitizeHtml(html){
   const doc=new DOMParser().parseFromString(`<div>${html||''}</div>`,'text/html');
   doc.querySelectorAll('script,iframe,object,embed,form,input,button,textarea,select,link,meta').forEach(el=>el.remove());
@@ -732,7 +740,7 @@ function buildSchedule(){
 }
 
 function buildMaisLidas(list){
-  const rows=list.slice(0,5).map((n,i)=>`<div class="sw-ml"><span class="num">${i+1}</span><span class="txt">${esc(n.title)}</span></div>`).join('');
+  const rows=mostRead(list).slice(0,5).map((n,i)=>`<div class="sw-ml"><span class="num">${i+1}</span><span class="txt">${esc(n.title)}${viewsLabel(n)}</span></div>`).join('');
   return `<div class="sw"><div class="sw-head">Mais lidas</div><div class="sw-body">${rows}</div></div>`;
 }
 
@@ -791,7 +799,7 @@ function renderHome(sponsors){
   </div>`:`<div class="lead-card lead-no-img" style="display:flex;align-items:center;justify-content:center;color:#4a1c1c">${I.img}</div>`;
 
   const secsHtml=secs.map(n=>`<div class="sec-item" onclick="openArticle('${n.id}')"><div class="sec-thumb">${n.image_url?`<img src="${esc(n.image_url)}" alt="${esc(n.title)}">`:I.ims}</div><div><div class="sec-cat">${esc(n.cat)}</div><div class="sec-ttl">${esc(n.title)}</div><div class="sec-time">${esc(n.time_str)}</div></div></div>`).join('');
-  const mlHtml=newsData.slice(0,5).map((n,i)=>`<div class="ml-item"><span class="num">${i+1}</span><span class="txt">${esc(n.title)}</span></div>`).join('');
+  const mlHtml=mostRead(newsData).slice(0,5).map((n,i)=>`<div class="ml-item"><span class="num">${i+1}</span><span class="txt">${esc(n.title)}${viewsLabel(n)}</span></div>`).join('');
   const ulHtml=ultimas.map(n=>`<div class="ncard" onclick="openArticle('${n.id}')"><div class="nthumb">${n.image_url?`<img src="${esc(n.image_url)}" alt="${esc(n.title)}">`:I.img}<span class="ntag">${esc(n.cat)}</span></div><div class="nbody"><h3>${esc(n.title)}</h3>${n.desc?`<p>${esc(n.desc)}</p>`:''}<div class="nmeta">${esc(n.time_str)}</div></div></div>`).join('');
 
   $('page-home').innerHTML=`${buildUtil()}${buildMasthead()}${buildInfoBar()}${buildNav('home')}${buildTicker()}
@@ -868,6 +876,7 @@ async function renderArticle(id){
   ${heroImg}${artBody}
   ${buildComments(id,comments)}${buildFooter()}`;
   setTimeout(()=>refreshComments(id),500);
+  recordArticleView(id);
 }
 
 function renderSinuca(sponsors){
@@ -965,6 +974,22 @@ async function postComment(aid,parentId=null){
 
 async function likeComment(aid,cid,btn){
   try{await api('POST',`/api/comments/${aid}/${cid}/like`);const m=btn.textContent.match(/\d+/);btn.innerHTML=I.hrt+(m?parseInt(m[0])+1:1);}catch(e){}
+}
+
+async function recordArticleView(id){
+  if(!id||id==='s1')return;
+  const key=`rn_view_${id}`;
+  const now=Date.now();
+  try{
+    const last=Number(localStorage.getItem(key)||0);
+    if(now-last<30*60*1000)return;
+    localStorage.setItem(key,String(now));
+  }catch(e){}
+  try{
+    await api('POST',`/api/news/${id}/view`);
+    const item=newsData.find(n=>n.id===id);
+    if(item)item.views=(Number(item.views||0)+1);
+  }catch(e){}
 }
 
 // ── ROUTING ──────────────────────────────────────────────────────────────────

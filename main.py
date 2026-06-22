@@ -101,6 +101,13 @@ def init_db():
     """)
     ensure_comment_parent_id(cur)
     db_execute(cur, """
+        CREATE TABLE IF NOT EXISTS article_views (
+            article_id TEXT PRIMARY KEY,
+            views      INTEGER DEFAULT 0,
+            updated_at BIGINT
+        )
+    """)
+    db_execute(cur, """
         CREATE TABLE IF NOT EXISTS sponsors (
             slot      TEXT PRIMARY KEY,
             name      TEXT,
@@ -671,7 +678,7 @@ MONTGOMERY_PROTEST_BODY = """
 <p><strong style="color:#cc0000">RED NEWS — COBERTURA DE CAMPO</strong></p>
 <h2>Protesto em frente ao Departamento de Xerifes termina com homem detido em Montgomery</h2>
 <p><strong>Por Beau Hollister — Red News</strong></p>
-<p><strong style="color:#cc0000">MONTGOMERY, RED COUNTY</strong> — Uma manifestação contra o Departamento de Xerifes terminou em confronto e na detenção de um homem na noite desta segunda-feira, 22/06, em frente à sede do órgão. Agentes recorreram a munição de menor potencial ofensivo — balas de borracha e taser — para conter o manifestante.</p>
+<p><strong style="color:#cc0000">MONTGOMERY, RED COUNTY</strong> — Uma manifestação contra o Departamento de Xerifes terminou em confronto e na detenção de um homem na noite de domingo, 21/06, em frente à sede do órgão. Agentes recorreram a munição de menor potencial ofensivo — balas de borracha e taser — para conter o manifestante.</p>
 <figure style="margin:22px 0">
   <img src="assets/sheriff-protest/montgomery-protest-04-impact.jpg?v=20260622" alt="Troy Boone é atingido durante confronto em frente ao Departamento de Xerifes" style="width:100%;border-radius:8px">
   <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#888;margin-top:8px">O momento em que a linha policial avança sobre Troy Boone, pouco antes da imobilização.</figcaption>
@@ -717,7 +724,7 @@ def seed_montgomery_sheriff_protest_article():
          "Protesto em frente ao Departamento de Xerifes termina com homem detido em Montgomery",
          "Manifestação contra o Departamento de Xerifes terminou em confronto, uso de munição menos letal, taser e detenção de Troy Boone.",
          MONTGOMERY_PROTEST_BODY, "assets/sheriff-protest/montgomery-protest-04-impact.jpg?v=20260622",
-         "Hoje, 22/06", "URGENTE", int(time.time()) + 880)
+         "Ontem, 21/06", "URGENTE", int(time.time()) + 880)
     )
     conn.commit(); cur.close(); conn.close()
 
@@ -916,10 +923,32 @@ def factory_reset(token: str = Depends(verify_token)):
 @app.get("/api/news")
 def get_news():
     conn = get_db(); cur = conn.cursor()
-    db_execute(cur, 'SELECT id,type,icon,cat,title,"desc",body,image_url,time_str,label,created_at FROM news ORDER BY created_at DESC')
+    db_execute(cur, '''
+        SELECT n.id,n.type,n.icon,n.cat,n.title,n."desc",n.body,n.image_url,n.time_str,n.label,n.created_at,
+               COALESCE(v.views, 0) AS views
+        FROM news n
+        LEFT JOIN article_views v ON v.article_id = n.id
+        ORDER BY n.created_at DESC
+    ''')
     rows = cur.fetchall()
     cur.close(); conn.close()
     return [dict(r) for r in rows]
+
+@app.post("/api/news/{news_id}/view")
+def record_news_view(news_id: str):
+    if should_proxy_comments():
+        return proxy_comment_request("POST", f"/api/news/{news_id}/view")
+    conn = get_db(); cur = conn.cursor()
+    db_execute(cur, "SELECT 1 FROM news WHERE id=%s", (news_id,))
+    if not cur.fetchone():
+        cur.close(); conn.close()
+        raise HTTPException(404, "Notícia não encontrada")
+    db_execute(cur,
+        "INSERT INTO article_views (article_id,views,updated_at) VALUES (%s,1,%s) ON CONFLICT (article_id) DO UPDATE SET views=article_views.views+1,updated_at=EXCLUDED.updated_at",
+        (news_id, int(time.time()))
+    )
+    conn.commit(); cur.close(); conn.close()
+    return {"ok": True}
 
 @app.post("/api/news")
 def add_news(item: NewsItem, token: str = Depends(verify_token)):
