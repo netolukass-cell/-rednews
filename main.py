@@ -133,6 +133,7 @@ def init_db():
     seed_dead_creek_fight_comments()
     seed_montgomery_commerce_video_article()
     seed_montgomery_sheriff_protest_article()
+    seed_juylie_evans_kidnap_article()
 
 DEFAULT_NEWS = [
     ("d1","featured","🚔","Segurança Pública",
@@ -725,6 +726,44 @@ def seed_montgomery_sheriff_protest_article():
          "Manifestação contra o Departamento de Xerifes terminou em confronto, uso de munição menos letal, taser e detenção de Troy Boone.",
          MONTGOMERY_PROTEST_BODY, "assets/sheriff-protest/montgomery-protest-04-impact.jpg?v=20260622",
          "Ontem, 21/06", "URGENTE", int(time.time()) + 880)
+    )
+    conn.commit(); cur.close(); conn.close()
+
+JUYLIE_EVANS_KIDNAP_BODY = """
+<p><strong style="color:#cc0000">RED NEWS — MONTGOMERY</strong></p>
+<h2>Paramédica é sequestrada em Montgomery e criminosos divulgam vídeo com pedido de resgate</h2>
+<p><strong>Por Redação Red News • Montgomery, Red County • Ontem</strong></p>
+<p>Um grupo de homens armados e de rosto coberto manteve em cativeiro a paramédica <strong style="color:#cc0000">Juylie Evans</strong> em Montgomery, na noite de ontem, e divulgou nas redes sociais um vídeo em que exige pagamento para libertá-la. As imagens, que se espalharam rápido pela cidade, mostram a profissional sentada e cercada por pelo menos dois sequestradores, um deles empunhando uma arma.</p>
+<figure style="margin:22px 0">
+  <img src="assets/juylie-kidnap/juylie-evans-cativeiro.jpg?v=20260623" alt="Juylie Evans sentada sob a mira de homens mascarados" style="width:100%;border-radius:8px">
+  <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#888;margin-top:8px">Imagem do vídeo que circulou em Montgomery mostra Juylie Evans cercada por homens mascarados.</figcaption>
+</figure>
+<p>Na gravação, um dos criminosos, identificado apenas pela máscara, fala diretamente à câmera. Com a voz abafada pelo pano que cobre o rosto, afirma que mantêm <strong style="color:#cc0000">"a paramédica mais querida de Montgomery"</strong> sob seu poder e que exigem, com urgência, um valor para a soltura. O tom da mensagem é de ameaça aberta.</p>
+<p>Juylie Evans não é figura pública de gabinete. É socorrista de campo, das que atendem ocorrência em qualquer zona da cidade, a qualquer hora. Para boa parte de Montgomery, é um rosto conhecido das piores madrugadas, o tipo de profissional que chega primeiro quando alguém está caído no asfalto. A escolha do alvo, segundo se comenta na cidade, não parece aleatória.</p>
+<blockquote>Atacar quem presta socorro é atacar a estrutura que segura a cidade de pé nas horas de emergência.</blockquote>
+<p>O caso liga um alerta que vai além de uma vítima. Cada profissional que passa a hesitar antes de atender uma chamada em área de risco é uma resposta a menos para o resto da população. O recado embutido no crime, ainda que não dito, é difícil de ignorar: <strong style="color:#cc0000">em Montgomery, nem quem salva está a salvo</strong>.</p>
+<div class="resumo">
+  <div class="resumo-ttl">O que se sabe até agora</div>
+  <div class="resumo-item"><span class="rdot"></span><span>Juylie Evans aparece sentada e cercada por homens mascarados em vídeo divulgado nas redes.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>O grupo exige pagamento para libertar a paramédica, mas a quantia não foi confirmada oficialmente.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>A localização do cativeiro e o número exato de envolvidos seguem sem confirmação.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>A Red News apura as vozes, o local e a circulação original da gravação.</span></div>
+</div>
+<p>Até o fechamento desta matéria, não havia informação confirmada sobre a localização do cativeiro nem sobre o paradeiro de Juylie. As circunstâncias da captura, o número exato de envolvidos e a quantia exigida seguem sem confirmação oficial. A <strong style="color:#cc0000">Red News</strong> apura.</p>
+<p>A cidade observa, comenta e compartilha o vídeo, mas o silêncio que costuma cobrir esse tipo de caso já começou a se formar. É justamente esse silêncio que costuma proteger quem usa máscara.</p>
+<p>A Red News acompanha o caso e seguirá publicando o que apurar. Quem tiver qualquer informação sobre o vídeo, as vozes, o local ou os envolvidos pode procurar a redação. A máscara esconde o rosto, não o nome. E nome, mais cedo ou mais tarde, esta casa publica.</p>
+<p style="text-align:right"><strong style="color:#cc0000">Red News</strong><br><span style="color:#777;font-style:italic">Rádio • Jornal • Red County</span></p>
+"""
+
+def seed_juylie_evans_kidnap_article():
+    conn = get_db(); cur = conn.cursor()
+    db_execute(cur,
+        'INSERT INTO news (id,type,icon,cat,title,"desc",body,image_url,time_str,label,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO UPDATE SET type=EXCLUDED.type,icon=EXCLUDED.icon,cat=EXCLUDED.cat,title=EXCLUDED.title,"desc"=EXCLUDED."desc",body=EXCLUDED.body,image_url=EXCLUDED.image_url,time_str=EXCLUDED.time_str,label=EXCLUDED.label,created_at=EXCLUDED.created_at',
+        ("juylie-evans-sequestro-2026-06-22", "featured", "RN", "Policial",
+         "Paramédica é sequestrada em Montgomery e criminosos divulgam vídeo com pedido de resgate",
+         "Juylie Evans, socorrista conhecida na cidade, aparece sob a mira de homens mascarados em gravação que circula nas redes.",
+         JUYLIE_EVANS_KIDNAP_BODY, "assets/juylie-kidnap/juylie-evans-cativeiro.jpg?v=20260623",
+         "Ontem, 22/06", "URGENTE", int(time.time()) + 920)
     )
     conn.commit(); cur.close(); conn.close()
 
