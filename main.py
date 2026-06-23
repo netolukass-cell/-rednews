@@ -735,7 +735,7 @@ JUYLIE_EVANS_KIDNAP_BODY = """
 <p><strong>Por Redação Red News • Montgomery, Red County • Ontem</strong></p>
 <p>Um grupo de homens armados e de rosto coberto manteve em cativeiro a paramédica <strong style="color:#cc0000">Juylie Evans</strong> em Montgomery, na noite de ontem, e divulgou nas redes sociais um vídeo em que exige pagamento para libertá-la. As imagens, que se espalharam rápido pela cidade, mostram a profissional sentada e cercada por pelo menos dois sequestradores, um deles empunhando uma arma.</p>
 <figure style="margin:22px 0">
-  <img src="assets/juylie-kidnap/juylie-evans-cativeiro.jpg?v=20260623" alt="Juylie Evans sentada sob a mira de homens mascarados" style="width:100%;border-radius:8px">
+  <img src="assets/juylie-kidnap/juylie-evans-cativeiro.jpg?v=20260623b" alt="Juylie Evans sentada sob a mira de homens mascarados" style="width:100%;border-radius:8px">
   <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#888;margin-top:8px">Imagem do vídeo que circulou em Montgomery mostra Juylie Evans cercada por homens mascarados.</figcaption>
 </figure>
 <p>Na gravação, um dos criminosos, identificado apenas pela máscara, fala diretamente à câmera. Com a voz abafada pelo pano que cobre o rosto, afirma que mantêm <strong style="color:#cc0000">"a paramédica mais querida de Montgomery"</strong> sob seu poder e que exigem, com urgência, um valor para a soltura. O tom da mensagem é de ameaça aberta.</p>
@@ -762,7 +762,7 @@ def seed_juylie_evans_kidnap_article():
         ("juylie-evans-sequestro-2026-06-22", "featured", "RN", "Policial",
          "Paramédica é sequestrada em Montgomery e criminosos divulgam vídeo com pedido de resgate",
          "Juylie Evans, socorrista conhecida na cidade, aparece sob a mira de homens mascarados em gravação que circula nas redes.",
-         JUYLIE_EVANS_KIDNAP_BODY, "assets/juylie-kidnap/juylie-evans-cativeiro.jpg?v=20260623",
+         JUYLIE_EVANS_KIDNAP_BODY, "assets/juylie-kidnap/juylie-evans-cativeiro.jpg?v=20260623b",
          "Ontem, 22/06", "URGENTE", int(time.time()) + 920)
     )
     conn.commit(); cur.close(); conn.close()
