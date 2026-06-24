@@ -135,6 +135,7 @@ def init_db():
     seed_montgomery_sheriff_protest_article()
     seed_juylie_evans_kidnap_article()
     seed_tony_taser_dead_creek_article()
+    seed_tony_taser_comments()
 
 DEFAULT_NEWS = [
     ("d1","featured","🚔","Segurança Pública",
@@ -828,6 +829,40 @@ def seed_tony_taser_dead_creek_article():
          TONY_TASER_BODY, "assets/tony-taser/tony-taser-01-taser-rua.jpg?v=20260624",
          "Hoje, 24/06", "EXCLUSIVO", int(time.time()) + 980)
     )
+    conn.commit(); cur.close(); conn.close()
+
+def seed_tony_taser_comments():
+    article_id = "tony-taser-dead-creek-2026-06-24"
+    base = int(time.time()) - (2 * 3600)
+    comments = [
+        ("tony-taser-c1", None, "SandyCreek_Pete", "Finalmente alguém falando o que todo mundo pensa. Operação gigante pra pegar homem sem habilitação. MINHA TAXA PAGANDO ISSO", 14, base + 120),
+        ("tony-taser-c2", None, "deputy_fan_rc", "Vocês não sabem metade do que aconteceu. Se levou taser é porque não colaborou, simples assim", 3, base + 360),
+        ("tony-taser-c3", "tony-taser-c2", "SandyCreek_Pete", "@deputy_fan_rc colaborou com o quê mano, ele tava parado na fazenda dele", 9, base + 540),
+        ("tony-taser-c4", "tony-taser-c3", "deputy_fan_rc", "@SandyCreek_Pete você tava lá? não. eu também não. então cala a boca", 2, base + 720),
+        ("tony-taser-c5", None, "MaryJo_Holloway", "o velho Benson falando em cassetete como se isso fosse melhor kkkkkkk Red County tá perdida", 7, base + 930),
+        ("tony-taser-c6", "tony-taser-c5", "RanchLife_RC", "@MaryJo_Holloway pelo menos o Benson tem coragem de falar. onde você tava quando invadiram as propriedades da região? calada como sempre", 11, base + 1110),
+        ("tony-taser-c7", "tony-taser-c6", "MaryJo_Holloway", "@RanchLife_RC eu não defendo invasão não, defendo que o sheriff faça o trabalho CERTO. diferença enorme", 8, base + 1290),
+        ("tony-taser-c8", None, "anonimo_dc_99", "tony é são. já tomou taser, já foi preso, ainda tá de pé. respeito", 13, base + 1560),
+        ("tony-taser-c9", "tony-taser-c8", "deputy_fan_rc", "@anonimo_dc_99 isso aí que vocês chamam de respeito é o problema de Dead Creek", 3, base + 1710),
+        ("tony-taser-c10", "tony-taser-c9", "anonimo_dc_99", "@deputy_fan_rc vai tomar taser você também e me conta se chama de procedimento padrão", 12, base + 1860),
+        ("tony-taser-c11", None, "OldTimer_Benson_FC", "Benson falou tudo. Veterano de guerra. Esse homem já viu mais em um dia do que esses xerifes vão ver na vida toda", 16, base + 2220),
+        ("tony-taser-c12", "tony-taser-c11", "deputy_fan_rc", "@OldTimer_Benson_FC veterano ou não, ameaçar o departamento em entrevista ao vivo é loucura. gravaram tudo", 4, base + 2400),
+        ("tony-taser-c13", "tony-taser-c12", "OldTimer_Benson_FC", "@deputy_fan_rc ele não ameaçou nada, disse que tem capacidade. você lê o que quer", 10, base + 2580),
+        ("tony-taser-c14", None, "RedCounty_Watch", "Alguém reparou que o Departamento não se pronunciou? Matéria saiu, entrevista foi ao vivo, e silêncio total. Isso diz tudo", 18, base + 2940),
+        ("tony-taser-c15", "tony-taser-c14", "deputy_fan_rc", "@RedCounty_Watch eles não precisam dar satisfação pra blog de fofoca", 1, base + 3120),
+        ("tony-taser-c16", "tony-taser-c15", "Klaus Vogel", "@deputy_fan_rc Red News. Não blog. E o convite pra entrevista continua aberto caso o Departamento queira se pronunciar.", 22, base + 3300),
+        ("tony-taser-c17", "tony-taser-c16", "SandyCreek_Pete", "@Klaus Vogel KKKKKKKKK", 15, base + 3420),
+        ("tony-taser-c18", "tony-taser-c16", "anonimo_dc_99", "@Klaus Vogel jornalismo de verdade", 14, base + 3540),
+        ("tony-taser-c19", "tony-taser-c7", "MaryJo_Holloway", "tá bom gente vou parar de discutir com desconhecido na internet às 11 da noite. mas tô certa e vocês sabem disso", 6, base + 3900),
+        ("tony-taser-c20", "tony-taser-c19", "RanchLife_RC", "@MaryJo_Holloway clássico. sai quando perde", 7, base + 4080),
+        ("tony-taser-c21", "tony-taser-c20", "MaryJo_Holloway", "@RanchLife_RC boa noite :)", 5, base + 4260),
+    ]
+    conn = get_db(); cur = conn.cursor()
+    for c in comments:
+        db_execute(cur,
+            "INSERT INTO comments (id,article_id,parent_id,author,body,likes,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO NOTHING",
+            (c[0], article_id, c[1], c[2], c[3], c[4], c[5])
+        )
     conn.commit(); cur.close(); conn.close()
 
 init_db()
