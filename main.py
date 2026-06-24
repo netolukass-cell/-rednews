@@ -134,6 +134,7 @@ def init_db():
     seed_montgomery_commerce_video_article()
     seed_montgomery_sheriff_protest_article()
     seed_juylie_evans_kidnap_article()
+    seed_tony_taser_dead_creek_article()
 
 DEFAULT_NEWS = [
     ("d1","featured","🚔","Segurança Pública",
@@ -764,6 +765,68 @@ def seed_juylie_evans_kidnap_article():
          "Juylie Evans, socorrista conhecida na cidade, aparece sob a mira de homens mascarados em gravação que circula nas redes.",
          JUYLIE_EVANS_KIDNAP_BODY, "assets/juylie-kidnap/juylie-evans-cativeiro.jpg?v=20260623b",
          "Ontem, 22/06", "URGENTE", int(time.time()) + 920)
+    )
+    conn.commit(); cur.close(); conn.close()
+
+TONY_TASER_BODY = """
+<p><strong style="color:#cc0000">RED NEWS | MONTGOMERY / DEAD CREEK</strong></p>
+<h2>Taser, calçada e conversa — do jeito que o xerife gosta</h2>
+<p><strong>Klaus Vogel | Red News</strong></p>
+<p>Mais um dia comum em Montgomery. Briga na rua, xerife aparece, dois homens levam choque.</p>
+<p>Um deles é <strong style="color:#cc0000">Tony</strong>. Rosto conhecido em Dead Creek, mas dessa vez o encontro com o Departamento aconteceu em Montgomery. O outro é o homem com quem ele discutiu — identidade não confirmada até o fechamento desta edição. O que gerou a briga, ninguém quis explicar direito. O que aconteceu depois, todo mundo viu.</p>
+<figure style="margin:22px 0">
+  <img src="assets/tony-taser/tony-taser-01-taser-rua.jpg?v=20260624" alt="Tony caído na rua durante abordagem em Montgomery" style="width:100%;border-radius:8px">
+  <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#888;margin-top:8px">Tony aparece caído na via após a ação do Departamento em Montgomery.</figcaption>
+</figure>
+<p>O Departamento chegou, avaliou a situação do jeito que costuma avaliar, e aplicou taser nos dois. Sem muita cerimônia. Depois disso, Tony foi levado para a calçada, onde os agentes tiveram uma <strong style="color:#cc0000">"conversa"</strong> com ele. Do lado de fora, na frente de quem passava. Ninguém soube dizer o que foi discutido. Ninguém perguntou.</p>
+<figure style="margin:22px 0">
+  <img src="assets/tony-taser/tony-taser-02-segundo-homem.jpg?v=20260624" alt="Segundo homem caído na calçada durante a ocorrência" style="width:100%;border-radius:8px">
+  <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#888;margin-top:8px">O segundo envolvido também aparece no chão após a confusão.</figcaption>
+</figure>
+<p>O que vale mencionar é que essa não foi a primeira vez que Tony cruzou com o Departamento hoje. Horas antes, ele foi detido em uma operação de grande porte montada na frente de uma fazenda da região. Viaturas, agentes, toda a estrutura. O tipo de abordagem que faz o pessoal da rua parar pra olhar pensando que capturaram alguém importante.</p>
+<blockquote>Prenderam Tony por estar sem carteira de habilitação. Só isso.</blockquote>
+<p>Ele foi liberado logo em seguida. Depois disso, acabou envolvido na confusão com o outro homem em Montgomery, levou taser pela segunda vez no mesmo dia e foi ter mais uma <strong style="color:#cc0000">"conversa"</strong> com os xerifes na calçada.</p>
+<figure style="margin:22px 0">
+  <img src="assets/tony-taser/tony-taser-03-conversa-calcada.jpg?v=20260624" alt="Agentes conversam com Tony na calçada" style="width:100%;border-radius:8px">
+  <figcaption style="font-family:'Share Tech Mono',monospace;font-size:11px;color:#888;margin-top:8px">Depois do taser, Tony foi levado para uma conversa na calçada, diante de quem passava.</figcaption>
+</figure>
+<p>Ao final da noite, a Red News foi até Dead Creek ouvir quem vive lá. Beau Hollister conversou com <strong>Elkins Benson</strong>, morador e veterano de guerra, na presença de <strong>Anthony Wisniewski</strong>, que acompanhou a entrevista do começo ao fim sem abrir muito a boca — mas aplaudiu bastante.</p>
+<p>Quando perguntado se o Departamento investigou o roubo nas propriedades antes de sair prendendo gente, Benson foi direto:</p>
+<blockquote>"Eles só estão rodando em círculos, atrás de um culpado, sem saber quem culpar. Enquanto isso, jovens abusados estão invadindo nossas terras, destruindo nossa propriedade e ninguém faz nada."</blockquote>
+<p>Sobre o uso do taser, o veterano não teve dúvida: excesso de força. E foi além.</p>
+<blockquote>"Nem no Vietnã precisávamos usar esse tipo de tecnologia. Preferia os cassetetes. Esse negócio de choque não dá certo — tem que ser na madeirada, eu já falei um milhão de vezes."</blockquote>
+<p>Wisniewski aplaudiu.</p>
+<p>Se Dead Creek está virando alvo fácil do Sheriff's Department, Benson respondeu com a tranquilidade de quem já viu coisa pior:</p>
+<blockquote>"Está virando alvo fácil até onde a gente quer. Se eles perturbarem o meu juízo, eu não tenho nada a perder. Sou veterano. Sou mais treinado e mais capacitado que eles."</blockquote>
+<p>Para fechar, a pergunta era simples: o que Red County precisa saber sobre a abordagem de hoje?</p>
+<blockquote>"Eles estão caçando as pessoas erradas. Somente."</blockquote>
+<div class="resumo">
+  <div class="resumo-ttl">Entenda o caso</div>
+  <div class="resumo-item"><span class="rdot"></span><span>Tony foi detido mais cedo em uma operação por estar sem carteira de habilitação.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>Horas depois, se envolveu em uma briga em Montgomery.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>Dois homens levaram taser durante a ocorrência.</span></div>
+  <div class="resumo-item"><span class="rdot"></span><span>Moradores de Dead Creek acusam o Departamento de mirar nas pessoas erradas.</span></div>
+</div>
+<h2><strong style="color:#cc0000">ÁLBUM DA NOITE</strong></h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:20px 0 8px">
+  <img src="assets/tony-taser/tony-taser-01-taser-rua.jpg?v=20260624" alt="Tony caído na rua" style="width:100%;height:160px;object-fit:cover;border-radius:8px">
+  <img src="assets/tony-taser/tony-taser-02-segundo-homem.jpg?v=20260624" alt="Segundo homem caído na calçada" style="width:100%;height:160px;object-fit:cover;border-radius:8px">
+  <img src="assets/tony-taser/tony-taser-03-conversa-calcada.jpg?v=20260624" alt="Conversa na calçada" style="width:100%;height:160px;object-fit:cover;border-radius:8px">
+  <img src="assets/tony-taser/tony-taser-04-saida-local.jpg?v=20260624" alt="Agentes deixando o local" style="width:100%;height:160px;object-fit:cover;border-radius:8px">
+</div>
+<p>Dead Creek falou. Agora falta o Sheriff's Department explicar.</p>
+<p style="text-align:right"><strong style="color:#cc0000">Klaus Vogel</strong><br><span style="color:#777;font-style:italic">Red News — Dead Creek</span></p>
+"""
+
+def seed_tony_taser_dead_creek_article():
+    conn = get_db(); cur = conn.cursor()
+    db_execute(cur,
+        'INSERT INTO news (id,type,icon,cat,title,"desc",body,image_url,time_str,label,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO UPDATE SET type=EXCLUDED.type,icon=EXCLUDED.icon,cat=EXCLUDED.cat,title=EXCLUDED.title,"desc"=EXCLUDED."desc",body=EXCLUDED.body,image_url=EXCLUDED.image_url,time_str=EXCLUDED.time_str,label=EXCLUDED.label,created_at=EXCLUDED.created_at',
+        ("tony-taser-dead-creek-2026-06-24", "featured", "RN", "Policial",
+         "Taser, calçada e conversa — do jeito que o xerife gosta",
+         "Tony cruzou duas vezes com o Departamento no mesmo dia: primeiro por falta de habilitação, depois no chão após uma briga em Montgomery.",
+         TONY_TASER_BODY, "assets/tony-taser/tony-taser-01-taser-rua.jpg?v=20260624",
+         "Hoje, 24/06", "EXCLUSIVO", int(time.time()) + 980)
     )
     conn.commit(); cur.close(); conn.close()
 
