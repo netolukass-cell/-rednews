@@ -136,6 +136,7 @@ def init_db():
     seed_juylie_evans_kidnap_article()
     seed_tony_taser_dead_creek_article()
     seed_tony_taser_comments()
+    seed_riley_vance_column()
 
 DEFAULT_NEWS = [
     ("d1","featured","🚔","Segurança Pública",
@@ -914,6 +915,36 @@ def seed_tony_taser_comments():
             "INSERT INTO comments (id,article_id,parent_id,author,body,likes,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO NOTHING",
             (c[0], article_id, c[1], c[2], c[3], c[4], c[5])
         )
+    conn.commit(); cur.close(); conn.close()
+
+RILEY_VANCE_COLUMN_BODY = """
+<p class="drop-cap">Montgomery perde gente o tempo todo. Às vezes de repente, às vezes devagar. A gente aprende a não perguntar muito sobre quem sumiu porque a resposta, quando vem, quase sempre é pior do que o silêncio.</p>
+<p><strong style="color:#cc0000">Dessa vez eu não consigo fazer isso.</strong></p>
+<p>Juylie Evans foi sequestrada. Homens mascarados, vídeo circulando pelas redes, pedido de resgate. A cidade viu, comentou, compartilhou e depois passou para a próxima história, como sempre faz. O que quase ninguém ficou sabendo é o que aconteceu depois de Juylie ser solta.</p>
+<blockquote>
+  <p>Riley Vance pagou o resgate. E desapareceu.</p>
+  <div class="bq-author">Beau Hollister</div>
+</blockquote>
+<p>Não sei como ela conseguiu o dinheiro. Não sei o que ela prometeu, nem para quem, nem o que ficou devendo depois. Sei que, quando o nome de Juylie entrou no vídeo, Riley não hesitou. Era a melhor amiga dela. Para Riley, isso era informação suficiente.</p>
+<p>Conheci poucas pessoas assim. Gente que age sem calcular o que vai sobrar para ela do outro lado. A maioria de nós pesa as coisas, mesmo quando não percebe que está pesando. Riley não pesava. Ela simplesmente via o que precisava ser feito e ia lá.</p>
+<p><strong style="color:#cc0000">Eu ficava observando isso.</strong></p>
+<p>Não vou dizer mais do que isso. Não é o lugar. Mas vou dizer o seguinte: tem coisas que a gente guarda esperando o momento certo, e o momento certo vai adiando porque Montgomery sempre arruma um motivo novo para você não parar. Uma cobertura, uma crise, mais uma história que não pode esperar. Você fica convencido de que o depois existe, de que a conversa vai acontecer, de que ainda tem tempo para dizer o que ficou sem dizer.</p>
+<p><strong style="color:#cc0000">Riley sumiu sem ouvir algumas coisas. Isso fica aqui.</strong></p>
+<p>Se alguém souber onde ela está, pode me procurar. Não precisa explicar nada. Só me diz que ela está bem.</p>
+<hr>
+<p style="color:#777;font-style:italic">Beau Hollister é colunista do Red News.</p>
+"""
+
+def seed_riley_vance_column():
+    conn = get_db(); cur = conn.cursor()
+    db_execute(cur,
+        'INSERT INTO news (id,type,icon,cat,title,"desc",body,image_url,time_str,label,created_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO UPDATE SET type=EXCLUDED.type,icon=EXCLUDED.icon,cat=EXCLUDED.cat,title=EXCLUDED.title,"desc"=EXCLUDED."desc",body=EXCLUDED.body,image_url=EXCLUDED.image_url,time_str=EXCLUDED.time_str,label=EXCLUDED.label,created_at=EXCLUDED.created_at',
+        ("ela-foi-embora-sem-saber-2026-06-26", "featured", "✒", "Crônica",
+         "Ela foi embora sem saber",
+         "Riley Vance pagou o resgate da melhor amiga e desapareceu. Montgomery segue em silêncio. Como de costume.",
+         RILEY_VANCE_COLUMN_BODY, "assets/riley-vance/ela-foi-embora-sem-saber.jpg?v=20260626a",
+         "Hoje, 26/06", "COLUNA · BEAU HOLLISTER", int(time.time()) + 310)
+    )
     conn.commit(); cur.close(); conn.close()
 
 init_db()

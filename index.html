@@ -863,6 +863,8 @@ async function renderArticle(id){
   if(id==='s1'){renderSinuca(sponsors);return;}
   const news=newsData.find(n=>n.id===id);
   if(!news){showPage('home');return;}
+  const articleAuthor=id==='ela-foi-embora-sem-saber-2026-06-26'?'Beau Hollister':'Redação Red News';
+  const articleInitials=id==='ela-foi-embora-sem-saber-2026-06-26'?'BH':'RN';
   let comments=null;
   const heroVideo=ARTICLE_HERO_VIDEOS[id];
   const heroImg=heroVideo
@@ -872,7 +874,7 @@ async function renderArticle(id){
     ?`<div class="art-body">${sanitizeHtml(news.body)}</div>`
     :`<div class="art-body"><p class="drop-cap">Red County — ${esc(news.title)}.</p>${news.desc?`<p>${esc(news.desc)}</p>`:''}<p>Acompanhe o desenvolvimento desta notícia através dos canais oficiais da Red News 98.9 FM.</p></div>`;
   $('page-article').innerHTML=`${buildCompact(currentPage)}
-  <div class="art-head"><div class="breadcrumb">Início / Notícias</div><div class="art-kicker"><span class="tag">${esc(news.cat)}</span>${news.label?`<span class="sub">${esc(news.label)}</span>`:''}</div><h1 class="art-h1">${esc(news.title)}</h1>${news.desc?`<p class="art-dek">${esc(news.desc)}</p>`:''}<div class="art-byline"><div class="art-avatar">RN</div><div><div class="art-author">Redação Red News</div><div class="art-meta">Red News · ${esc(news.time_str)}</div></div></div></div>
+  <div class="art-head"><div class="breadcrumb">Início / ${news.cat==='Crônica'?'Crônicas':'Notícias'}</div><div class="art-kicker"><span class="tag">${esc(news.cat)}</span>${news.label?`<span class="sub">${esc(news.label)}</span>`:''}</div><h1 class="art-h1">${esc(news.title)}</h1>${news.desc?`<p class="art-dek">${esc(news.desc)}</p>`:''}<div class="art-byline"><div class="art-avatar">${articleInitials}</div><div><div class="art-author">${esc(articleAuthor)}</div><div class="art-meta">Red News · ${esc(news.time_str)}</div></div></div></div>
   ${heroImg}${artBody}
   ${buildComments(id,comments)}${buildFooter()}`;
   setTimeout(()=>refreshComments(id),500);
