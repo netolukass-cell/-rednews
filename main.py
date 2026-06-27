@@ -942,7 +942,7 @@ def seed_riley_vance_column():
         ("ela-foi-embora-sem-saber-2026-06-26", "featured", "✒", "Crônica",
          "Ela foi embora sem saber",
          "Riley Vance pagou o resgate da melhor amiga e desapareceu. Montgomery segue em silêncio. Como de costume.",
-         RILEY_VANCE_COLUMN_BODY, "assets/riley-vance/ela-foi-embora-sem-saber.svg?v=20260626b",
+         RILEY_VANCE_COLUMN_BODY, "assets/riley-vance/capa-riley-vance.png?v=20260626c",
          "Hoje, 26/06", "COLUNA · BEAU HOLLISTER", int(time.time()) + 310)
     )
     conn.commit(); cur.close(); conn.close()
