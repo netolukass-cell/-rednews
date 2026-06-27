@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+  <defs>
+    <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#000" stop-opacity=".94"/>
+      <stop offset=".22" stop-color="#000" stop-opacity=".76"/>
+      <stop offset=".5" stop-color="#000" stop-opacity=".2"/>
+      <stop offset=".76" stop-color="#000" stop-opacity=".58"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".96"/>
+    </linearGradient>
+    <filter id="photo">
+      <feColorMatrix type="saturate" values=".65"/>
+    </filter>
+  </defs>
+  <image href="ela-foi-embora-sem-saber.jpg" width="1080" height="1080" preserveAspectRatio="xMidYMid slice" filter="url(#photo)"/>
+  <rect width="1080" height="1080" fill="url(#shade)"/>
+
+  <rect width="1080" height="64" fill="#cc0000"/>
+  <text x="40" y="43" fill="#fff" font-family="Impact, Arial Narrow, sans-serif" font-size="35" letter-spacing="3">RED • NEWS</text>
+  <rect x="880" y="17" width="160" height="31" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.5"/>
+  <text x="960" y="39" fill="#fff" text-anchor="middle" font-family="Arial Narrow, Arial, sans-serif" font-size="14" font-weight="700" letter-spacing="3">CRÔNICA</text>
+
+  <text x="48" y="692" fill="#cc0000" font-family="Arial Narrow, Arial, sans-serif" font-size="17" font-weight="700" letter-spacing="4">COLUNA — BEAU HOLLISTER</text>
+  <text x="48" y="790" fill="#fff" font-family="Impact, Arial Narrow, sans-serif" font-size="100" letter-spacing="1">ELA FOI EMBORA</text>
+  <text x="48" y="882" fill="#fff" font-family="Impact, Arial Narrow, sans-serif" font-size="100" letter-spacing="1">SEM SABER</text>
+
+  <rect x="48" y="914" width="4" height="76" fill="#cc0000"/>
+  <text x="69" y="940" fill="#eee" font-family="Arial, sans-serif" font-size="24" font-style="italic">
+    <tspan x="69" dy="0">Riley Vance pagou o resgate da melhor amiga e desapareceu.</tspan>
+    <tspan x="69" dy="34">Montgomery segue em silêncio. Como de costume.</tspan>
+  </text>
+
+  <rect y="1012" width="1080" height="68" fill="#000" fill-opacity=".9"/>
+  <rect y="1012" width="1080" height="3" fill="#cc0000"/>
+  <text x="48" y="1054" fill="#aaa" font-family="Arial Narrow, Arial, sans-serif" font-size="16" letter-spacing="1">POR <tspan fill="#eee" font-weight="700">BEAU HOLLISTER</tspan>  ·  RED NEWS</text>
+  <text x="1032" y="1054" fill="#888" text-anchor="end" font-family="Arial Narrow, Arial, sans-serif" font-size="16" letter-spacing="2">REDNEWS-1.ONRENDER.COM</text>
+</svg>
